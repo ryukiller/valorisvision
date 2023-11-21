@@ -8,7 +8,7 @@ export default function Privacy() {
                 <h4>Introduction</h4>
                 <p>ValorisVisio respects your privacy and is committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website (regardless of where you visit it from) and tell you about your privacy rights and how the law protects you.</p>
                 <h4>Important Information and Who We Are</h4>
-                <p>ValorisVisio is the controller and responsible for your personal data (collectively referred to as "ValorisVisio", "we", "us" or "our" in this privacy policy).</p>
+                <p>ValorisVisio is the controller and responsible for your personal data (collectively referred to as {`"ValorisVisio", "we", "us" or "our"`} in this privacy policy).</p>
                 <h4>Contact Details</h4>
                 <p>If you have any questions about this privacy policy or our privacy practices, please contact us in the following ways:</p>
                 <p>Full name: ValorisVisio Email address: <a href="mailto:riangraphics@gmail.com" target="_new">riangraphics@gmail.com</a></p>

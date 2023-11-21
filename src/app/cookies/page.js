@@ -20,7 +20,7 @@ export default function Cookies() {
                     <li>This site uses Google Analytics, one of the most widespread and trusted analytics solutions on the web, for helping us to understand how you use the site and ways that we can improve your experience. These cookies may track things such as how long you spend on the site and the pages that you visit so we can continue to produce engaging content.</li>
                 </ul>
                 <h4>More Information</h4>
-                <p>Hopefully, that has clarified things for you and as was previously mentioned if there is something that you aren't sure whether you need or not it's usually safer to leave cookies enabled in case it does interact with one of the features you use on our site. However, if you are still looking for more information, you can contact us through one of our preferred contact methods.</p>
+                <p>Hopefully, that has clarified things for you and as was previously mentioned if there is something that you {`aren't `}sure whether you need or not {`it's`} usually safer to leave cookies enabled in case it does interact with one of the features you use on our site. However, if you are still looking for more information, you can contact us through one of our preferred contact methods.</p>
                 <p>Email: <a href="mailto:support@valorisvisio.top" target="_new">support@valorisvisio.top</a></p>
             </div>
         </main>
