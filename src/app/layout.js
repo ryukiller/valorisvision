@@ -5,6 +5,8 @@ import Script from 'next/script'
 import { ThemeProvider } from '@/rgcomponents/ThemeProvider'
 import { Header } from '@/rgcomponents/Header'
 import { Footer } from '@/rgcomponents/Footer'
+import { Toaster } from "@/components/ui/toaster"
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -37,6 +39,7 @@ export default function RootLayout({ children }) {
           <Header />
           {children}
           <Footer />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

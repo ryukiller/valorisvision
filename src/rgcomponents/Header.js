@@ -59,7 +59,7 @@ const components = [
 export function Header() {
     const menuReady = false
     return (
-        <header className="flex flex-row items-center justify-between p-6 fixed w-full">
+        <header className="flex flex-row items-center justify-between p-6 fixed w-full backdrop-blur-[2px] shadow-sm z-10">
             <Link href="/" title="ValorisVisio Crypto Scenarios" alt="ValorisVisio Crypto Scenarios">
                 <Image src="logoicon.svg" width={40} height={40} alt="ValorisVisio Crypto Scenarios Logo" />
             </Link>
