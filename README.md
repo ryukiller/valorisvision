@@ -21,7 +21,7 @@ Getting Started
 
 To get started with ValorisVisio:
 
-1.  Clone the Repository: `git clone https://github.com/[YourUsername]/ValorisVisio.git`
+1.  Clone the Repository: `git clone https://github.com/ryukiller/valorisvision.git`
 2.  Install Dependencies: Navigate to the project directory and run `npm install` (assuming Node.js is installed).
 3.  Run the Application: Execute `npm start` to launch ValorisVisio on your local machine.
 
@@ -33,9 +33,9 @@ We welcome contributions to ValorisVisio! If you have suggestions or improvement
 License
 -------
 
-ValorisVisio is released under the [MIT License](https://chat.openai.com/c/LICENSE). Feel free to use, modify, and distribute it as per the license terms.
+ValorisVisio is released under the MIT License. Feel free to use, modify, and distribute it as per the license terms.
 
 Contact
 -------
 
-For any queries or support, please reach out to us at <support@valorisvisio.com>.
+For any queries or support, please reach out to us at <riangrapphics@gmail.com>.
