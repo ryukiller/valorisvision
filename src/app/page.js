@@ -46,7 +46,7 @@ export default function Home() {
         <Input className="w-auto" type="number" name="bag" placeHolder="Bags" onChange={handleHoldingsChange} />
         <span>what if my coin/token</span>
         <GetCoinsData onCoinSelect={handleFrom} fieldName="from" />
-        <span>reaches this other coin's/token market cap</span>
+        <span>reaches this other {`coin's`}/token market cap</span>
         <GetCoinsData onCoinSelect={handleTo} fieldName="to" />
         {potentialValue > 0 && (
           <span>Your holdings could potentially be worth: <span className="font-bold text-lg text-emerald-600">${potentialValue.toLocaleString()}</span></span>
@@ -59,13 +59,13 @@ export default function Home() {
             <p><strong>Enter Your Holdings</strong>: Start by inputting the number of coins you currently hold in the cryptocurrency of your choice.</p>
           </li>
           <li>
-            <p><strong>Select Your Current Cryptocurrency ("From")</strong>: Choose the cryptocurrency you currently own. This is the coin whose future potential you want to explore.</p>
+            <p><strong>Select Your Current Cryptocurrency ({`"From"`})</strong>: Choose the cryptocurrency you currently own. This is the coin whose future potential you want to explore.</p>
           </li>
           <li>
-            <p><strong>Choose Your Target Cryptocurrency ("To")</strong>: Select another cryptocurrency whose market cap represents your target or goal. This is the market cap your current cryptocurrency would need to reach.</p>
+            <p><strong>Choose Your Target Cryptocurrency ({`"To"`})</strong>: Select another cryptocurrency whose market cap represents your target or goal. This is the market cap your current cryptocurrency would need to reach.</p>
           </li>
           <li>
-            <p><strong>Discover Potential Value</strong>: Our tool calculates what your holdings could be worth if your current cryptocurrency's market cap matches that of your target. It does this by estimating a new potential price for your current coin, derived from the target's market cap divided by your current coin's circulating supply. Then, it multiplies this potential price by your current holdings to estimate their future value.</p>
+            <p><strong>Discover Potential Value</strong>: Our tool calculates what your holdings could be worth if your current {`cryptocurrency's`} market cap matches that of your target. It does this by estimating a new potential price for your current coin, derived from the {`target's`} market cap divided by your current {`coin's`} circulating supply. Then, it multiplies this potential price by your current holdings to estimate their future value.</p>
           </li>
         </ol>
         <h3>Visualize Your Potential Gains</h3>

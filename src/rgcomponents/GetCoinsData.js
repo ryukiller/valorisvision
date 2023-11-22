@@ -118,9 +118,8 @@ const GetCoinsData = ({ onCoinSelect }) => {
         }
     }, [page, searchTerm]);
 
-    const handleSearch = (e) => {
-        const values = e.target.value;
-        console.log(e)
+    const handleSearch = (values) => {
+        console.log(values)
         setSearchTerm(values);
         if (searchTimeoutRef.current) {
             clearTimeout(searchTimeoutRef.current);
@@ -178,7 +177,8 @@ const GetCoinsData = ({ onCoinSelect }) => {
                     <CommandInput
                         placeholder="Search Coin..."
                         className="h-9"
-                        onChange={handleSearch}
+                        //onValueChange={handleSearch}
+                        ref={searchTimeoutRef}
                     />
                     {filteredCoins.length === 0 && searchTerm && <CommandEmpty>No Coin found.</CommandEmpty>}
                     <CommandGroup
