@@ -190,7 +190,8 @@ const GetCoinsData = ({ onCoinSelect }) => {
                             //console.log(coin)
                             return (
                                 <CoinInfo
-                                    info={coin}>
+                                    info={coin}
+                                    key={index}>
                                     <CommandItem
                                         ref={index === (searchTerm ? filteredCoins : coins).length - 1 ? lastCoinRef : null}
                                         key={index}
