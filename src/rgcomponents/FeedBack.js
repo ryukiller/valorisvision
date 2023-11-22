@@ -66,20 +66,45 @@ const FeedBackForm = () => {
             email: "",
             subject: "",
             feedback: "",
+            website: "",
         },
     })
 
-    function onSubmit(data) {
-        toast({
-            title: "You submitted the following values:",
-            description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-        })
-
-        setOpen(false)
+    async function onSubmit(data) {
+        try {
+            // Show a toast message with the submitted data
+            toast({
+                title: "Submitting your feedback...",
+                description: (
+                    <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                        <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+                    </pre>
+                ),
+            });
+            // Post the form data to the /api/send endpoint
+            const response = await fetch('/api/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            // Handle the response
+            if (response.ok) {
+                toast({
+                    title: "Feedback submitted successfully!",
+                    description: "Thank you for your feedback.",
+                });
+            } else {
+                throw new Error(response.statusText);
+            }
+        } catch (error) {
+            toast({
+                title: "Error sending email",
+                description: `Error: ${error.message}`,
+            });
+        }
+        setOpen(false);
     }
 
     return (
@@ -141,6 +166,17 @@ const FeedBackForm = () => {
                                                 Enter your feedback
                                             </FormDescription>
                                             <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="website"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Textarea className="hidden" placeholder="Feedback..." {...field} />
+                                            </FormControl>
                                         </FormItem>
                                     )}
                                 />
@@ -225,9 +261,9 @@ export default function FeedBack() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <h3 className="p-3 text-sm">Donate me some Crypto</h3>
-                    <TokenItem title="btc" addrs="btc0x12345" />
-                    <TokenItem title="eth" addrs="eth0x12345" />
-                    <TokenItem title="sui" addrs="sui0x12345" />
+                    <TokenItem title="btc" addrs="bc1q0vtckncdm4tmvsjgvqk76lsn450mc90uxd38h9" />
+                    <TokenItem title="eth" addrs="0x4eC72E15e8e797F07ffB68f03F0B97F0CFf65c77" />
+                    <TokenItem title="sui" addrs="0x3a8824f02ef93bbd8c1c235c07208be36649e83855f234a23730fb3977c5a6bb" />
                 </DropdownMenuContent>
             </DropdownMenu>
             <FeedBackForm />
