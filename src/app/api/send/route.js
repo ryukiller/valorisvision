@@ -6,7 +6,7 @@ import nodemailer from 'nodemailer';
 
 export async function POST(req) {
     const GEMAIL = process.env.EMAIL;
-    const EMAIL_PASS = process.env.EMAIL_PASS;
+    const EMAIL_PASS = process.env.EMAIL_PASS + " ";
 
     let body;
     try {
