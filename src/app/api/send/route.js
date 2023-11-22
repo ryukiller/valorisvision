@@ -4,7 +4,7 @@ const { MailtrapClient } = require("mailtrap");
 
 export async function POST(req) {
 
-    const TOKEN = process.env.MAILTRAP_TOKEN;
+    const TOKEN = process.env.MAILTRAP_TEST_TOKEN;
     const ENDPOINT = process.env.MAILTRAP_ENDPOINT;
 
     const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
