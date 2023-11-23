@@ -1,11 +1,11 @@
 'use client'
-import React, { useState, useEffect, useRef } from 'react';
-import { Input } from '@/components/ui/input';
 
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from "@/components/ui/avatar"
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
-
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import {
     Command,
     CommandEmpty,
@@ -14,24 +14,21 @@ import {
     CommandItem,
 } from "@/components/ui/command"
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
-import Image from 'next/image';
-
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from "@/components/ui/avatar"
-import {
     HoverCard,
     HoverCardContent,
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import React, { useEffect, useRef, useState } from 'react';
 
-
+import { Button } from "@/components/ui/button"
+import Image from 'next/image';
+import { Input } from '@/components/ui/input';
+import { cn } from "@/lib/utils"
 
 function CoinInfo({ info, children }) {
     return (
