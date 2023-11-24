@@ -1,11 +1,11 @@
 'use client'
+import React, { useState, useEffect, useRef } from 'react';
+import { Input } from '@/components/ui/input';
 
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from "@/components/ui/avatar"
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
     Command,
     CommandEmpty,
@@ -14,21 +14,24 @@ import {
     CommandItem,
 } from "@/components/ui/command"
 import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger,
-} from "@/components/ui/hover-card"
-import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import React, { useEffect, useRef, useState } from 'react';
-
-import { Button } from "@/components/ui/button"
 import Image from 'next/image';
-import { Input } from '@/components/ui/input';
-import { cn } from "@/lib/utils"
+
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from "@/components/ui/avatar"
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "@/components/ui/hover-card"
+
+
 
 function CoinInfo({ info, children }) {
     return (
@@ -80,34 +83,44 @@ const GetCoinsData = ({ onCoinSelect }) => {
     const searchTimeoutRef = useRef(null);
     const abortControllerRef = useRef(new AbortController());
 
+    const [isLoading, setIsLoading] = useState(false)
+
     const fetchCoins = async (pageNum, search = '') => {
-        if (!lastPage) {
-            try {
-                abortControllerRef.current.abort(); // Abort previous fetch
-                abortControllerRef.current = new AbortController();
-                const response = await fetch(`/data/markets_page_${pageNum}.json`, { signal: abortControllerRef.current.signal });
-                const data = await response.json();
-                if (search) {
-                    return data.filter(coin => coin.name.includes(search));
-                }
-                return data;
-            } catch (err) {
-                if (err.status == "404") {
-                    setLastPage(true)
-                }
-                if (err.name !== 'AbortError') {
-                    setLastPage(true)
-                    console.log(err);
-                }
-                return [];
-            }
-        } else {
-            console.log('last page hit')
+        setIsLoading(true)
+        try {
+            abortControllerRef.current.abort(); // Abort previous fetch
+            abortControllerRef.current = new AbortController();
+            const query = `?page=${pageNum}&limit=12${search ? `&searchTerm=${search}` : ''}`;
+            const response = await fetch(`/api/getdata${query}`, { signal: abortControllerRef.current.signal });
+            const data = await response.json();
+            setIsLoading(false)
+            return data.coins;
+        } catch (err) {
+            setIsLoading(false)
+            // Handle errors
+            return [];
         }
     };
 
     useEffect(() => {
-        console.log(value)
+        console.log('val changed')
+        setSearchTerm('');
+        setPage(1)
+    }, [value])
+
+    useEffect(() => {
+        if (open) {
+            document.body.classList.add('overflow-hidden');
+        } else {
+            document.body.classList.remove('overflow-hidden');
+        }
+        // Cleanup function to remove the class when the component unmounts
+        return () => {
+            document.body.classList.remove('overflow-hidden');
+        };
+    }, [open]);
+
+    useEffect(() => {
         if (!searchTerm) {
             fetchCoins(page).then(newCoins => {
                 setCoins(prevCoins => [...prevCoins, ...newCoins]);
@@ -116,7 +129,6 @@ const GetCoinsData = ({ onCoinSelect }) => {
     }, [page, searchTerm]);
 
     const handleSearch = (values) => {
-        console.log(values)
         setSearchTerm(values);
         if (searchTimeoutRef.current) {
             clearTimeout(searchTimeoutRef.current);
@@ -128,14 +140,7 @@ const GetCoinsData = ({ onCoinSelect }) => {
 
     const performSearch = async (searchValue) => {
         if (searchValue) {
-            let searchResults = [];
-            let currentPage = 1;
-            let data = [];
-            do {
-                data = await fetchCoins(currentPage, searchValue);
-                searchResults = [...searchResults, ...data];
-                currentPage++;
-            } while (data.length > 0 && !lastPage);
+            const searchResults = await fetchCoins(1, searchValue);
             setFilteredCoins(searchResults);
         } else {
             setFilteredCoins([]);
@@ -158,13 +163,13 @@ const GetCoinsData = ({ onCoinSelect }) => {
                     aria-expanded={open}
                     className="w-[200px] justify-between"
                 >
-                    <div className="flex flex-row items-center justify-center gap-2">
+                    <div className="flex flex-row items-center justify-center gap-2 text-ellipsis overflow-hidden">
                         {value.image ? (
                             <Image className="rounded-full bg-white p-[2px]" src={value.image !== 'missing_large.png' ? value.image : '/logoicon.svg'} width={20} height={20} alt={value.name} />
                         ) : (
                             <Image className="rounded-full bg-white p-[2px]" src="/logoicon.svg" width={20} height={20} alt="ValorisVisio" />
                         )}
-                        {value.name ? value.name : "Select Coin..."}
+                        <span className="text-ellipsis overflow-hidden w-full">{value.name ? value.name : "Select Coin..."}</span>
                     </div>
                     <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -174,8 +179,9 @@ const GetCoinsData = ({ onCoinSelect }) => {
                     <CommandInput
                         placeholder="Search Coin..."
                         className="h-9"
-                        //onValueChange={handleSearch}
+                        onValueChange={handleSearch}
                         ref={searchTimeoutRef}
+                        isLoading={isLoading}
                     />
                     {filteredCoins.length === 0 && searchTerm && <CommandEmpty>No Coin found.</CommandEmpty>}
                     <CommandGroup
@@ -201,7 +207,7 @@ const GetCoinsData = ({ onCoinSelect }) => {
                                         className="flex flex-row items-center justify-center gap-2"
                                     >
                                         <Image className="rounded-full bg-white p-1" src={coin.image !== 'missing_large.png' ? coin.image : '/logoicon.svg'} width={30} height={30} alt={coin.name} />
-                                        {coin.name}
+                                        <span className="text-ellipsis overflow-hidden">{coin.name}</span>
                                         <CheckIcon
                                             className={cn(
                                                 "ml-auto h-4 w-4",
@@ -209,6 +215,7 @@ const GetCoinsData = ({ onCoinSelect }) => {
                                             )}
                                         />
                                     </CommandItem>
+
                                 </CoinInfo>
                             )
                         })}

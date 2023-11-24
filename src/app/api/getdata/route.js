@@ -72,26 +72,40 @@ export async function GET(req) {
     const skip = (page - 1) * limit;
 
     // Search parameter
-    const searchTerm = searchParams.get('page');
+    const searchTerm = searchParams.get('searchTerm');
 
     try {
         await client.connect();
         const collection = client.db("valorisvisio").collection("coins");
 
-        let query = {};
+        let query = {
+            $and: [
+                { market_cap: { $gt: 0 } },
+                { total_supply: { $gt: 0 } },
+                { circulating_supply: { $gt: 0 } },
+            ]
+        };
+
         if (searchTerm) {
-            // Search by name or symbol using regex for case-insensitive partial match
-            query = {
+            // Extend the query to include search conditions
+            query.$and.push({
                 $or: [
                     { name: new RegExp(searchTerm, 'i') },
                     { symbol: new RegExp(searchTerm, 'i') }
                 ]
-            };
+            });
         }
 
-        const coins = await collection.find(query).skip(skip).limit(limit).toArray();
-        const total = await collection.countDocuments(query);
-        return NextResponse.json({ message: "Here coins", coins, total, page, limit }, { status: 200 });
+        const coins = await collection
+            .find(query)
+            .sort({ market_cap: -1 }) // Sorting by market cap in descending order
+            .skip(skip)
+            .limit(limit)
+            .toArray();
+
+
+        //const total = await collection.countDocuments(query);
+        return NextResponse.json({ message: "Here coins", coins, page, limit }, { status: 200 });
     } catch (error) {
         console.error("Failed to fetch coins:", error);
         return NextResponse.json({ message: "Failed to fetch coins" }, { status: 500 });
