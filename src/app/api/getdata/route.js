@@ -61,7 +61,7 @@ export async function POST(req) {
 
 
 
-export async function GET(req, res) {
+export async function GET(req) {
     const client = new MongoClient(process.env.MONGODB);
 
     const { searchParams } = new URL(req.url)
@@ -91,11 +91,10 @@ export async function GET(req, res) {
 
         const coins = await collection.find(query).skip(skip).limit(limit).toArray();
         const total = await collection.countDocuments(query);
-
-        res.status(200).json({ coins, total, page, limit });
+        return NextResponse.json({ message: "Here coins", coins, total, page, limit }, { status: 200 });
     } catch (error) {
         console.error("Failed to fetch coins:", error);
-        res.status(500).json({ error: "Failed to fetch coins" });
+        return NextResponse.json({ message: "Failed to fetch coins" }, { status: 500 });
     } finally {
         await client.close();
     }
