@@ -72,7 +72,7 @@ export async function GET(req, res) {
     const skip = (page - 1) * limit;
 
     // Search parameter
-    const searchTerm = req.query.searchTerm;
+    const searchTerm = searchParams.get('page');
 
     try {
         await client.connect();
