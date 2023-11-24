@@ -62,7 +62,7 @@ export async function POST(req) {
 
 
 export async function GET(req, res) {
-    const client = new MongoClient(process.env.MONGODB_URI);
+    const client = new MongoClient(process.env.MONGODB);
 
     // Pagination parameters
     const page = parseInt(req.query.page) || 1;
