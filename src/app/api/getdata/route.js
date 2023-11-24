@@ -64,9 +64,11 @@ export async function POST(req) {
 export async function GET(req, res) {
     const client = new MongoClient(process.env.MONGODB);
 
+    const { searchParams } = new URL(req.url)
+
     // Pagination parameters
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(searchParams.get('page')) || 1;
+    const limit = parseInt(searchParams.get('limit')) || 10;
     const skip = (page - 1) * limit;
 
     // Search parameter
