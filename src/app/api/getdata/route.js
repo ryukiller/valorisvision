@@ -59,13 +59,38 @@ export async function POST(req) {
 }
 
 
+
+
 export async function GET(req, res) {
     const client = new MongoClient(process.env.MONGODB_URI);
+
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Search parameter
+    const searchTerm = req.query.searchTerm;
+
     try {
         await client.connect();
-        const collection = client.db("your_database_name").collection("your_collection_name");
-        const coins = await collection.find({}).toArray(); // Fetch all coins
-        res.status(200).json(coins);
+        const collection = client.db("valorisvisio").collection("coins");
+
+        let query = {};
+        if (searchTerm) {
+            // Search by name or symbol using regex for case-insensitive partial match
+            query = {
+                $or: [
+                    { name: new RegExp(searchTerm, 'i') },
+                    { symbol: new RegExp(searchTerm, 'i') }
+                ]
+            };
+        }
+
+        const coins = await collection.find(query).skip(skip).limit(limit).toArray();
+        const total = await collection.countDocuments(query);
+
+        res.status(200).json({ coins, total, page, limit });
     } catch (error) {
         console.error("Failed to fetch coins:", error);
         res.status(500).json({ error: "Failed to fetch coins" });
