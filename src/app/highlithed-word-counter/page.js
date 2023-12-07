@@ -4,7 +4,7 @@
 export default function Wordcounter() {
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center p-4 lg:p-24 text-center">
+        <main className="flex min-h-screen flex-col items-center justify-center p-4 lg:p-24 text-left">
 
             <h1 className="text-lg lg:text-3xl font-bold mt-20 lg:mt-4">Text Counter: A Chrome Extension for Counting Words and Characters</h1>
             <h2 className="text-xl font-bold my-2">Introduction</h2>
