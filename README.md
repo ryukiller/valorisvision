@@ -32,4 +32,4 @@ ValorisVisio is released under the MIT License. Feel free to use, modify, and di
 
 ## Contact
 
-For any queries or support, please reach out to us at <riangrapphics@gmail.com>.
+For any queries or support, please reach out to us at <riangrapphics@gmail.com> or visit our website <https://valorisvisio.top/>.
