@@ -89,12 +89,12 @@ export default function Home() {
       <h3>Understanding Crypto Investment App Essentials:</h3>
 
       <p>
-        The landscape of digital currency investment has evolved rapidly, necessitating tools that offer more than just basic tracking functionalities. A high-quality crypto investment app like ValorisVisio provides a holistic view of your portfolio, integrating features such as cryptocurrency trends analyzer and crypto market predictions. We'll explore how these features empower investors to make strategic decisions.
+        The landscape of digital currency investment has evolved rapidly, necessitating tools that offer more than just basic tracking functionalities. A high-quality crypto investment app like ValorisVisio provides a holistic view of your portfolio, integrating features such as cryptocurrency trends analyzer and crypto market predictions. {`We'll`} explore how these features empower investors to make strategic decisions.
       </p>
       <h3>ValorisVisio: Your Cryptocurrency Market Analysis Expert:</h3>
 
       <p>
-        Diving deeper into market analysis, ValorisVisio serves as your crypto analytics tool, offering insights into the volatile world of digital currencies. It's not just about tracking; it's about understanding the why and how behind market movements. We'll discuss how the app's advanced analytics turn complex data into actionable insights.
+        Diving deeper into market analysis, ValorisVisio serves as your crypto analytics tool, offering insights into the volatile world of digital currencies. It{`'`}s not just about tracking; it{`'`}s about understanding the why and how behind market movements. We{`'`}ll discuss how the app{`'`}s advanced analytics turn complex data into actionable insights.
       </p>
       <h3>The Art of Crypto Scenario Planning with ValorisVisio:</h3>
 
@@ -109,7 +109,7 @@ export default function Home() {
       <h3>Conclusion:</h3>
 
       <p>
-        In conclusion, ValorisVisio redefines the way investors interact with the crypto market. From crypto market cap analysis to digital asset management, the app offers everything needed to navigate the complex world of cryptocurrency investing confidently. Whether you're a seasoned trader or new to the crypto space, ValorisVisio is designed to elevate your investment journey.
+        In conclusion, ValorisVisio redefines the way investors interact with the crypto market. From crypto market cap analysis to digital asset management, the app offers everything needed to navigate the complex world of cryptocurrency investing confidently. Whether you{`'`}re a seasoned trader or new to the crypto space, ValorisVisio is designed to elevate your investment journey.
       </p>
     </main>
   )
