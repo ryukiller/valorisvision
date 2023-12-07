@@ -82,7 +82,7 @@ export default function Home() {
         </h2>
 
 
-        <h3>Introduction toValorisVisio Crypto Scenarios:</h3>
+        <h3 className="text-lg font-bold my-2">Introduction toValorisVisio Crypto Scenarios:</h3>
 
         <p className="my-2 text-justify">
           In the fast-paced world of cryptocurrency, staying ahead of market trends and making informed investment decisions is crucial. ValorisVisio emerges as a beacon for crypto enthusiasts, offering a comprehensive solution that transcends traditional crypto investment apps. This article delves into how ValorisVisio stands out as a cryptocurrency market analysis tool, providing users with an unparalleled experience in crypto scenario planning, portfolio tracking, and market forecasting.
@@ -92,7 +92,7 @@ export default function Home() {
         <p className="my-2 text-justify">
           The landscape of digital currency investment has evolved rapidly, necessitating tools that offer more than just basic tracking functionalities. A high-quality crypto investment app like ValorisVisio provides a holistic view of your portfolio, integrating features such as cryptocurrency trends analyzer and crypto market predictions. {`We'll`} explore how these features empower investors to make strategic decisions.
         </p>
-        <h3>ValorisVisio: Your Cryptocurrency Market Analysis Expert:</h3>
+        <h3 className="text-lg font-bold my-2">ValorisVisio: Your Cryptocurrency Market Analysis Expert:</h3>
 
         <p className="my-2 text-justify">
           Diving deeper into market analysis, ValorisVisio serves as your crypto analytics tool, offering insights into the volatile world of digital currencies. It{`'`}s not just about tracking; it{`'`}s about understanding the why and how behind market movements. We{`'`}ll discuss how the app{`'`}s advanced analytics turn complex data into actionable insights.
