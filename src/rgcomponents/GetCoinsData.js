@@ -163,6 +163,7 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
                     aria-expanded={open}
                     className="w-[200px] justify-between"
                     name={fieldName}
+                    aria-label={fieldName}
                 >
                     <div className="flex flex-row items-center justify-center gap-2 text-ellipsis overflow-hidden">
                         {value.image ? (
