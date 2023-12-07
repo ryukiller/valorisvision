@@ -17,7 +17,7 @@ export function Footer() {
                 </div>
                 <div className="p-4 lg:max-w-[33%] flex flex-col gap-4"></div>
                 <div className="p-4 lg:max-w-[33%] flex flex-col gap-4 justify-end items-end">
-                    <Link rel="nofollow" href="https://github.com/ryukiller/valorisvision" className="rounded-full border border-slate-600 dark:boder-white p-3">
+                    <Link rel="nofollow" href="https://github.com/ryukiller/valorisvision" aria-label="GitHub repository" title="GitHub repository" className="rounded-full border border-slate-600 dark:boder-white p-3">
                         <Github size={32} strokeWidth={1.5} />
                     </Link>
                 </div>

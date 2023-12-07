@@ -69,7 +69,7 @@ function CoinInfo({ info, children }) {
 
 
 
-const GetCoinsData = ({ onCoinSelect }) => {
+const GetCoinsData = ({ onCoinSelect, fieldName }) => {
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState([])
 
@@ -162,6 +162,7 @@ const GetCoinsData = ({ onCoinSelect }) => {
                     role="combobox"
                     aria-expanded={open}
                     className="w-[200px] justify-between"
+                    name={fieldName}
                 >
                     <div className="flex flex-row items-center justify-center gap-2 text-ellipsis overflow-hidden">
                         {value.image ? (

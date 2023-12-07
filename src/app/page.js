@@ -43,7 +43,7 @@ export default function Home() {
       <h1 className="text-lg lg:text-3xl font-bold mt-20 lg:mt-4">Crypto Scenario, find out what your holdings value might be</h1>
       <div className="max-w-[800px] my-20 mx-8 flex flex-row items-center justify-center lg:justify-start gap-3 flex-wrap">
         <span>This are my holdings $</span>
-        <Input className="w-auto" type="number" name="bag" placeHolder="Bags" onChange={handleHoldingsChange} />
+        <Input className="w-auto" type="number" name="bag" placeHolder="Tokens/Coins amount" onChange={handleHoldingsChange} />
         <span>what if my coin/token</span>
         <GetCoinsData onCoinSelect={handleFrom} fieldName="from" />
         <span>reaches this other {`coin's`}/token market cap</span>
@@ -53,7 +53,7 @@ export default function Home() {
         )}
       </div>
       <div className="text-left max-w-[1000px] my-20 mx-6">
-        <h3>How It Works</h3>
+        <h2>How It Works</h2>
         <ol className="list-decimal flex flex-col gap-4">
           <li>
             <p><strong>Enter Your Holdings</strong>: Start by inputting the number of coins you currently hold in the cryptocurrency of your choice.</p>
