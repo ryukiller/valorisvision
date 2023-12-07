@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
           gtag('config', 'G-ETPN827MV5');
         `}
       </Script>
-      <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9378551640725453"
+      <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1078298151629101"
         crossorigin="anonymous" />
       <body className={inter.className}>
         <ThemeProvider
