@@ -104,7 +104,7 @@ export default function Home() {
       <h3>Maximizing Portfolio Performance with Advanced Analytics:</h3>
 
       <p>
-        ValorisVisio goes beyond basic portfolio tracking. It offers a comprehensive suite of tools for crypto portfolio analysis, helping users optimize their investments. We'll explore how the app aids in cryptocurrency risk management and portfolio diversification, ensuring that your investments are aligned with your financial goals.
+        ValorisVisio goes beyond basic portfolio tracking. It offers a comprehensive suite of tools for crypto portfolio analysis, helping users optimize their investments. We{`'`}ll explore how the app aids in cryptocurrency risk management and portfolio diversification, ensuring that your investments are aligned with your financial goals.
       </p>
       <h3>Conclusion:</h3>
 
