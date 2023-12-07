@@ -18,9 +18,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <Script src="https://www.googletagmanager.com/gtag/js?id=G-ETPN827MV5" />
-      <Script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="3b8cc79d-ff1c-4442-aeaf-5682c0ab0c6c" data-blockingmode="auto" type="text/javascript" />
-      <Script id="google-analytics">
+      <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-ETPN827MV5" />
+      <Script strategy="afterInteractive" id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="3b8cc79d-ff1c-4442-aeaf-5682c0ab0c6c" data-blockingmode="auto" type="text/javascript" />
+      <Script strategy="afterInteractive" id="google-analytics">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
           gtag('config', 'G-ETPN827MV5');
         `}
       </Script>
-      <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1078298151629101"
+      <Script strategy="afterInteractive" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1078298151629101"
         crossorigin="anonymous" />
       <body className={inter.className}>
         <ThemeProvider
