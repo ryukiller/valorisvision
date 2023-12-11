@@ -13,8 +13,8 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Crypto Scenarios Calciulate you profits - ValorisVisio',
-  description: "Ever wonder what your crypto value could be if it's market cap matches another crypto? Visualize your gains in that scenario, input your holdings and check it",
+  title: 'Crypto Scenarios Calculate you profits - ValorisVisio',
+  description: "Ever wonder what your crypto value could be if it's market cap matches another crypto? Visualize your gains in that scenario, input your holdings and calculate it",
 }
 
 export default function RootLayout({ children }) {
