@@ -35,8 +35,6 @@ export default function Wordcounter() {
             <h2 className="text-xl font-bold my-2">Conclusion</h2>
             <p className="my-2 text-justify">The Text Counter Chrome Extension is a testament to the power of simple, effective tools in enhancing our digital interactions. By providing instant analysis of text, it empowers users to be more aware of their word and character usage, aiding in a variety of tasks from crafting tweets to editing lengthy articles. Its blend of functionality, ease of use, and respect for user privacy makes it an essential tool for the modern internet user.</p>
             <p className="my-2 text-justify">In a world where every character counts, the Text Counter Chrome Extension ensures that you&rsquo;re always informed about the length and breadth of your digital words.</p>
-
-
         </main>
     )
 }
