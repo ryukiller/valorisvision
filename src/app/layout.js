@@ -40,8 +40,6 @@ export default function RootLayout({ children }) {
           gtag('config', 'G-ETPN827MV5');
         `}
       </Script>
-      <Script strategy="lazyOnload" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1078298151629101"
-        crossorigin="anonymous" />
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
