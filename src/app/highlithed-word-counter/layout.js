@@ -28,7 +28,6 @@ export default function RootLayout({ children }) {
                 <meta name="theme-color" content="#ffffff" />
             </Head>
             <Script strategy="lazyOnload" async src="https://www.googletagmanager.com/gtag/js?id=G-ETPN827MV5" />
-            <Script strategy="lazyOnload" async id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="3b8cc79d-ff1c-4442-aeaf-5682c0ab0c6c" data-blockingmode="auto" type="text/javascript" />
             <Script strategy="lazyOnload" id="google-analytics">
                 {`
           window.dataLayer = window.dataLayer || [];
