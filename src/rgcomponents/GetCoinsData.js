@@ -77,13 +77,16 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
     const [lastPage, setLastPage] = useState(false);
     const [filteredCoins, setFilteredCoins] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
     const displayRef = useRef(null);
     const lastCoinRef = useRef(null);
     const searchTimeoutRef = useRef(null);
     const abortControllerRef = useRef(new AbortController());
 
+    const [initialFetchDone, setInitialFetchDone] = useState(false);
+
     const [isLoading, setIsLoading] = useState(false)
+
 
     const fetchCoins = async (pageNum, search = '') => {
         setIsLoading(true)
@@ -121,12 +124,19 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
     }, [open]);
 
     useEffect(() => {
-        if (!searchTerm) {
+        if (initialFetchDone && !searchTerm) {
             fetchCoins(page).then(newCoins => {
                 setCoins(prevCoins => [...prevCoins, ...newCoins]);
             });
         }
-    }, [page, searchTerm]);
+    }, [page, searchTerm, initialFetchDone]);
+
+    const initiateFetch = () => {
+        if (!initialFetchDone) {
+            setInitialFetchDone(true);
+            setPage(1); // Or any initial page you want to start with
+        }
+    };
 
     const handleSearch = (values) => {
         setSearchTerm(values);
@@ -148,7 +158,7 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
     };
 
     const handleScroll = (e) => {
-        if (!searchTerm && displayRef.current && !lastPage) {
+        if (initialFetchDone && !searchTerm && displayRef.current && !lastPage) {
             const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
             if (bottom) setPage(prevPage => prevPage + 1);
         }
@@ -164,6 +174,7 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
                     className="w-[200px] justify-between"
                     name={fieldName}
                     aria-label={fieldName}
+                    onClick={initiateFetch}
                 >
                     <div className="flex flex-row items-center justify-center gap-2 text-ellipsis overflow-hidden">
                         {value.image ? (
