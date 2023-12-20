@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link";
-import { Github } from "lucide-react"
+import { Github, Twitter } from "lucide-react"
 
 export function Footer() {
 
@@ -16,7 +16,20 @@ export function Footer() {
                     </p>
                 </div>
                 <div className="p-4 lg:max-w-[33%] flex flex-col gap-4"></div>
-                <div className="p-4 lg:max-w-[33%] flex flex-col gap-4 justify-end items-end">
+                <div className="p-4 lg:max-w-[33%] flex flex-row gap-4 justify-end items-end">
+                    <Link rel="nofollow" href="https://twitter.com/ValorisVisio" target="_blank" aria-label="Twitter" title="Twitter" className="rounded-full border border-slate-600 dark:boder-white p-3">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="32"
+                            height="32"
+                            fill="none"
+                            viewBox="0 0 1200 1227"
+                            className="dark:fill-white fill-black"
+                        >
+                            <path d="M714.163 519.284L1160.89 0h-105.86L667.137 450.887 357.328 0H0l468.492 681.821L0 1226.37h105.866l409.625-476.152 327.181 476.152H1200L714.137 519.284h.026zM569.165 687.828l-47.468-67.894-377.686-540.24h162.604l304.797 435.991 47.468 67.894 396.2 566.721H892.476L569.165 687.854v-.026z"
+                            ></path>
+                        </svg>
+                    </Link>
                     <Link rel="nofollow" href="https://github.com/ryukiller/valorisvision" target="_blank" aria-label="GitHub repository" title="GitHub repository" className="rounded-full border border-slate-600 dark:boder-white p-3">
                         <Github size={32} strokeWidth={1.5} />
                     </Link>

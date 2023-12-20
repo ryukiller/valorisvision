@@ -31,12 +31,11 @@ export default function RootLayout({ children }) {
             <Script strategy="lazyOnload" async src="https://www.googletagmanager.com/gtag/js?id=G-ETPN827MV5" />
             <Script strategy="lazyOnload" id="google-analytics">
                 {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
- 
-          gtag('config', 'G-ETPN827MV5');
-        `}
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-ETPN827MV5');
+                `}
             </Script>
             <body className={inter.className}>
                 <ThemeProvider

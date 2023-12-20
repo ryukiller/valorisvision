@@ -9,7 +9,6 @@ import { Header } from '@/rgcomponents/Header'
 import { Footer } from '@/rgcomponents/Footer'
 import { Toaster } from "@/components/ui/toaster"
 
-
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -35,7 +34,6 @@ export default function RootLayout({ children }) {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
- 
           gtag('config', 'G-ETPN827MV5');
         `}
       </Script>
