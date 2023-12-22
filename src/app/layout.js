@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
           gtag('config', 'G-ETPN827MV5');
         `}
       </Script>
-      <Script type="application/ld+json">
+      <Script type="application/ld+json" id="siteName">
         {`
        { "@context" : "https://schema.org",
         "@type" : "WebSite",
