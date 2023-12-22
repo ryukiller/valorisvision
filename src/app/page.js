@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Input } from '@/components/ui/input';
 
 import { useEffect, useState } from 'react';
+import { gtagEvent } from '@/lib/utils';
 
 export default function Home() {
 
@@ -14,6 +15,10 @@ export default function Home() {
 
   const handleHoldingsChange = (e) => {
     setHoldings(e.target.value);
+    gtagEvent({
+      action: 'click',
+      params: { actionType: 'enteredHoldings', value: e.target.value }
+    })
   };
 
   const calculatePotentialValue = () => {

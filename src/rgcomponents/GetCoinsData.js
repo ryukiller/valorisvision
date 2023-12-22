@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
 
-import { cn } from "@/lib/utils"
+import { cn, gtagEvent } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
     Command,
@@ -152,6 +152,10 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
         if (searchValue) {
             const searchResults = await fetchCoins(1, searchValue);
             setFilteredCoins(searchResults);
+            gtagEvent({
+                action: 'click',
+                params: { actionType: 'searchedCoins', value: searchValue }
+            })
         } else {
             setFilteredCoins([]);
         }
@@ -160,7 +164,13 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
     const handleScroll = (e) => {
         if (initialFetchDone && !searchTerm && displayRef.current && !lastPage) {
             const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-            if (bottom) setPage(prevPage => prevPage + 1);
+            if (bottom) {
+                setPage(prevPage => prevPage + 1);
+                gtagEvent({
+                    action: 'scroll',
+                    params: { actionType: 'scrolledCoins' }
+                })
+            }
         }
     };
 

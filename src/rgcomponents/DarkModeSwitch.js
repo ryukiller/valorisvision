@@ -10,6 +10,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { gtagEvent } from "@/lib/utils"
 
 export function DarkModeSwitch() {
     const { setTheme } = useTheme()
@@ -23,7 +24,13 @@ export function DarkModeSwitch() {
                     <span className="sr-only">Toggle theme</span>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" onClick={() => {
+                gtagEvent({
+                    action: 'click',
+                    params: { actionType: 'changedThemeMode' }
+                })
+            }
+            }>
                 <DropdownMenuItem onClick={() => setTheme("light")}>
                     Light
                 </DropdownMenuItem>

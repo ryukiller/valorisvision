@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link";
 import { Github, Twitter } from "lucide-react"
+import { gtagEvent } from "@/lib/utils";
 
 export function Footer() {
 

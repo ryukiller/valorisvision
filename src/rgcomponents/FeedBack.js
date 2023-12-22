@@ -40,6 +40,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
 import { useState } from "react";
+import { gtagEvent } from "@/lib/utils";
 
 
 const FeedBackForm = () => {
@@ -238,7 +239,13 @@ const TokenItem = ({ title, addrs }) => {
     };
 
     return (
-        <DropdownMenuItem onClick={() => copyAddrs(addrs)} className="flex flex-row gap-3 cursor-pointer">
+        <DropdownMenuItem onClick={() => {
+            copyAddrs(addrs)
+            gtagEvent({
+                action: 'click',
+                params: { tokenName: icons[title]?.title ?? 'Unknown Token', actionType: 'copyAddrs' }
+            })
+        }} className="flex flex-row gap-3 cursor-pointer">
             <Image src={icons[title]?.img ?? '/logoicon.svg'} width={25} height={25} alt={icons[title]?.title ?? 'Unknown Token'} />
             <span>{icons[title]?.title ?? 'Unknown Token'}</span>
             <Copy size={18} strokeWidth={1.5} />
@@ -259,7 +266,12 @@ export default function FeedBack() {
                         <span className="sr-only">Donate</span>
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" onClick={() =>
+                    gtagEvent({
+                        action: 'click',
+                        params: { actionType: 'openedCopyAddrs' }
+                    })
+                }>
                     <h3 className="p-3 text-sm">Donate me some Crypto</h3>
                     <TokenItem title="btc" addrs="bc1q0vtckncdm4tmvsjgvqk76lsn450mc90uxd38h9" />
                     <TokenItem title="eth" addrs="0x4eC72E15e8e797F07ffB68f03F0B97F0CFf65c77" />
