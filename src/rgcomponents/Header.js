@@ -126,6 +126,7 @@ export function Header() {
                 </NavigationMenu>
             }
             <div className="flex flex-row items-center justify-center gap-3">
+                <a href="/blog">Blog</a>
                 <FeedBack />
                 <DarkModeSwitch />
             </div>
