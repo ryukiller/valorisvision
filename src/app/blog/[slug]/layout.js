@@ -1,4 +1,4 @@
-import '../globals.css'
+import '../../globals.css'
 
 import { Footer } from '@/rgcomponents/Footer'
 import Head from 'next/head'
@@ -10,10 +10,10 @@ import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const metadata = {
-    title: 'Cookie Policy - ValorisVisio',
-    description: "Cookie polycy for ValoriVisio",
-}
+// export const metadata = {
+//     title: 'Cookie Policy - ValorisVisio',
+//     description: "Cookie polycy for ValoriVisio",
+// }
 
 export default function RootLayout({ children }) {
     return (
