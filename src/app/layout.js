@@ -15,6 +15,13 @@ export const metadata = {
   metadataBase: new URL('https://valorisvisio.top'),
   title: 'Crypto Scenarios Calculate you profits - ValorisVisio',
   description: "Ever wonder what your crypto value could be if it's market cap matches another crypto? Visualize your gains in that scenario, input your holdings and calculate it",
+  openGraph: {
+    title: 'Crypto Scenarios Calculate you profits - ValorisVisio',
+    description: "Ever wonder what your crypto value could be if it's market cap matches another crypto? Visualize your gains in that scenario, input your holdings and calculate it",
+    url: 'https://valorisvisio.top',
+    siteName: 'ValorisVisio',
+    images: [{ url: 'https://valorisvisio.top/apple-touch-icon.png' }],
+  },
 }
 
 export default function RootLayout({ children }) {
