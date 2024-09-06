@@ -1,4 +1,4 @@
-<?xml?>
+<?xml version="1.0" encoding="UTF-8"?>
 <urlset>
   <url>
     <loc>https://valorisvisio.top/</loc>
@@ -36,6 +36,24 @@
   </url>
   <url>
     <loc>https://valorisvisio.top/blog/polymarket-is-booming-while-usage-is-mooning-a-new-era-of-prediction-markets</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://valorisvisio.top/blog/pavel-durov-defends-telegrams-practices-following-arrest-in-france</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://valorisvisio.top/blog/robinhood-crypto-reaches-39-million-settlement-with-california-doj-over-withdrawal-practices</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://valorisvisio.top/blog/dogwifhat-futures-surge-traders-anticipate-major-reversal</loc>
     <lastmod>2024-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

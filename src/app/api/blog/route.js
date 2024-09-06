@@ -2,7 +2,7 @@ import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
 import path from 'path';
 import { writeFile, readFile } from 'fs/promises';
-import { XMLParser, XMLBuilder } from 'fast-xml-parser';
+import xml2js from 'xml2js';
 import OpenAI from 'openai';
 
 // MongoDB setup
@@ -165,25 +165,33 @@ async function updateSitemap(slug) {
         const xmlData = await readFile(sitemapPath, 'utf8');
 
         // Parse XML
-        const parser = new XMLParser();
-        const sitemapObj = parser.parse(xmlData);
+        const parser = new xml2js.Parser({ xmldec: { 'version': '1.0', 'encoding': 'UTF-8' } });
+        const result = await parser.parseStringPromise(xmlData);
 
         // Add new URL
         const newUrl = {
-            loc: `https://valorisvisio.top/blog/${slug}`,
-            lastmod: new Date().toISOString().split('T')[0],
-            changefreq: 'weekly',
-            priority: '0.8'
+            loc: [`https://valorisvisio.top/blog/${slug}`],
+            lastmod: [new Date().toISOString().split('T')[0]],
+            changefreq: ['weekly'],
+            priority: ['0.8']
         };
-        sitemapObj.urlset.url.push(newUrl);
+
+        // Add new URL to existing urls
+        result.urlset.url.push(newUrl);
 
         // Convert back to XML
-        const builder = new XMLBuilder({
-            format: true,
-            ignoreAttributes: false,
-            suppressEmptyNode: true,
+        const builder = new xml2js.Builder({
+            xmldec: { 'version': '1.0', 'encoding': 'UTF-8' },
+            renderOpts: { pretty: true, indent: '  ', newline: '\n' },
+            xmlns: result.urlset.$
         });
-        const updatedXml = builder.build(sitemapObj);
+        let updatedXml = builder.buildObject(result);
+
+        // Ensure the XML declaration is correct
+        updatedXml = updatedXml.replace(
+            '<?xml?>',
+            '<?xml version="1.0" encoding="UTF-8"?>'
+        );
 
         // Write updated sitemap
         await writeFile(sitemapPath, updatedXml, 'utf8');
