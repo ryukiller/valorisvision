@@ -2,7 +2,7 @@ export default function Cookies() {
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-4">
-            <div className="max-w-[1024px] my-[100px]">
+            <div className="max-w-[1024px] my-[100px] main-content">
                 <h3>Cookie Policy for ValorisVisio</h3>
                 <h4>What Are Cookies</h4>
                 <p>As is common practice with almost all professional websites, valorisvisio.top uses cookies, which are tiny files that are downloaded to your computer, to improve your experience. This page describes what information they gather, how we use it, and why we sometimes need to store these cookies.</p>

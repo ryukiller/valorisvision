@@ -2,7 +2,7 @@
 export default function Privacy() {
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center p-4">
+        <main className="flex min-h-screen flex-col items-center justify-center p-4 main-content">
             <div className="max-w-[1024px] my-[100px]">
                 <h3>Privacy Policy for ValorisVisio</h3>
                 <h4>Introduction</h4>

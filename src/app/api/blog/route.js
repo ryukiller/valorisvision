@@ -1,10 +1,9 @@
 import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
 import path from 'path';
-import { writeFile } from 'fs/promises';
-
+import { writeFile, readFile } from 'fs/promises';
+import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import OpenAI from 'openai';
-
 
 // MongoDB setup
 const uri = process.env.MONGODB;
@@ -46,7 +45,7 @@ export async function POST(req) {
         const post = await openai.chat.completions.create({
             messages: [{
                 role: "system",
-                content: `You are a New York Times Journalist working for ValorisVisio write a blog post about ${topic} minimum 1000 words use markdown for styling use Seo Best Practices for the writing. You will be given a topic and you will generate a json with the following keys: title, seo title, seo description, summary, article content.`
+                content: `You are a New York Times Journalist working for ValorisVisio write a blog post about ${topic} minimum 1000 words use markdown for styling use Seo Best Practices for the writing and think of a category for the article use one of these Altcoins, Bitcoin, Blockchain, DeFi, Ethereum, GameFi, Metaverse, NFTs, Trading. You will be given a topic and you will generate a json with the following keys: title, seo title, seo description, summary, article content, category.`
             }, {
                 role: "user",
                 content: postprompt
@@ -55,7 +54,6 @@ export async function POST(req) {
             max_tokens: 1500,
             response_format: { "type": "json_object" }
         });
-
         const articleData = JSON.parse(post.choices[0].message.content);
 
         // Function to slugify the title
@@ -75,6 +73,9 @@ export async function POST(req) {
         const title = articleData.title || '';
         const slug = slugify(title);
         articleData.slug = slug;
+        const category_title = articleData.category || '';
+        const category_slug = slugify(category_title);
+        articleData.category_slug = category_slug;
 
         console.log(articleData)
         // Generate image (placeholder - you'll need to implement actual image generation)
@@ -110,7 +111,8 @@ export async function POST(req) {
             createdAt: new Date(),
         });
 
-        console.log(image_url)
+        // Update sitemap.xml
+        await updateSitemap(slug);
 
         return NextResponse.json({ success: true, id: result.insertedId });
     } catch (error) {
@@ -152,5 +154,41 @@ export async function GET(req) {
     } catch (error) {
         console.error("Error fetching blog posts:", error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+}
+
+async function updateSitemap(slug) {
+    const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
+
+    try {
+        // Read existing sitemap
+        const xmlData = await readFile(sitemapPath, 'utf8');
+
+        // Parse XML
+        const parser = new XMLParser();
+        const sitemapObj = parser.parse(xmlData);
+
+        // Add new URL
+        const newUrl = {
+            loc: `https://valorisvisio.com/blog/${slug}`,
+            lastmod: new Date().toISOString().split('T')[0],
+            changefreq: 'weekly',
+            priority: '0.8'
+        };
+        sitemapObj.urlset.url.push(newUrl);
+
+        // Convert back to XML
+        const builder = new XMLBuilder({
+            format: true,
+            ignoreAttributes: false,
+            suppressEmptyNode: true,
+        });
+        const updatedXml = builder.build(sitemapObj);
+
+        // Write updated sitemap
+        await writeFile(sitemapPath, updatedXml, 'utf8');
+        console.log('Sitemap updated successfully');
+    } catch (error) {
+        console.error('Error updating sitemap:', error);
     }
 }

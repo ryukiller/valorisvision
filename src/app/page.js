@@ -60,7 +60,7 @@ export default function Home() {
             <span>Your holdings could potentially be worth: <span className="font-bold text-lg text-emerald-600">${potentialValue.toLocaleString()}</span></span>
           )}
         </div>
-        <div className="text-left max-w-[1000px] my-20 mx-6">
+        <div className="text-left max-w-[1000px] my-20 mx-6 main-content">
           <h2>How Crypto scenario calculator Works</h2>
           <ol className="list-decimal flex flex-col gap-4">
             <li>
