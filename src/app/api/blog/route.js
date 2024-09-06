@@ -130,17 +130,40 @@ export async function GET(req) {
         const { searchParams } = new URL(req.url);
         const limit = parseInt(searchParams.get('limit')) || 10;
         const page = parseInt(searchParams.get('page')) || 1;
+        const category = searchParams.get('category');
+        const getCategories = searchParams.get('getCategories') === 'true';
         const skip = (page - 1) * limit;
 
+        if (getCategories) {
+            // Fetch unique categories and their slugs, excluding empty ones
+            const categories = await collection.aggregate([
+                { $match: { category: { $ne: "" }, category_slug: { $ne: "" } } },
+                { $group: { _id: { name: "$category", slug: "$category_slug" } } },
+                { $project: { _id: 0, name: "$_id.name", slug: "$_id.slug" } },
+                { $match: { name: { $ne: null }, slug: { $ne: null } } }
+            ]).toArray();
+
+            return NextResponse.json({
+                success: true,
+                data: categories
+            });
+        }
+
+        // Prepare filter
+        const filter = {};
+        if (category) {
+            filter.category_slug = category;
+        }
+
         // Fetch blog posts
-        const blogPosts = await collection.find({})
+        const blogPosts = await collection.find(filter)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
             .toArray();
 
         // Get total count for pagination
-        const totalCount = await collection.countDocuments();
+        const totalCount = await collection.countDocuments(filter);
 
         return NextResponse.json({
             success: true,

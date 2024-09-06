@@ -88,6 +88,7 @@ export default function ClientPost({ params }) {
             <div className="mt-[100px] flex flex-row items-start gap-4 w-full">
 
                 <div className="w-8/12 prose lg:prose-xl">
+                    <span className="text-xs text-gray-200 border border-gray-200 rounded-full px-2 py-1">{article.category ? article.category : "Uncategorized"} - {new Date(article.createdAt).toLocaleDateString()}</span>
                     <ReactMarkdown>{article.article_content}</ReactMarkdown>
                 </div>
                 <div
