@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import ClientPost from './ClientPost';
-
+import { Skeleton } from '@/components/ui/skeleton';
 export async function generateMetadata({ params }) {
     // Fetch article data
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/${params.slug}`);
@@ -18,9 +18,25 @@ export async function generateMetadata({ params }) {
     };
 }
 
+const Loading = () => {
+    return (
+        <article className="container mx-auto px-4 py-8 main-content">
+            <Skeleton className="h-8 w-full my-2 mt-[100px]" />
+            <Skeleton className="h-4 w-full my-2" />
+            <Skeleton className="h-4 w-full my-2" />
+            <Skeleton className="h-4 w-full my-2" />
+            <Skeleton className="h-4 w-full my-2" />
+            <Skeleton className="h-4 w-full my-2" />
+            <Skeleton className="h-4 w-full my-2" />
+            <Skeleton className="h-4 w-full my-2" />
+        </article>
+    );
+}
+
+
 export default function Post({ params }) {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Loading />}>
             <ClientPost params={params} />
         </Suspense>
     );
