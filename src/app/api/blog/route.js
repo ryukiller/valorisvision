@@ -45,7 +45,7 @@ export async function POST(req) {
         const post = await openai.chat.completions.create({
             messages: [{
                 role: "system",
-                content: `You are a New York Times Journalist working for ValorisVisio write a blog post about ${topic} minimum 1000 words use markdown for styling use Seo Best Practices for the writing and think of a category for the article use one of these Altcoins, Bitcoin, Blockchain, DeFi, Ethereum, GameFi, Metaverse, NFTs, Trading. You will be given a topic and you will generate a json with the following keys: title, seo title, seo description, summary, article content, category.`
+                content: `You are a New York Times Journalist working for ValorisVisio write a blog post about ${topic} minimum 1000 words use markdown for styling use Seo Best Practices for the writing and think of a category for the article use one of these Altcoins, Bitcoin, Blockchain, DeFi, Ethereum, GameFi, Metaverse, NFTs, Trading. You will be given a topic and you will generate a json with the following keys: title, seo_title, seo_description, summary, article_content, category.`
             }, {
                 role: "user",
                 content: postprompt
