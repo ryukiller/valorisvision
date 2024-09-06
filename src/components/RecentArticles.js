@@ -57,9 +57,9 @@ export default function RecentArticles() {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {articles.map((article) => (
+            {articles.map((article, index) => (
 
-                <div className="border rounded-lg overflow-hidden shadow-lg">
+                <div key={index} className="border rounded-lg overflow-hidden shadow-lg">
                     <Image
                         src={article.imageUrl}
                         alt={article.title}

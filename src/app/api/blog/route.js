@@ -170,7 +170,7 @@ async function updateSitemap(slug) {
 
         // Add new URL
         const newUrl = {
-            loc: `https://valorisvisio.com/blog/${slug}`,
+            loc: `https://valorisvisio.top/blog/${slug}`,
             lastmod: new Date().toISOString().split('T')[0],
             changefreq: 'weekly',
             priority: '0.8'
