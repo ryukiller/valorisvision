@@ -88,4 +88,22 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://valorisvisio.top/blog/analyzing-the-synchronization-slowdown-of-bitcoin-core-280rc1-on-windows-10</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://valorisvisio.top/blog/coordinating-optimization-and-debugging-flags-in-cmake-passing-options-from-depends-build-to-main-build</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://valorisvisio.top/blog/moving-forward-deprecating-uint256s-in-favor-of-base_blobfromhex-in-crypto-development</loc>
+    <lastmod>2024-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
