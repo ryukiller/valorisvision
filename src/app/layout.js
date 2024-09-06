@@ -20,6 +20,8 @@ export const metadata = {
     description: "Ever wonder what your crypto value could be if it's market cap matches another crypto? Visualize your gains in that scenario, input your holdings and calculate it",
     url: 'https://valorisvisio.top',
     siteName: 'ValorisVisio',
+    locale: 'en_US',
+    type: 'website',
     images: [{ url: 'https://valorisvisio.top/apple-touch-icon.png' }],
   },
 }
