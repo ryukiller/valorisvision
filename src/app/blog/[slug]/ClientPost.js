@@ -85,22 +85,29 @@ export default function ClientPost({ params }) {
 
     return (
         <article className="container mx-auto px-4 py-8 main-content">
-            <div className="mt-[100px] flex flex-row items-start gap-4 w-full">
+            <div className="mt-[100px] flex flex-col md:flex-row items-start gap-4 w-full">
 
-                <div className="w-8/12 prose lg:prose-xl">
+                <div className="w-full md:w-8/12 prose lg:prose-xl">
                     <span className="text-xs text-gray-200 border border-gray-200 rounded-full px-2 py-1">{article.category ? article.category : "Uncategorized"} - {new Date(article.createdAt).toLocaleDateString()}</span>
+                    <Image
+                        src={article.imageUrl}
+                        alt={article.title}
+                        width={800}
+                        height={800}
+                        className={`block md:hidden w-full object-cover mb-2 mr-4 transition-all duration-300 ${isScrolled ? 'h-44' : 'h-96'}`}
+                    />
                     <ReactMarkdown>{article.article_content}</ReactMarkdown>
                 </div>
                 <div
                     ref={sidebarRef}
-                    className={`w-4/12 sidebar sticky top-[100px] self-start`}
+                    className={`w-full md:w-4/12 sidebar sticky top-[100px] self-start`}
                 >
                     <Image
                         src={article.imageUrl}
                         alt={article.title}
                         width={800}
                         height={800}
-                        className={`w-full object-cover mb-2 mr-4 transition-all duration-300 ${isScrolled ? 'h-44' : 'h-96'}`}
+                        className={`hidden md:block w-full object-cover mb-2 mr-4 transition-all duration-300 ${isScrolled ? 'h-44' : 'h-96'}`}
                     />
                     <Sidebar currentArticle={article} />
                 </div>
