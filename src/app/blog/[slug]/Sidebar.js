@@ -30,7 +30,7 @@ export default function Sidebar({ currentArticle }) {
 
     return (
         <div className="flex flex-col gap-4">
-            <h6 className="text-2xl font-bold my-2">Categorie</h6>
+            {/* <h6 className="text-2xl font-bold my-2">Categorie</h6> */}
 
             <div className="flex flex-col gap-2">
                 <h6 className="text-2xl font-bold my-2">Recent Posts</h6>
