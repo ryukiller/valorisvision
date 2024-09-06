@@ -128,7 +128,7 @@ export async function GET(req) {
 
         // Get query parameters
         const { searchParams } = new URL(req.url);
-        const limit = parseInt(searchParams.get('limit')) || 10;
+        const limit = parseInt(searchParams.get('limit')) || 12;
         const page = parseInt(searchParams.get('page')) || 1;
         const category = searchParams.get('category');
         const getCategories = searchParams.get('getCategories') === 'true';
