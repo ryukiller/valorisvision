@@ -14,6 +14,12 @@ const nextConfig = {
                 port: '',
                 pathname: '/coins/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'valorisvisio.top',
+                port: '',
+                pathname: '/**',
+            },
         ],
     },
 }
