@@ -50,7 +50,7 @@ export async function POST(req) {
                 role: "user",
                 content: postprompt
             }],
-            model: "gpt-4o", // "gpt-4o",
+            model: "gpt-4o-mini", // "gpt-4o",
             max_tokens: 1500,
             response_format: { "type": "json_object" }
         });
