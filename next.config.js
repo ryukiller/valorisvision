@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
+        domains: ['valorisvisio.top', 'coin-images.coingecko.com', 'assets.coingecko.com'],
         remotePatterns: [
             {
                 protocol: 'https',
