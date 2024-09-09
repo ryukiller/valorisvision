@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 
 import { useEffect, useState } from 'react';
 import { gtagEvent } from '@/lib/utils';
+import RecentArticles from '@/components/RecentArticles';
 
 export default function Home() {
 
@@ -59,6 +60,10 @@ export default function Home() {
           {potentialValue > 0 && (
             <span>Your holdings could potentially be worth: <span className="font-bold text-lg text-emerald-600">${potentialValue.toLocaleString()}</span></span>
           )}
+        </div>
+        <div>
+          <h3 className='text-lg lg:text-3xl font-bold mt-20 lg:mt-4 mb-4'>Latest Crypto News</h3>
+          <RecentArticles count="4" />
         </div>
         <div className="text-left max-w-[1000px] my-20 mx-6 main-content">
           <h2>How Crypto scenario calculator Works</h2>

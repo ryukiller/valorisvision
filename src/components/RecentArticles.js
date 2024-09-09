@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function RecentArticles({ category }) {
+export default function RecentArticles({ category, count }) {
     const [articles, setArticles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -15,8 +15,8 @@ export default function RecentArticles({ category }) {
         async function fetchArticles() {
             try {
                 const url = category
-                    ? `/api/blog?category=${encodeURIComponent(category)}&page=${currentPage}`
-                    : `/api/blog?page=${currentPage}`;
+                    ? `/api/blog?category=${encodeURIComponent(category)}&page=${currentPage} &limit=${count}`
+                    : `/api/blog?page=${currentPage} &limit=${count}`;
                 const response = await fetch(url);
                 const data = await response.json();
                 if (data.success) {
@@ -66,7 +66,7 @@ export default function RecentArticles({ category }) {
 
     return (
         <>
-            <div className="columns-1 md:columns-3 gap-4 space-y-4">
+            <div className={`columns-1 ${count ? 'md:columns-4' : 'md:columns-3'} ${count ? 'lg:columns-4' : 'lg:columns-3'} gap-4 space-y-4`}>
                 {articles.map((article, index) => (
 
                     <div key={index} className="border rounded-lg overflow-hidden shadow-lg">
@@ -86,25 +86,27 @@ export default function RecentArticles({ category }) {
 
                 ))}
             </div>
-            <div className="flex justify-center mt-8">
-                <button
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 mr-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
-                >
-                    Previous
-                </button>
-                <span className="px-4 py-2">
-                    Page {currentPage} of {totalPages}
-                </span>
-                <button
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 ml-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
-                >
-                    Next
-                </button>
-            </div>
+            {!count && (
+                <div className="flex justify-center mt-8">
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 mr-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
+                    >
+                        Previous
+                    </button>
+                    <span className="px-4 py-2">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 ml-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
         </>
     );
 }
