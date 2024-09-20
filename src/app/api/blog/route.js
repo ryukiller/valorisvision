@@ -45,7 +45,7 @@ export async function POST(req) {
 
         if (data.success) {
             // Assuming the blog posts are in data.posts
-            urls = data.data.map(post => post.slug);
+            urls = data.data.map(post => "https://valorisvisio.top/blog/" + post.slug);
         }
 
         // Step 2: Prepare the URLs string
@@ -66,7 +66,7 @@ export async function POST(req) {
                                 - Use **bold text** to highlight important points.
 
                                 - **Internal Links**:
-                                - Incorporate internal links based on the following URLs:
+                                - Incorporate internal links based on the following URLs, first try to add them naturally based on poential keywords inside the articles where they fit else add them as related articles:
                                     ${urlsString}
 
                                 - **SEO Best Practices**:
