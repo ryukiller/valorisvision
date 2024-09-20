@@ -8,11 +8,11 @@ export async function generateMetadata({ params }) {
     const article = data.success ? data.data : null;
 
     return {
-        title: article ? article.title : 'Article Not Found',
-        description: article ? article.description || `Read ${article.title}` : 'Article not found',
+        title: article ? article.seo_title || article.title : 'Article Not Found',
+        description: article ? article.seo_description || `Read ${article.title}` : 'Article not found',
         openGraph: article ? {
-            title: article.title,
-            description: article.description || `Read ${article.title}`,
+            title: article.seo_title || article.title,
+            description: article ? article.seo_description || `Read ${article.title}` : 'Article not found',
             images: [{ url: article.imageUrl }],
         } : {},
     };

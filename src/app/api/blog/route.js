@@ -39,13 +39,69 @@ export async function POST(req) {
 
     try {
 
+        const response = await fetch(`http://localhost:3001/api/blog?page=1&limit=1000`);
+        const data = await response.json();
+        let urls = [];
+
+        if (data.success) {
+            // Assuming the blog posts are in data.posts
+            urls = data.data.map(post => post.slug);
+        }
+
+        // Step 2: Prepare the URLs string
+        const urlsString = urls.join('\n');
+
         const postprompt = `Generate a new Blog Post about ${topic}.`;
+
+        const systemMessage = `You are a New York Times journalist working for ValorisVisio. Your task is to write a blog post about the topit defined below with a minimum of 1,000 words. Please follow these guidelines:
+                                
+                                - **Topic**:
+                                "${topic}"
+        
+                                - **Writing Style**:
+                                - Use markdown for styling.
+                                - Organize content with headings and subheadings.
+                                - Use bullet points or numbered lists to enhance readability.
+                                - Keep paragraphs concise (maximum of 2-3 lines).
+                                - Use **bold text** to highlight important points.
+
+                                - **Internal Links**:
+                                - Incorporate internal links based on the following URLs:
+                                    ${urlsString}
+
+                                - **SEO Best Practices**:
+                                - Optimize the content for search engines.
+                                - Include relevant keywords naturally.
+                                - Write an engaging meta description of max 160 characters.
+
+                                - **Article Category**:
+                                - Choose an appropriate category from the following options:
+                                    - Altcoins
+                                    - Bitcoin
+                                    - Blockchain
+                                    - DeFi
+                                    - Ethereum
+                                    - GameFi
+                                    - Metaverse
+                                    - NFTs
+                                    - Trading
+
+                                - **Output Format**:
+                                - Provide the final output as a JSON object with the following keys:
+                                    - **title**: The title of the blog post.
+                                    - **seo_title**: An SEO-friendly version of the title of max 55 characters.
+                                    - **seo_description**: A brief description optimized for SEO of max 155 characters.
+                                    - **summary**: A concise summary of the article.
+                                    - **article_content**: The full article content in markdown format.
+                                    - **category**: The selected category for the article.
+
+                                Ensure the content is engaging, informative, and adheres to journalistic standards.`;
 
         // Generate article content
         const post = await openai.chat.completions.create({
             messages: [{
                 role: "system",
-                content: `You are a New York Times Journalist working for ValorisVisio write a blog post about ${topic} minimum 1000 words use markdown for styling use Seo Best Practices for the writing and think of a category for the article use one of these Altcoins, Bitcoin, Blockchain, DeFi, Ethereum, GameFi, Metaverse, NFTs, Trading. You will be given a topic and you will generate a json with the following keys: title, seo_title, seo_description, summary, article_content, category.`
+                content: systemMessage
             }, {
                 role: "user",
                 content: postprompt
