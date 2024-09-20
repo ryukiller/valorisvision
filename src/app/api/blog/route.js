@@ -75,7 +75,7 @@ export async function POST(req) {
                                 - Write an engaging meta description of max 160 characters.
 
                                 - **Article Category**:
-                                - Choose an appropriate category from the following options:
+                                - Choose an appropriate category from the following options if you cant fit one use Cryptocurrency:
                                     - Altcoins
                                     - Bitcoin
                                     - Blockchain
@@ -184,7 +184,7 @@ export async function GET(req) {
 
         // Get query parameters
         const { searchParams } = new URL(req.url);
-        const limit = parseInt(searchParams.get('limit')) || 12;
+        const limit = parseInt(searchParams.get('limit')) || 30;
         const page = parseInt(searchParams.get('page')) || 1;
         const category = searchParams.get('category');
         const getCategories = searchParams.get('getCategories') === 'true';
