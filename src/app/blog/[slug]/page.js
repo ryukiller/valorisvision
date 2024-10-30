@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import ClientPost from './ClientPost';
-import { Skeleton } from '@/components/ui/skeleton';
 export async function generateMetadata({ params }) {
     // Fetch article data
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/${params.slug}`);
