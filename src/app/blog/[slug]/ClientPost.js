@@ -79,6 +79,7 @@ export default function ClientPost({ params }) {
                         alt={article.title}
                         width={800}
                         height={800}
+                        priority={true}
                         className={`block md:hidden w-full object-cover mb-2 mr-4 transition-all duration-300 ${isScrolled ? 'h-44' : 'h-96'}`}
                     />
                     <ReactMarkdown>{article.article_content}</ReactMarkdown>
