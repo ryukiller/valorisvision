@@ -63,7 +63,7 @@ export default function Home() {
         </div>
         <div>
           <h3 className='text-lg lg:text-3xl font-bold mt-20 lg:mt-4 mb-4'>Latest Crypto News</h3>
-          <RecentArticles count="4" />
+          <RecentArticles count="16" />
         </div>
         <div className="text-left max-w-[1000px] my-20 mx-6 main-content">
           <h2>How Crypto scenario calculator Works</h2>
