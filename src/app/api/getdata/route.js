@@ -1,5 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
+import cache, { getCacheKey, CACHE_TTL } from '@/lib/cache';
 
 // MongoDB setup
 const uri = process.env.MONGODB;
@@ -62,8 +63,6 @@ export async function POST(req) {
 
 
 export async function GET(req) {
-    const client = new MongoClient(process.env.MONGODB);
-
     const { searchParams } = new URL(req.url)
 
     // Pagination parameters
@@ -73,6 +72,16 @@ export async function GET(req) {
 
     // Search parameter
     const searchTerm = searchParams.get('searchTerm');
+    
+    // Check cache first
+    const cacheKey = getCacheKey.coins(page, limit, searchTerm || '')
+    const cachedData = cache.get(cacheKey)
+    
+    if (cachedData) {
+        return NextResponse.json(cachedData, { status: 200 })
+    }
+
+    const client = new MongoClient(process.env.MONGODB);
 
     try {
         await client.connect();
@@ -103,9 +112,12 @@ export async function GET(req) {
             .limit(limit)
             .toArray();
 
-
-        //const total = await collection.countDocuments(query);
-        return NextResponse.json({ message: "Here coins", coins, page, limit }, { status: 200 });
+        const responseData = { message: "Here coins", coins, page, limit }
+        
+        // Cache the response
+        cache.set(cacheKey, responseData, CACHE_TTL.COINS)
+        
+        return NextResponse.json(responseData, { status: 200 });
     } catch (error) {
         console.error("Failed to fetch coins:", error);
         return NextResponse.json({ message: "Failed to fetch coins" }, { status: 500 });

@@ -1,131 +1,239 @@
 'use client'
-import GetCoinsData from '@/rgcomponents/GetCoinsData'
+import ModernCalculator from '@/components/ModernCalculator'
 import Image from 'next/image'
-import { Input } from '@/components/ui/input';
-
-import { useEffect, useState } from 'react';
-import { gtagEvent } from '@/lib/utils';
-import RecentArticles from '@/components/RecentArticles';
+import RecentArticles from '@/components/RecentArticles'
+import { motion } from 'framer-motion'
 
 export default function Home() {
 
-  const [from, setFrom] = useState(null);
-  const [to, setTo] = useState(null);
-  const [holdings, setHoldings] = useState(0);
-  const [potentialValue, setPotentialValue] = useState(0);
-
-  const handleHoldingsChange = (e) => {
-    setHoldings(e.target.value);
-    gtagEvent({
-      action: 'click',
-      params: { actionType: 'enteredHoldings', value: e.target.value }
-    })
-  };
-
-  const calculatePotentialValue = () => {
-    if (from && to && holdings > 0) {
-      const potentialPrice = to.market_cap / from.circulating_supply;
-      const potentialHoldingsValue = potentialPrice * holdings;
-      setPotentialValue(potentialHoldingsValue);
-    }
-  };
-
-  const handleFrom = (coin) => {
-    setFrom(coin);
-    // Any other logic you need when a coin is selected
-  };
-  const handleTo = (coin) => {
-    setTo(coin);
-    // Any other logic you need when a coin is selected
-  };
-
-  useEffect(() => {
-    calculatePotentialValue();
-  }, [from, to, holdings])
-
-
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center  text-center">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-blue-900 dark:to-purple-900">
+      {/* Hero Section */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="relative overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
+        <Image
+          priority
+          src="/shibnew.webp"
+          className="w-full h-[300px] md:h-[400px] object-cover"
+          width={1600}
+          height={400}
+          alt="ValorisVisio - Advanced Crypto Scenario Calculator for Market Analysis"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="absolute bottom-8 left-8 right-8 text-center"
+        >
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 drop-shadow-2xl">
+            Advanced Crypto Scenario Calculator
+          </h1>
+          <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto drop-shadow-lg">
+            Discover your cryptocurrency potential with real-time market analysis
+          </p>
+        </motion.div>
+      </motion.div>
 
-      <Image priority src="/shibnew.webp" className="w-full" width={1600} height={400} alt="Crypto Scenario Calculator, find out what your holdings value might be" />
-      <div className="flex min-h-screen flex-col items-center justify-center  text-center p-4 lg:p-24">
-        <h1 className="text-lg lg:text-3xl font-bold mt-20 lg:mt-4">Crypto Scenario Calculator, find out what your holdings value might be</h1>
-        <div className="max-w-[800px] my-10 mx-8 flex flex-row items-center justify-center lg:justify-start gap-3 flex-wrap">
-          <span>This are my holdings $</span>
-          <Input className="w-auto" type="number" name="bag" placeHolder="Tokens/Coins amount" onChange={handleHoldingsChange} />
-          <span>what if my coin/token</span>
-          <GetCoinsData onCoinSelect={handleFrom} fieldName="from" />
-          <span>reaches this other {`coin's`}/token market cap</span>
-          <GetCoinsData onCoinSelect={handleTo} fieldName="to" />
-          {potentialValue > 0 && (
-            <span>Your holdings could potentially be worth: <span className="font-bold text-lg text-emerald-600">${potentialValue.toLocaleString()}</span></span>
-          )}
-        </div>
-        <div>
-          <h3 className='text-lg lg:text-3xl font-bold mt-20 lg:mt-4 mb-4'>Latest Crypto News</h3>
+      {/* Calculator Section */}
+      <section className="py-16">
+        <ModernCalculator />
+      </section>
+
+      {/* News Section */}
+      <section className="py-16 bg-white/50 dark:bg-black/20">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+              Latest Crypto Insights
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Stay informed with the latest cryptocurrency news, market analysis, and investment insights.
+            </p>
+          </motion.div>
           <RecentArticles count="16" />
         </div>
-        <div className="text-left max-w-[1000px] my-20 mx-6 main-content">
-          <h2>How Crypto scenario calculator Works</h2>
-          <ol className="list-decimal flex flex-col gap-4">
-            <li>
-              <p><strong>Enter Your Holdings</strong>: Start by inputting the number of coins you currently hold in the cryptocurrency of your choice.</p>
-            </li>
-            <li>
-              <p><strong>Select Your Current Cryptocurrency ({`"From"`})</strong>: Choose the cryptocurrency you currently own. This is the coin whose future potential you want to explore.</p>
-            </li>
-            <li>
-              <p><strong>Choose Your Target Cryptocurrency ({`"To"`})</strong>: Select another cryptocurrency whose market cap represents your target or goal. This is the market cap your current cryptocurrency would need to reach.</p>
-            </li>
-            <li>
-              <p><strong>Discover Potential Value</strong>: Our tool calculates what your holdings could be worth if your current {`cryptocurrency's`} market cap matches that of your target. It does this by estimating a new potential price for your current coin, derived from the {`target's`} market cap divided by your current {`coin's`} circulating supply. Then, it multiplies this potential price by your current holdings to estimate their future value.</p>
-            </li>
-          </ol>
-          <h3 className="text-lg font-bold my-2">Visualize Your Potential Gains</h3>
-          <p>This tool provides a simple yet powerful way to visualize the potential gains of your cryptocurrency investments under specific market conditions. Just enter your details and let our calculator unveil the possibilities!</p>
+      </section>
+      {/* How It Works Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+                How Our Crypto Calculator Works
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-300">
+                Simple steps to discover your cryptocurrency&apos;s potential value
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                {
+                  step: "01",
+                  title: "Enter Your Holdings",
+                  description: "Simply input the number of tokens or coins you currently own. Our calculator supports all major cryptocurrencies with real-time data.",
+                  icon: "💎",
+                  color: "from-green-400 to-emerald-600"
+                },
+                {
+                  step: "02",
+                  title: "Select Your Cryptocurrency",
+                  description: "Choose your current cryptocurrency from our extensive database of 1000+ coins and tokens, updated in real-time.",
+                  icon: "⚡",
+                  color: "from-blue-400 to-cyan-600"
+                },
+                {
+                  step: "03",
+                  title: "Set Your Target",
+                  description: "Pick any cryptocurrency whose market cap represents your investment goal. Dream big or stay realistic - it's your choice.",
+                  icon: "🚀",
+                  color: "from-purple-400 to-violet-600"
+                },
+                {
+                  step: "04",
+                  title: "Visualize Success",
+                  description: "Get instant, detailed calculations showing your potential returns, percentage gains, and investment insights.",
+                  icon: "✨",
+                  color: "from-orange-400 to-red-600"
+                }
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="relative p-6 rounded-2xl bg-white/60 dark:bg-black/20 backdrop-blur-sm border border-white/20 hover:bg-white/80 dark:hover:bg-black/30 transition-all duration-300 group overflow-hidden"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
+                  <div className="relative z-10">
+                    <div className="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
+                    <div className="text-xs font-bold text-blue-600 dark:text-blue-400 mb-2 tracking-widest">
+                      STEP {item.step}
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                      {item.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="mt-12 p-8 rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border border-blue-500/20 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-yellow-400/20 to-transparent rounded-full -mr-16 -mt-16"></div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="text-3xl">🎯</div>
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Why ValorisVisio Stands Out
+                  </h3>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="flex items-start gap-3">
+                    <div className="text-xl">⚡</div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Real-Time Data</h4>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm">Live market data from CoinGecko ensures your calculations are always accurate and up-to-date.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="text-xl">🧠</div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Smart Analytics</h4>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm">Advanced algorithms provide detailed insights into potential returns and market scenarios.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="text-xl">🎨</div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Beautiful Interface</h4>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm">Modern glassmorphism design that makes complex calculations simple and enjoyable.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="text-xl">📱</div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Mobile Optimized</h4>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm">Perfect experience across all devices - desktop, tablet, and mobile.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         </div>
+      </section>
 
-        <section className="text-left">
-          <Image src="/innerimage.webp" className="float-left mr-4 mb-2" width={400} height={400} alt="ValorisVisio: Unleash the Power of Your Crypto Holdings with Our Revolutionary Crypto Scenario Calculator" />
-          <h2 className="text-xl font-bold my-2">ValorisVisio: Unleash the Power of Your Crypto Holdings with Our Revolutionary Crypto Scenario Calculator</h2>
-          <h3 className="text-lg font-bold my-2">Introduction to the Thrilling World of ValorisVisio{`'`}s Crypto Scenario Calculator:</h3>
-          <p>Ever imagined the exhilaration of watching your crypto holdings skyrocket? With ValorisVisio{`'`}s Crypto Scenario Calculator, that dream is closer than ever. This isn{`'`}t just a tool; it{`'`}s your gateway to visualizing potential wealth in the dynamic realm of cryptocurrency. Here, we invite you to not just track, but to actively explore the {`'`}what-ifs{`'`} of the crypto market.</p>
-          <h3 className="text-lg font-bold my-2">Experience the Magic of {`'`}What If{`'`} with ValorisVisio:</h3>
-          <p>Imagine this: You input your current crypto holdings and select a target project. In moments, the Crypto Scenario Calculator reveals what your holdings could be worth if your chosen project reaches its market cap potential. This electrifying feature doesn{`'`}t just show numbers; it paints a picture of possibilities, turning the mundane act of calculation into an adventure in financial forecasting.</p>
-          <h3 className="text-lg font-bold my-2">How the Crypto Scenario Calculator Ignites Your Investment Passion:</h3>
-          <p>The secret sauce of ValorisVisio{`'`}s Calculator is its ability to make complex calculations feel like a treasure hunt. It uses real-time data, market trends, and historical performances to give you a glimpse into the future of your investments. This isn{`'`}t about dry predictions; it{`'`}s about experiencing the thrill of seeing your potential gains come to life on your screen.</p>
-          <h3 className="text-lg font-bold my-2">Beyond Calculation: Empowering Your Investment Strategy with ValorisVisio:</h3>
-          <p>But it{`'`}s not all about the excitement. The Crypto Scenario Calculator is a powerful ally in your investment journey. It helps you understand market dynamics, assess risk, and plan with more confidence. By seeing potential outcomes, you{`'`}re equipped to make smarter, more informed decisions about your crypto portfolio.</p>
-          <h3 className="text-lg font-bold my-2">Conclusion: Your Journey to Crypto Mastery Begins with ValorisVisio:</h3>
-          <p>ValorisVisio is more than an app; it{`'`}s a revolution in how you view your crypto investments. It transforms the complex world of cryptocurrency into an exhilarating journey of discovery. Whether you{`'`}re a seasoned investor or just starting out, ValorisVisio{`'`}s Crypto Scenario Calculator is your ticket to experiencing the thrill of potential wealth in the crypto market. Embrace the excitement, and let your crypto dreams take flight with ValorisVisio.</p>
-          <Image src="/shib.webp" className="float-right m-4" width={600} height={400} alt="ValorisVisio: Unleash the Power of Your Crypto Holdings with Our Revolutionary Crypto Scenario Calculator" />
-          <h3 className="text-lg font-bold my-2">Crypto Scenarios Calculator: Unleash the Power of Strategic Crypto Investment</h3>
-          <p>In the ever-evolving world of cryptocurrency, the need for a dynamic and intuitive tool like the <strong>Crypto Scenarios Calculator</strong> cannot be overstated. This tool is a game-changer for investors seeking to navigate the complexities of cryptocurrency markets with confidence and clarity.</p>
-          <h3 className="text-lg font-bold my-2">Discover the Magic of the Crypto Scenarios Calculator</h3>
-          <p>The <strong>Crypto Scenarios Calculator</strong> is not just a tool; it{`'`}s your gateway to mastering the art of crypto investment. It provides a thrilling visual and analytical journey through your crypto holdings, turning the usual stress of market analysis into an engaging and insightful experience. The <strong>Crypto Scenarios Calculator</strong> makes understanding your portfolio{`'`}s potential not just easy, but exciting.</p>
-          <h3 className="text-lg font-bold my-2">How the Crypto Scenarios Calculator Transforms Your Investment Strategy</h3>
-          <p>The <strong>Crypto Scenarios Calculator</strong> excels in breaking down complex market data into understandable and actionable insights. By harnessing the advanced algorithms of the <strong>Crypto Scenarios Calculator</strong>, investors can vividly see the potential growth of their crypto investments. This isn{`'`}t just number-crunching; it{`'`}s a strategic tool that empowers you to make informed decisions.</p>
-          <h3 className="text-lg font-bold my-2">Experience the Excitement with Crypto Scenarios Calculator</h3>
-          <p>Each interaction with the <strong>Crypto Scenarios Calculator</strong> is an adventure. It visualizes various investment scenarios, offering a glimpse into the potential future of your portfolio. The excitement of uncovering the possibilities within your crypto investments is what sets the <strong>Crypto Scenarios Calculator</strong> apart.</p>
-          <Image src="/shibimg.webp" className="float-left m-4 ml-0" width={600} height={400} alt="ValorisVisio: Unleash the Power of Your Crypto Holdings with Our Revolutionary Crypto Scenario Calculator" />
-          <h3 className="text-lg font-bold my-2">Crypto Scenarios Calculator: Unleash the Power of Strategic Crypto Investment</h3>
-          <h3 className="text-lg font-bold my-2">Comprehensive Features of the Crypto Scenarios Calculator</h3>
-          <p>The <strong>Crypto Scenarios Calculator</strong> goes beyond mere calculations. It{`'`}s a comprehensive suite equipped with features tailored for the modern crypto investor:</p>
-          <ol>
-            <li><strong>Dynamic Market Analysis</strong>: The <strong>Crypto Scenarios Calculator</strong> navigates through market trends to predict potential impacts on your investments.</li>
-            <li><strong>In-depth Risk Assessment</strong>: With the <strong>Crypto Scenarios Calculator</strong>, balance risk and potential gains effortlessly.</li>
-            <li><strong>Strategic Planning</strong>: The tool offers visualizations of various investment strategies, enhancing your decision-making process.</li>
-            <li><strong>Real-Time Data Integration</strong>: The <strong>Crypto Scenarios Calculator</strong> stays updated with the latest market changes, keeping your strategy sharp and informed.</li>
-          </ol>
-          <h3 className="text-lg font-bold my-2">Empowerment through the Crypto Scenarios Calculator</h3>
-          <p>The <strong>Crypto Scenarios Calculator</strong> is not just about managing investments; it{`'`}s about empowering investors with the knowledge and foresight to make smart, strategic decisions. The tool is designed to help you strike the perfect balance between caution and ambition in your crypto trading endeavors.</p>
-          <h3 className="text-lg font-bold my-2">The Indispensable Crypto Scenarios Calculator</h3>
-          <p>In a market where timing and information are everything, the <strong>Crypto Scenarios Calculator</strong> is your indispensable ally. It{`'`}s not just an analytical tool; it{`'`}s a comprehensive solution for the savvy crypto investor.</p>
-          <h3 className="text-lg font-bold my-2">Embrace the Future with the Crypto Scenarios Calculator</h3>
-          <p>The <strong>Crypto Scenarios Calculator</strong> represents a new era in cryptocurrency investment. It{`'`}s an essential tool for anyone looking to make informed, strategic, and successful crypto investments. Dive into the world of cryptocurrency with confidence and excitement, backed by the unparalleled capabilities of the <strong>Crypto Scenarios Calculator</strong>.</p>
-          <Image src="/hero.webp" className="mt-10 w-full" width={1600} height={600} alt="Ever wonder what your bag value will be if your crypto holdings market cap matches another crypto project? Here you can visualize your potential gains in that possible scenario, just input your holdings and select your target crypto project, and visualize how mutch your current holdings value would be in that case." />
+      {/* Content Section */}
+      <section className="py-16 bg-white/30 dark:bg-black/10">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto text-left">
+            <Image src="/innerimage.webp" className="float-left mr-4 mb-2" width={400} height={400} alt="ValorisVisio: Unleash the Power of Your Crypto Holdings with Our Revolutionary Crypto Scenario Calculator" />
+            <h2 className="text-xl font-bold my-2">ValorisVisio: Unleash the Power of Your Crypto Holdings with Our Revolutionary Crypto Scenario Calculator</h2>
+            <h3 className="text-lg font-bold my-2">Introduction to the Thrilling World of ValorisVisio{`'`}s Crypto Scenario Calculator:</h3>
+            <p>Ever imagined the exhilaration of watching your crypto holdings skyrocket? With ValorisVisio{`'`}s Crypto Scenario Calculator, that dream is closer than ever. This isn{`'`}t just a tool; it{`'`}s your gateway to visualizing potential wealth in the dynamic realm of cryptocurrency. Here, we invite you to not just track, but to actively explore the {`'`}what-ifs{`'`} of the crypto market.</p>
+            <h3 className="text-lg font-bold my-2">Experience the Magic of {`'`}What If{`'`} with ValorisVisio:</h3>
+            <p>Imagine this: You input your current crypto holdings and select a target project. In moments, the Crypto Scenario Calculator reveals what your holdings could be worth if your chosen project reaches its market cap potential. This electrifying feature doesn{`'`}t just show numbers; it paints a picture of possibilities, turning the mundane act of calculation into an adventure in financial forecasting.</p>
+            <h3 className="text-lg font-bold my-2">How the Crypto Scenario Calculator Ignites Your Investment Passion:</h3>
+            <p>The secret sauce of ValorisVisio{`'`}s Calculator is its ability to make complex calculations feel like a treasure hunt. It uses real-time data, market trends, and historical performances to give you a glimpse into the future of your investments. This isn{`'`}t about dry predictions; it{`'`}s about experiencing the thrill of seeing your potential gains come to life on your screen.</p>
+            <h3 className="text-lg font-bold my-2">Beyond Calculation: Empowering Your Investment Strategy with ValorisVisio:</h3>
+            <p>But it{`'`}s not all about the excitement. The Crypto Scenario Calculator is a powerful ally in your investment journey. It helps you understand market dynamics, assess risk, and plan with more confidence. By seeing potential outcomes, you{`'`}re equipped to make smarter, more informed decisions about your crypto portfolio.</p>
+            <h3 className="text-lg font-bold my-2">Conclusion: Your Journey to Crypto Mastery Begins with ValorisVisio:</h3>
+            <p>ValorisVisio is more than an app; it{`'`}s a revolution in how you view your crypto investments. It transforms the complex world of cryptocurrency into an exhilarating journey of discovery. Whether you{`'`}re a seasoned investor or just starting out, ValorisVisio{`'`}s Crypto Scenario Calculator is your ticket to experiencing the thrill of potential wealth in the crypto market. Embrace the excitement, and let your crypto dreams take flight with ValorisVisio.</p>
+            <Image src="/shib.webp" className="float-right m-4" width={600} height={400} alt="ValorisVisio: Unleash the Power of Your Crypto Holdings with Our Revolutionary Crypto Scenario Calculator" />
+            <h3 className="text-lg font-bold my-2">Crypto Scenarios Calculator: Unleash the Power of Strategic Crypto Investment</h3>
+            <p>In the ever-evolving world of cryptocurrency, the need for a dynamic and intuitive tool like the <strong>Crypto Scenarios Calculator</strong> cannot be overstated. This tool is a game-changer for investors seeking to navigate the complexities of cryptocurrency markets with confidence and clarity.</p>
+            <h3 className="text-lg font-bold my-2">Discover the Magic of the Crypto Scenarios Calculator</h3>
+            <p>The <strong>Crypto Scenarios Calculator</strong> is not just a tool; it{`'`}s your gateway to mastering the art of crypto investment. It provides a thrilling visual and analytical journey through your crypto holdings, turning the usual stress of market analysis into an engaging and insightful experience. The <strong>Crypto Scenarios Calculator</strong> makes understanding your portfolio{`'`}s potential not just easy, but exciting.</p>
+            <h3 className="text-lg font-bold my-2">How the Crypto Scenarios Calculator Transforms Your Investment Strategy</h3>
+            <p>The <strong>Crypto Scenarios Calculator</strong> excels in breaking down complex market data into understandable and actionable insights. By harnessing the advanced algorithms of the <strong>Crypto Scenarios Calculator</strong>, investors can vividly see the potential growth of their crypto investments. This isn{`'`}t just number-crunching; it{`'`}s a strategic tool that empowers you to make informed decisions.</p>
+            <h3 className="text-lg font-bold my-2">Experience the Excitement with Crypto Scenarios Calculator</h3>
+            <p>Each interaction with the <strong>Crypto Scenarios Calculator</strong> is an adventure. It visualizes various investment scenarios, offering a glimpse into the potential future of your portfolio. The excitement of uncovering the possibilities within your crypto investments is what sets the <strong>Crypto Scenarios Calculator</strong> apart.</p>
+            <Image src="/shibimg.webp" className="float-left m-4 ml-0" width={600} height={400} alt="ValorisVisio: Unleash the Power of Your Crypto Holdings with Our Revolutionary Crypto Scenario Calculator" />
+            <h3 className="text-lg font-bold my-2">Crypto Scenarios Calculator: Unleash the Power of Strategic Crypto Investment</h3>
+            <h3 className="text-lg font-bold my-2">Comprehensive Features of the Crypto Scenarios Calculator</h3>
+            <p>The <strong>Crypto Scenarios Calculator</strong> goes beyond mere calculations. It{`'`}s a comprehensive suite equipped with features tailored for the modern crypto investor:</p>
+            <ol>
+              <li><strong>Dynamic Market Analysis</strong>: The <strong>Crypto Scenarios Calculator</strong> navigates through market trends to predict potential impacts on your investments.</li>
+              <li><strong>In-depth Risk Assessment</strong>: With the <strong>Crypto Scenarios Calculator</strong>, balance risk and potential gains effortlessly.</li>
+              <li><strong>Strategic Planning</strong>: The tool offers visualizations of various investment strategies, enhancing your decision-making process.</li>
+              <li><strong>Real-Time Data Integration</strong>: The <strong>Crypto Scenarios Calculator</strong> stays updated with the latest market changes, keeping your strategy sharp and informed.</li>
+            </ol>
+            <h3 className="text-lg font-bold my-2">Empowerment through the Crypto Scenarios Calculator</h3>
+            <p>The <strong>Crypto Scenarios Calculator</strong> is not just about managing investments; it{`'`}s about empowering investors with the knowledge and foresight to make smart, strategic decisions. The tool is designed to help you strike the perfect balance between caution and ambition in your crypto trading endeavors.</p>
+            <h3 className="text-lg font-bold my-2">The Indispensable Crypto Scenarios Calculator</h3>
+            <p>In a market where timing and information are everything, the <strong>Crypto Scenarios Calculator</strong> is your indispensable ally. It{`'`}s not just an analytical tool; it{`'`}s a comprehensive solution for the savvy crypto investor.</p>
+            <h3 className="text-lg font-bold my-2">Embrace the Future with the Crypto Scenarios Calculator</h3>
+            <p>The <strong>Crypto Scenarios Calculator</strong> represents a new era in cryptocurrency investment. It{`'`}s an essential tool for anyone looking to make informed, strategic, and successful crypto investments. Dive into the world of cryptocurrency with confidence and excitement, backed by the unparalleled capabilities of the <strong>Crypto Scenarios Calculator</strong>.</p>
+            <Image src="/hero.webp" className="mt-10 w-full" width={1600} height={600} alt="Ever wonder what your bag value will be if your crypto holdings market cap matches another crypto project? Here you can visualize your potential gains in that possible scenario, just input your holdings and select your target crypto project, and visualize how mutch your current holdings value would be in that case." />
 
-          {/* <h2 className="text-xl font-bold my-2">CRYPTO SCENARIO CALCULATOR INVESTMENT ANALYTICS APP</h2>
+            {/* <h2 className="text-xl font-bold my-2">CRYPTO SCENARIO CALCULATOR INVESTMENT ANALYTICS APP</h2>
         <p className="p2">Cryptocurrency investments are volatile. Continuous market analysis is key to thrive in this niche. But that takes time and requires top level market analysis skills. As you invest, it&rsquo;s also critical to diversify your investments and spread risks. That way, you can achieve better outcomes.</p>
         <p className="p2">Investing in multiple cryptocurrencies may require even more time from you. As your assets grow in worth, it may become a challenge to manage them if you do not have a proper tool to achieve that. This makes it necessary to have a cryptocurrency portfolio tracker.</p>
         <p className="p3">Cryptocurrency Data Analytics</p>
@@ -192,8 +300,9 @@ export default function Home() {
         <p className="p2">The Crypto Scenarios Calculator tool should come with a crypto calculator that allows you to calculate asset values and make critical decisions. Digital wealth management will require you to make close trade offs all the time. This must get you ready and that&rsquo;s why you must download the crypto analytics app as soon as possible.</p>
         <p className="p5"></p> */}
 
-        </section>
-      </div>
+          </div>
+        </div>
+      </section>
     </main>
   )
 }

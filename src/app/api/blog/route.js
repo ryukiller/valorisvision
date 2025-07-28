@@ -39,65 +39,80 @@ export async function POST(req) {
 
     try {
 
-        const response = await fetch(`http://localhost:3001/api/blog?page=1&limit=1000`);
-        const data = await response.json();
-        let urls = [];
+        // Get existing blog posts for internal linking
+        const blogCollection = await connectToMongoDB();
+        const existingPosts = await blogCollection.find({}, {
+            projection: { slug: 1, title: 1, _id: 0 }
+        }).limit(100).toArray();
 
-        if (data.success) {
-            // Assuming the blog posts are in data.posts
-            urls = data.data.map(post => "https://valorisvisio.top/blog/" + post.slug);
-        }
+        const urls = existingPosts.map(post => "https://valorisvisio.top/blog/" + post.slug);
 
         // Step 2: Prepare the URLs string
         const urlsString = urls.join('\n');
 
         const postprompt = `Generate a new Blog Post about ${topic}.`;
 
-        const systemMessage = `You are a New York Times journalist working for ValorisVisio. Your task is to write a blog post about the topit defined below with a minimum of 1,000 words. Please follow these guidelines:
+        const systemMessage = `You are an expert cryptocurrency journalist and SEO specialist working for ValorisVisio. Your task is to write a comprehensive, SEO-optimized blog post about the topic defined below with a minimum of 1,500 words. Please follow these enhanced guidelines:
                                 
                                 - **Topic**:
                                 "${topic}"
         
-                                - **Writing Style**:
-                                - Use markdown for styling.
-                                - Organize content with headings and subheadings.
-                                - Use bullet points or numbered lists to enhance readability.
-                                - Keep paragraphs concise (maximum of 2-3 lines).
-                                - Use **bold text** to highlight important points.
+                                - **Advanced Writing Style**:
+                                - Use markdown for styling with proper H1, H2, H3 hierarchy
+                                - Create engaging hooks in the introduction
+                                - Use data-driven insights and current market statistics
+                                - Include actionable advice and expert analysis
+                                - Keep paragraphs concise but informative (2-4 sentences)
+                                - Use **bold text** for key terms and important points
+                                - Include relevant emojis sparingly for engagement
+                                - Add FAQ section at the end for long-tail keywords
 
-                                - **Internal Links**:
-                                - Incorporate internal links based on the following URLs, first try to add them naturally based on poential keywords inside the articles where they fit else add them as related articles:
-                                    ${urlsString}
+                                - **SEO Optimization Requirements**:
+                                - Target primary keyword density of 1-2%
+                                - Include semantic keywords and LSI terms naturally
+                                - Use keyword variations in subheadings
+                                - Optimize for featured snippets with clear answers
+                                - Include current year and trending terms
+                                - Add schema-friendly structure
 
-                                - **SEO Best Practices**:
-                                - Optimize the content for search engines.
-                                - Include relevant keywords naturally.
-                                - Write an engaging meta description of max 160 characters.
+                                - **Internal Linking Strategy**:
+                                - Naturally incorporate 3-5 internal links from: ${urlsString}
+                                - Use descriptive anchor text with target keywords
+                                - Link to related articles in context, not just at the end
+                                - Prioritize high-authority pages for link juice
 
-                                - **Article Category**:
-                                - Choose an appropriate category from the following options if you cant fit one use Cryptocurrency:
-                                    - Altcoins
-                                    - Bitcoin
-                                    - Blockchain
-                                    - DeFi
-                                    - Ethereum
-                                    - GameFi
-                                    - Metaverse
-                                    - NFTs
-                                    - Trading
+                                - **Content Structure**:
+                                - Introduction with hook and value proposition
+                                - Main content with 4-6 H2 sections
+                                - Data points, statistics, and expert quotes
+                                - Actionable tips and strategies
+                                - FAQ section (3-5 questions)
+                                - Strong conclusion with call-to-action
 
-                                - **Output Format**:
-                                - Provide the final output as a JSON object with the following keys:
-                                    - **title**: The title of the blog post.
-                                    - **seo_title**: An SEO-friendly version of the title of max 55 characters.
-                                    - **seo_description**: A brief description optimized for SEO of max 155 characters.
-                                    - **summary**: A concise summary of the article.
-                                    - **article_content**: The full article content in markdown format.
-                                    - **category**: The selected category for the article.
+                                - **Enhanced Category Selection**:
+                                Choose the most specific category from:
+                                    - Altcoins, Bitcoin, Blockchain, DeFi, Ethereum
+                                    - GameFi, Metaverse, NFTs, Trading, Market Analysis
+                                    - Investment Strategies, Technical Analysis, News
+                                    - Regulations, Mining, Staking
 
-                                Ensure the content is engaging, informative, and adheres to journalistic standards.`;
+                                - **Required JSON Output**:
+                                {
+                                    "title": "Compelling title with primary keyword",
+                                    "seo_title": "SEO title max 60 chars with year/trending terms",
+                                    "seo_description": "Meta description 150-160 chars with CTA",
+                                    "summary": "Article summary highlighting key insights",
+                                    "article_content": "Full markdown content with proper structure",
+                                    "category": "Most relevant category",
+                                    "primary_keyword": "Main target keyword",
+                                    "secondary_keywords": ["keyword1", "keyword2", "keyword3"],
+                                    "estimated_read_time": "X min read",
+                                    "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]
+                                }
 
-        // Generate article content
+                                Ensure content is original, fact-based, and provides genuine value to crypto investors and enthusiasts.`;
+
+        // Generate article content with enhanced parameters
         const post = await openai.chat.completions.create({
             messages: [{
                 role: "system",
@@ -106,16 +121,17 @@ export async function POST(req) {
                 role: "user",
                 content: postprompt
             }],
-            model: "gpt-4o-mini", // "gpt-4o",
-            max_tokens: 1500,
+            model: "gpt-4.1-mini", // Use GPT-4 for better quality
+            max_tokens: 3000, // Increased for longer content
+            temperature: 0.7, // Balanced creativity and accuracy
             response_format: { "type": "json_object" }
         });
         const articleData = JSON.parse(post.choices[0].message.content);
 
         // Function to slugify the title
         function slugify(text) {
-            return text
-                .toString()
+            if (!text) return ''
+            return String(text)
                 .toLowerCase()
                 .trim()
                 .replace(/\s+/g, '-')        // Replace spaces with -
@@ -134,14 +150,38 @@ export async function POST(req) {
         articleData.category_slug = category_slug;
 
         console.log(articleData)
-        // Generate image (placeholder - you'll need to implement actual image generation)
+
+        // Array of famous Japanese mangaka styles
+        const mangakaStyles = [
+            "dynamic action scenes, rounded muscular characters, clean line art",
+            "realistic detailed characters, psychological depth, cinematic composition",
+            "dark fantasy, incredibly detailed linework, gothic atmosphere",
+            "clean expressive characters, classic manga aesthetic, simple but powerful",
+            "whimsical nature-focused art, soft colors, magical atmosphere",
+            "beautiful detailed backgrounds, realistic lighting, atmospheric",
+            "surreal horror aesthetic, detailed linework, unsettling atmosphere",
+            "elegant shoujo aesthetic, flowing designs, beautiful character designs",
+            "action-packed ninja scenes, dynamic poses, energetic composition",
+            "quirky exaggerated characters, adventure atmosphere, cartoonish style",
+            "gritty intense artwork, dramatic lighting, post-apocalyptic feel",
+            "stylish fashion-forward characters, clean composition, modern aesthetic",
+            "incredibly detailed action scenes, dynamic movement, superhero aesthetic",
+            "traditional Japanese aesthetic, vibrant colors, spiritual themes"
+        ];
+
+        // Randomly select an art style
+        const randomStyle = mangakaStyles[Math.floor(Math.random() * mangakaStyles.length)];
+
+        // Generate image with random professional art style
+        const imagePrompt = `Cryptocurrency article illustration about ${title} in ${randomStyle}. High quality, suitable for blog header, 16:9 aspect ratio, professional and clean design.`;
 
         const imageResponse = await openai.images.generate(
             {
-                model: "dall-e-3",
-                prompt: articleData.seo_description,
+                model: "gpt-image-1",
+                prompt: imagePrompt,
                 n: 1,
-                size: "1024x1024",
+                size: "1536x1024", // Better aspect ratio for blog headers
+                quality: "medium"
             }
         )
 
@@ -160,17 +200,47 @@ export async function POST(req) {
 
         articleData.imageUrl = `/imgs/${fileName}`; // Use a URL path for client-side usage
 
-        // Save to MongoDB
-        const collection = await connectToMongoDB();
-        const result = await collection.insertOne({
+        // Prepare enhanced article data for MongoDB
+        const enhancedArticleData = {
             ...articleData,
             createdAt: new Date(),
-        });
+            updatedAt: new Date(),
+            published: true,
+            views: 0,
+            likes: 0,
+            author: "ValorisVisio Editorial",
+            status: "published",
+            featured: false,
+            reading_time: articleData.estimated_read_time || "5 min read",
+            seo_keywords: {
+                primary: articleData.primary_keyword || topic,
+                secondary: articleData.secondary_keywords || [],
+                tags: articleData.tags || []
+            },
+            social_media: {
+                twitter_card: "summary_large_image",
+                og_type: "article"
+            }
+        };
+
+        // Save to MongoDB (reuse existing connection)
+        const result = await blogCollection.insertOne(enhancedArticleData);
 
         // Update sitemap.xml
         await updateSitemap(slug);
 
-        return NextResponse.json({ success: true, id: result.insertedId });
+        return NextResponse.json({
+            success: true,
+            id: result.insertedId,
+            article: {
+                title: articleData.title,
+                slug: slug,
+                category: articleData.category,
+                estimated_read_time: articleData.estimated_read_time || "5 min read",
+                image_url: `/imgs/${fileName}`
+            },
+            message: "Article created successfully with enhanced SEO optimization!"
+        });
     } catch (error) {
         console.error("Error creating blog post:", error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });

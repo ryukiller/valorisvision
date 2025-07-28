@@ -22,6 +22,19 @@ const nextConfig = {
                 pathname: '/**',
             },
         ],
+        formats: ['image/webp', 'image/avif'],
+        minimumCacheTTL: 31536000, // 1 year
+        dangerouslyAllowSVG: true,
+        contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    },
+    experimental: {
+        optimizeCss: true,
+    },
+    compress: true,
+    poweredByHeader: false,
+    generateEtags: false,
+    httpAgentOptions: {
+        keepAlive: true,
     },
 }
 
