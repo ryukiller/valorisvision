@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
 import Sidebar from './Sidebar';
 
-export default function ClientPost({ slug, article: articleProp }) {
+export default function ClientPost({ slug, article: articleProp, heading, content }) {
     // `articleProp` is passed server-side when the page already fetched the post;
     // fall back to client fetch when absent.
     const [article, setArticle] = useState(articleProp || null);
@@ -81,27 +81,26 @@ export default function ClientPost({ slug, article: articleProp }) {
                         <span className="text-neon-cyan/70">{new Date(article.createdAt).toLocaleDateString()}</span>
                         <span className="hidden sm:inline text-muted-foreground/50">{'// decrypting signal'}</span>
                     </div>
+                    {/* single hero image at all breakpoints (no duplicate <img>) */}
                     <Image
                         src={article.imageUrl}
                         alt={article.title}
                         width={1536}
                         height={1024}
                         priority={true}
-                        className={`block md:hidden w-full object-cover mb-2 mr-4 transition-all duration-300 border border-line ${isScrolled ? 'h-44' : 'h-96'}`}
+                        className={`block w-full object-cover border border-line mb-6 transition-all duration-300 ${isScrolled ? 'h-44' : 'h-96'}`}
                     />
-                    <ReactMarkdown>{article.article_content}</ReactMarkdown>
+                    {heading && (
+                        <h1 className="font-display text-2xl md:text-4xl font-extrabold tracking-tight text-foreground mb-4 leading-tight">
+                            {heading}
+                        </h1>
+                    )}
+                    <ReactMarkdown>{content ?? article.article_content}</ReactMarkdown>
                 </div>
                 <div
                     ref={sidebarRef}
                     className={`w-full md:w-4/12 sidebar sticky top-[100px] self-start`}
                 >
-                    <Image
-                        src={article.imageUrl}
-                        alt={article.title}
-                        width={1536}
-                        height={1024}
-                        className={`hidden md:block w-full object-cover mb-2 mr-4 transition-all duration-300 border border-line ${isScrolled ? 'h-44' : 'h-96'}`}
-                    />
                     <Sidebar currentArticle={article} />
                 </div>
             </div>

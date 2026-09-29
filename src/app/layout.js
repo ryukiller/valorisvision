@@ -8,6 +8,7 @@ import { ThemeProvider } from '@/rgcomponents/ThemeProvider'
 import { Header } from '@/rgcomponents/Header'
 import { Footer } from '@/rgcomponents/Footer'
 import { Toaster } from "@/components/ui/toaster"
+import { SITE_NAME, OG_LOCALE, twitterSite } from '@/lib/site'
 
 // Self-hosted (latin woff2, variable) — avoids build-time Google Fonts fetches
 const display = localFont({
@@ -54,9 +55,9 @@ export const metadata = {
   },
   openGraph: {
     type: 'website',
-    locale: 'en_US',
+    locale: OG_LOCALE,
     url: 'https://valorisvisio.top',
-    siteName: 'ValorisVisio',
+    siteName: SITE_NAME,
     title: 'ValorisVisio - Advanced Crypto Scenario Calculator & Market Analysis Tool',
     description: 'Calculate potential cryptocurrency profits with our advanced scenario calculator. Compare market caps, visualize gains, and make informed crypto investment decisions.',
     images: [
@@ -70,6 +71,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
+    ...twitterSite(),
     title: 'ValorisVisio - Advanced Crypto Scenario Calculator',
     description: 'Calculate potential cryptocurrency profits with our advanced scenario calculator. Compare market caps and visualize gains.',
     images: ['https://valorisvisio.top/displaycard.png'],

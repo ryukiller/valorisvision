@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ArticleGrid from '@/components/ArticleGrid';
 import { getBlogPosts } from '@/lib/blog';
+import { SITE_NAME, OG_LOCALE } from '@/lib/site';
 
 const BASE = 'https://valorisvisio.top';
 const PER_PAGE = 30;
@@ -32,6 +33,8 @@ export async function generateMetadata({ params, searchParams }) {
         },
         robots: { index: true, follow: true },
         openGraph: {
+            locale: OG_LOCALE,
+            siteName: SITE_NAME,
             title: `${name} Articles, News & Analysis | ValorisVisio`,
             description: `The latest ${name} articles on ValorisVisio — market analysis, trends, and expert insights.`,
         },

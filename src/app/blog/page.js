@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ArticleGrid from '@/components/ArticleGrid';
 import { getBlogPosts } from '@/lib/blog';
+import { SITE_NAME, OG_LOCALE } from '@/lib/site';
 
 const BASE = 'https://valorisvisio.top';
 const PER_PAGE = 30;
@@ -20,6 +21,8 @@ export async function generateMetadata({ searchParams }) {
             canonical: page === 1 ? `${BASE}/blog` : `${BASE}/blog?page=${page}`,
         },
         openGraph: {
+            locale: OG_LOCALE,
+            siteName: SITE_NAME,
             title: 'Crypto Insights: Latest News and Analysis on Cryptocurrencies',
             description: 'Expert analysis, market trends, and in-depth articles on Bitcoin, Ethereum, and emerging cryptocurrencies.',
         },

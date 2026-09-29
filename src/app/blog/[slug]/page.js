@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { getBlogPostBySlug } from '@/lib/blog';
 import { extractFaq } from '@/lib/faq';
+import { stripH1 } from '@/lib/markdown';
+import { SITE_NAME, OG_LOCALE, twitterSite } from '@/lib/site';
 import ClientPost from './ClientPost';
 
 // Re-render periodically so metadata/content stay fresh (previous caching model:
@@ -10,7 +12,8 @@ export const revalidate = 3600;
 
 const BASE = 'https://valorisvisio.top';
 
-// Google shows ~60 chars in SERPs; keep meta titles inside that budget.
+// Google shows ~60 chars in SERPs; keep the meta title inside that budget.
+// The H1 and og/twitter titles use the SAME string, so the three always match.
 function metaTitle(raw) {
   if (raw.length <= 60) return raw;
   return raw.slice(0, 57).replace(/\s+\S*$/, '').trim().replace(/[,;:-\s]+$/, '') + '…';
@@ -23,6 +26,10 @@ function JsonLd({ data }) {
             dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }}
         />
     );
+}
+
+function titleCase(slug) {
+    return slug.split('-').map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w)).join(' ');
 }
 
 export async function generateMetadata({ params }) {
@@ -47,7 +54,9 @@ export async function generateMetadata({ params }) {
         alternates: { canonical: `/blog/${article.slug}` },
         openGraph: {
             type: 'article',
-            title: seoTitle,
+            locale: OG_LOCALE,
+            siteName: SITE_NAME,
+            title: metaTitle(seoTitle),
             description,
             url: `/blog/${article.slug}`,
             images: [{ url: article.imageUrl, alt: article.title, width: 1536, height: 1024 }],
@@ -56,15 +65,12 @@ export async function generateMetadata({ params }) {
         },
         twitter: {
             card: 'summary_large_image',
-            title: seoTitle,
+            ...twitterSite(),
+            title: metaTitle(seoTitle),
             description,
             images: [article.imageUrl],
         },
     };
-}
-
-function titleCase(slug) {
-    return slug.split('-').map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w)).join(' ');
 }
 
 export default async function Post({ params }) {
@@ -73,6 +79,7 @@ export default async function Post({ params }) {
 
     if (!article) notFound();
 
+    const seoTitle = article.seo_title || article.title;
     const faq = extractFaq(article.article_content);
 
     const jsonLd = [
@@ -80,7 +87,7 @@ export default async function Post({ params }) {
             '@context': 'https://schema.org',
             '@type': 'BlogPosting',
             mainEntityOfPage: `${BASE}/blog/${article.slug}`,
-            headline: article.seo_title || article.title,
+            headline: seoTitle,
             description: article.seo_description || article.summary,
             image: `${BASE}${article.imageUrl}`,
             datePublished: article.createdAt,
@@ -105,7 +112,7 @@ export default async function Post({ params }) {
                 ...(article.category_slug
                     ? [{ '@type': 'ListItem', position: 3, name: titleCase(article.category_slug), item: `${BASE}/blog/category/${article.category_slug}` }]
                     : []),
-                { '@type': 'ListItem', position: article.category_slug ? 4 : 3, name: article.title, item: `${BASE}/blog/${article.slug}` },
+                { '@type': 'ListItem', position: article.category_slug ? 4 : 3, name: seoTitle, item: `${BASE}/blog/${article.slug}` },
             ],
         },
         ...(faq.length >= 2
@@ -126,7 +133,12 @@ export default async function Post({ params }) {
                     ]}
                 />
             </div>
-            <ClientPost slug={slug} article={article} />
+            <ClientPost
+                slug={slug}
+                article={article}
+                heading={metaTitle(seoTitle)}
+                content={stripH1(article.article_content)}
+            />
         </>
     );
 }

@@ -77,7 +77,7 @@ ${urlsString}
 ## STRUCTURE
 - Introduction: answer-first (per rules), then hook.
 - Main body: 4-6 H2 sections with data points, examples, and actionable advice.
-- FAQ: 4 questions phrased as long-tail searches people would type, each answered in 40-50 words.
+- FAQ: a dedicated final section titled exactly \`## FAQ\` containing 4 questions phrased as long-tail searches people would type. Each question MUST be its own \`### Question?\` (H3) line followed by a 40-50 word answer paragraph. This exact \`## FAQ\` + \`###\` structure is required — it powers the FAQ rich results.
 - Conclusion: 2-3 sentences plus a call to use the free ValorisVisio calculator at https://valorisvisio.top.
 
 ## CATEGORY
