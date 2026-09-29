@@ -20,52 +20,6 @@ import {
 } from "@/components/ui/popover"
 import Image from 'next/image';
 
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from "@/components/ui/avatar"
-import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger,
-} from "@/components/ui/hover-card"
-
-
-
-function CoinInfo({ info, children }) {
-    return (
-        <HoverCard>
-            <HoverCardTrigger asChild>
-                {children}
-            </HoverCardTrigger>
-            <HoverCardContent className="w-80">
-                <div className="flex ga-3 space-x-4">
-                    <Avatar>
-                        <AvatarImage src={info.image} />
-                        <AvatarFallback>{info.symbol}</AvatarFallback>
-                    </Avatar>
-                    <div className="space-y-1">
-                        <h4 className="text-sm font-semibold">{info.name}</h4>
-                        <p className="text-xs">
-                            Current Price: ${info.current_price}
-                        </p>
-                        <p className="text-xs">
-                            Market Cap: ${info.market_cap?.toLocaleString()}
-                        </p>
-                        <p className="text-xs">
-                            24h Change: {info.price_change_percentage_24h?.toFixed(2)}%
-                        </p>
-                        <p className="text-xs">
-                            Circulating Supply: {info.circulating_supply?.toLocaleString()}
-                        </p>
-                    </div>
-                </div>
-            </HoverCardContent>
-        </HoverCard>
-    )
-}
-
 
 
 
@@ -82,6 +36,11 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
     const lastCoinRef = useRef(null);
     const searchTimeoutRef = useRef(null);
     const abortControllerRef = useRef(new AbortController());
+
+    // Keep a separate ref for the debounced search timer. Previously this ref was
+    // also used as the CommandInput ref, so React overwrote it with the DOM node
+    // and clearTimeout() silently no-op'd.
+    const searchTimerRef = useRef(null);
 
     const [initialFetchDone, setInitialFetchDone] = useState(false);
 
@@ -114,18 +73,6 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
     }, [value])
 
     useEffect(() => {
-        if (open) {
-            document.body.classList.add('overflow-hidden');
-        } else {
-            document.body.classList.remove('overflow-hidden');
-        }
-        // Cleanup function to remove the class when the component unmounts
-        return () => {
-            document.body.classList.remove('overflow-hidden');
-        };
-    }, [open]);
-
-    useEffect(() => {
         if (initialFetchDone && !searchTerm) {
             // Async data load on page change (intentional)
             // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -144,10 +91,10 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
 
     const handleSearch = (values) => {
         setSearchTerm(values);
-        if (searchTimeoutRef.current) {
-            clearTimeout(searchTimeoutRef.current);
+        if (searchTimerRef.current) {
+            clearTimeout(searchTimerRef.current);
         }
-        searchTimeoutRef.current = setTimeout(() => {
+        searchTimerRef.current = setTimeout(() => {
             performSearch(values);
         }, 500); // Debounce for 500ms
     };
@@ -201,13 +148,13 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
                     <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent align="start" className="w-[280px] p-0">
                 <Command>
                     <CommandInput
                         placeholder="Search Coin..."
                         className="h-9"
                         onValueChange={handleSearch}
-                        ref={searchTimeoutRef}
+                        ref={searchTimerRef}
                         isLoading={isLoading}
                     />
                     {filteredCoins.length === 0 && searchTerm && <CommandEmpty>No Coin found.</CommandEmpty>}
@@ -217,33 +164,35 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
                         className="max-h-[250px] overflow-scroll"
                     >
                         {(searchTerm ? filteredCoins : coins).map((coin, index) => {
-                            //console.log(coin)
+                            // NOTE: the item must NOT be wrapped in another Radix primitive
+                            // (e.g. HoverCard). Radix renders a <span> trigger wrapper that
+                            // intercepts the pointer event, and cmdk 1.x only fires its
+                            // selection when the event target is the item itself -> clicks
+                            // and Enter never selected anything.
                             return (
-                                <CoinInfo
-                                    info={coin}
-                                    key={index}>
-                                    <CommandItem
-                                        ref={index === (searchTerm ? filteredCoins : coins).length - 1 ? lastCoinRef : null}
-                                        key={index}
-                                        value={coin.name}
-                                        onSelect={() => {
-                                            setValue(coin);
-                                            onCoinSelect(coin);
-                                            setOpen(false);
-                                        }}
-                                        className="flex flex-row items-center justify-center gap-2"
-                                    >
-                                        <Image className="rounded-full bg-white p-1" src={coin.image !== 'missing_large.png' ? coin.image : '/logoicon.svg'} width={30} height={30} alt={coin.name} />
-                                        <span className="text-ellipsis overflow-hidden">{coin.name}</span>
-                                        <CheckIcon
-                                            className={cn(
-                                                "ml-auto h-4 w-4",
-                                                value?.name?.toLowerCase() === coin.name.toLowerCase() ? "opacity-100" : "opacity-0"
-                                            )}
-                                        />
-                                    </CommandItem>
-
-                                </CoinInfo>
+                                <CommandItem
+                                    ref={index === (searchTerm ? filteredCoins : coins).length - 1 ? lastCoinRef : null}
+                                    key={index}
+                                    value={coin.name}
+                                    onSelect={() => {
+                                        setValue(coin);
+                                        onCoinSelect(coin);
+                                        setOpen(false);
+                                    }}
+                                    className="flex flex-row items-center gap-2"
+                                >
+                                    <Image className="rounded-full bg-white p-[2px]" src={coin.image !== 'missing_large.png' ? coin.image : '/logoicon.svg'} width={24} height={24} alt={coin.name} />
+                                    <span className="text-ellipsis overflow-hidden">{coin.name}</span>
+                                    <span className="ml-auto text-xs font-mono text-muted-foreground">
+                                        ${Number(coin.current_price ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                    </span>
+                                    <CheckIcon
+                                        className={cn(
+                                            "h-4 w-4 shrink-0",
+                                            value?.name?.toLowerCase() === coin.name.toLowerCase() ? "opacity-100" : "opacity-0"
+                                        )}
+                                    />
+                                </CommandItem>
                             )
                         })}
                     </CommandGroup>
