@@ -4,6 +4,7 @@ import path from 'path';
 import { writeFile, readFile } from 'fs/promises';
 import xml2js from 'xml2js';
 import OpenAI from 'openai';
+import { requireAuth } from '@/lib/auth';
 
 // MongoDB setup
 const uri = process.env.MONGODB;
@@ -20,18 +21,12 @@ async function connectToMongoDB() {
     }
 }
 
-export async function POST(req) {
+export const POST = requireAuth(async (req) => {
 
-    // get a topic search for articles on that topic get the content the send it to to openai to generate new content on that topic
-    // generate also images for the article
+    // get a topic, send it to OpenAI to generate new content on that topic
+    // generate also images for the article (OpenAI Responses API image tool)
     // generate also seo meta data for the article
-    // generate also a short description for the article
-    // generate also a title for the article
-    // generate also a slug for the article
-    // generate also a summary for the article
-    // generate also a summary for the article
-    // generate also a summary for the article
-    // generate also a summary for the article
+    // generate also a short description, title, slug for the article
     // save it to mongo db
 
     const { topic } = await req.json();
@@ -112,21 +107,21 @@ export async function POST(req) {
 
                                 Ensure content is original, fact-based, and provides genuine value to crypto investors and enthusiasts.`;
 
-        // Generate article content with enhanced parameters
-        const post = await openai.chat.completions.create({
-            messages: [{
-                role: "system",
-                content: systemMessage
-            }, {
-                role: "user",
-                content: postprompt
-            }],
-            model: "gpt-4.1-mini", // Use GPT-4 for better quality
-            max_tokens: 3000, // Increased for longer content
-            temperature: 0.7, // Balanced creativity and accuracy
-            response_format: { "type": "json_object" }
+        // Generate article content with the OpenAI Responses API
+        const textModel = process.env.OPENAI_TEXT_MODEL || "gpt-6-luna";
+        const post = await openai.responses.create({
+            model: textModel,
+            instructions: systemMessage,
+            input: postprompt,
+            temperature: 0.7 // Balanced creativity and accuracy
         });
-        const articleData = JSON.parse(post.choices[0].message.content);
+
+        // The model returns JSON (possibly wrapped in markdown fences) - normalize before parsing
+        const rawText = (post.output_text || "")
+            .trim()
+            .replace(/^```(?:json)?\s*/i, "")
+            .replace(/\s*```$/, "");
+        const articleData = JSON.parse(rawText);
 
         // Function to slugify the title
         function slugify(text) {
@@ -172,25 +167,40 @@ export async function POST(req) {
         // Randomly select an art style
         const randomStyle = mangakaStyles[Math.floor(Math.random() * mangakaStyles.length)];
 
-        // Generate image with random professional art style
+        // Generate image with random professional art style via the Responses API image tool
         const imagePrompt = `Cryptocurrency article illustration about ${title} in ${randomStyle}. High quality, suitable for blog header, 16:9 aspect ratio, professional and clean design.`;
 
-        const imageResponse = await openai.images.generate(
-            {
-                model: "gpt-image-1",
-                prompt: imagePrompt,
-                n: 1,
+        const imageResponse = await openai.responses.create({
+            model: textModel,
+            input: imagePrompt,
+            tools: [{
+                type: "image_generation",
+                model: process.env.OPENAI_IMAGE_MODEL || "gpt-image-2.5-flare",
                 size: "1536x1024", // Better aspect ratio for blog headers
                 quality: "medium"
+            }]
+        });
+
+        // Extract the generated image from the response output
+        const imgItem = (imageResponse.output || []).find(
+            (o) => o.type === "image_generation_call" || o.type === "image"
+        );
+
+        let buffer;
+        if (imgItem?.result) {
+            // Base64 payload
+            buffer = Buffer.from(imgItem.result, "base64");
+        } else if (imgItem?.image_url) {
+            const url = imgItem.image_url;
+            if (url.startsWith("data:")) {
+                buffer = Buffer.from(url.split(",")[1], "base64");
+            } else {
+                const imageRes = await fetch(url);
+                buffer = Buffer.from(await imageRes.arrayBuffer());
             }
-        )
-
-        const image_url = imageResponse.data[0].url
-
-        // Download and save the image
-        const imageRes = await fetch(image_url);
-        const arrayBuffer = await imageRes.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        } else {
+            throw new Error("No image returned by the model");
+        }
 
         const publicDir = path.join(process.cwd(), 'public');
         const fileName = `${slug}-${Date.now()}.png`;
@@ -245,8 +255,7 @@ export async function POST(req) {
         console.error("Error creating blog post:", error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
-
-}
+    });
 
 export async function GET(req) {
     try {
