@@ -44,67 +44,57 @@ export const POST = requireAuth(async (req) => {
         // Step 2: Prepare the URLs string
         const urlsString = urls.join('\n');
 
-        const postprompt = `Generate a new Blog Post about ${topic}.`;
+        const today = new Date().toISOString().slice(0, 10);
 
-        const systemMessage = `You are an expert cryptocurrency journalist and SEO specialist working for ValorisVisio. Your task is to write a comprehensive, SEO-optimized blog post about the topic defined below with a minimum of 1,500 words. Please follow these enhanced guidelines:
-                                
-                                - **Topic**:
-                                "${topic}"
-        
-                                - **Advanced Writing Style**:
-                                - Use markdown for styling with proper H1, H2, H3 hierarchy
-                                - Create engaging hooks in the introduction
-                                - Use data-driven insights and current market statistics
-                                - Include actionable advice and expert analysis
-                                - Keep paragraphs concise but informative (2-4 sentences)
-                                - Use **bold text** for key terms and important points
-                                - Include relevant emojis sparingly for engagement
-                                - Add FAQ section at the end for long-tail keywords
+        const postprompt = `Write a comprehensive, SEO-optimized blog post about: ${topic}. Today's date: ${today}.`;
 
-                                - **SEO Optimization Requirements**:
-                                - Target primary keyword density of 1-2%
-                                - Include semantic keywords and LSI terms naturally
-                                - Use keyword variations in subheadings
-                                - Optimize for featured snippets with clear answers
-                                - Include current year and trending terms
-                                - Add schema-friendly structure
+        const systemMessage = `You are an expert cryptocurrency journalist and SEO specialist working for ValorisVisio, a crypto scenario calculator site. Write an original, fact-based, in-depth article that is optimized to rank in Google for its primary keyword. Topic: "${topic}". Today's date: ${today}. Follow these rules strictly.
 
-                                - **Internal Linking Strategy**:
-                                - Naturally incorporate 3-5 internal links from: ${urlsString}
-                                - Use descriptive anchor text with target keywords
-                                - Link to related articles in context, not just at the end
-                                - Prioritize high-authority pages for link juice
+## CONTENT RULES (hard requirements)
+- Minimum 1,500 words, written in markdown.
+- The content MUST begin with a single H1 matching the title exactly.
+- 4-6 H2 sections. Each H2 must contain the primary keyword or a natural LSI variation. Use H3 sparingly.
+- Start the introduction with a 40-60 word direct answer to the topic's core question (featured-snippet format), then a short hook.
+- Paragraphs of 2-3 sentences. Use bullet lists or one table where they add clarity. Bold key terms.
+- Primary keyword at 1-2% density, distributed naturally; vary with LSI terms. Never keyword-stuff.
+- Use real, current market data where possible. Never invent statistics. Use the current year and trending terms naturally.
+- Use at most 2 emojis, only if they fit.
 
-                                - **Content Structure**:
-                                - Introduction with hook and value proposition
-                                - Main content with 4-6 H2 sections
-                                - Data points, statistics, and expert quotes
-                                - Actionable tips and strategies
-                                - FAQ section (3-5 questions)
-                                - Strong conclusion with call-to-action
+## INTERNAL LINKS
+- Weave 3-5 links to these existing posts at contextually relevant places (not clustered at the end), using descriptive keyword-rich anchor text:
+${urlsString}
 
-                                - **Enhanced Category Selection**:
-                                Choose the most specific category from:
-                                    - Altcoins, Bitcoin, Blockchain, DeFi, Ethereum
-                                    - GameFi, Metaverse, NFTs, Trading, Market Analysis
-                                    - Investment Strategies, Technical Analysis, News
-                                    - Regulations, Mining, Staking
+## SEO FIELDS (character limits are hard limits)
+- "title": MAX 8 WORDS. Put the primary keyword first. Add a number or the current year when it helps.
+- "seo_title": max 60 chars. Primary keyword near the start plus one power word (Guide, Explained, What To Know, Impact).
+- "seo_description": 140-155 chars. Contains the primary keyword and one clear call to action.
+- "summary": 2-3 sentences for card previews, including 1-2 LSI terms.
 
-                                - **Required JSON Output**:
-                                {
-                                    "title": "Compelling title with primary keyword",
-                                    "seo_title": "SEO title max 60 chars with year/trending terms",
-                                    "seo_description": "Meta description 150-160 chars with CTA",
-                                    "summary": "Article summary highlighting key insights",
-                                    "article_content": "Full markdown content with proper structure",
-                                    "category": "Most relevant category",
-                                    "primary_keyword": "Main target keyword",
-                                    "secondary_keywords": ["keyword1", "keyword2", "keyword3"],
-                                    "estimated_read_time": "X min read",
-                                    "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]
-                                }
+## STRUCTURE
+- Introduction: answer-first (per rules), then hook.
+- Main body: 4-6 H2 sections with data points, examples, and actionable advice.
+- FAQ: 4 questions phrased as long-tail searches people would type, each answered in 40-50 words.
+- Conclusion: 2-3 sentences plus a call to use the free ValorisVisio calculator at https://valorisvisio.top.
 
-                                Ensure content is original, fact-based, and provides genuine value to crypto investors and enthusiasts.`;
+## CATEGORY
+Choose the single most specific category from: Altcoins, Bitcoin, Blockchain, DeFi, Ethereum, GameFi, Metaverse, NFTs, Trading, Market Analysis, Investment Strategies, Technical Analysis, News, Regulations, Mining, Staking.
+
+## OUTPUT FORMAT
+Return exactly one JSON object, no markdown fences, with these fields:
+{
+    "title": "...",
+    "seo_title": "...",
+    "seo_description": "...",
+    "summary": "...",
+    "article_content": "# {title} ... full markdown ...",
+    "category": "...",
+    "primary_keyword": "...",
+    "secondary_keywords": ["...", "...", "..."],
+    "estimated_read_time": "X min read",
+    "tags": ["...", "...", "..."]
+}
+
+The content must be original, fact-based, and genuinely useful to crypto investors and enthusiasts.`;
 
         // Generate article content with the OpenAI Responses API
         const textModel = process.env.OPENAI_TEXT_MODEL || "gpt-6-luna";
@@ -138,7 +128,19 @@ export const POST = requireAuth(async (req) => {
 
         // Extract title, create slug, and append to articleData
         const title = articleData.title || '';
-        const slug = slugify(title);
+        // Keep slugs crawlable and shareable: max 6 words.
+        // Fall back to the topic if the resulting slug is degenerate.
+        let slug = slugify(title).split('-').slice(0, 6).join('-');
+        if (slug.length < 8) slug = (slug + '-' + slugify(topic)).split('-').slice(0, 6).join('-');
+        // De-duplicate against existing posts (title collisions get -2, -3, ...)
+        {
+            let candidate = slug;
+            let n = 2;
+            while (await blogCollection.findOne({ slug: candidate }, { projection: { _id: 1 } })) {
+                candidate = `${slug}-${n++}`;
+            }
+            slug = candidate;
+        }
         articleData.slug = slug;
         const category_title = articleData.category || '';
         const category_slug = slugify(category_title);

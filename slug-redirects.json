@@ -1,0 +1,278 @@
+[
+  {
+    "source": "/blog/navigating-the-bitcoin-halving-bear-market-a-comprehensive-guide",
+    "destination": "/blog/navigating-the-bitcoin-halving-bear-market"
+  },
+  {
+    "source": "/blog/polymarket-is-booming-while-usage-is-mooning-a-new-era-of-prediction-markets",
+    "destination": "/blog/polymarket-is-booming-while-usage-is"
+  },
+  {
+    "source": "/blog/the-crypto-market-is-playing-mind-games-bitcoins-rollercoaster-ride-and-more",
+    "destination": "/blog/the-crypto-market-is-playing-mind"
+  },
+  {
+    "source": "/blog/cftc-settles-with-uniswap-labs-over-alleged-illegal-leveraged-trading",
+    "destination": "/blog/cftc-settles-with-uniswap-labs-over"
+  },
+  {
+    "source": "/blog/fca-reveals-widespread-failures-among-cryptocurrency-firms-90-fail-registration-standards",
+    "destination": "/blog/fca-reveals-widespread-failures-among-cryptocurrency"
+  },
+  {
+    "source": "/blog/celestia-unveils-1-gigabyte-block-plan-a-leap-towards-unmatched-blockchain-scalability",
+    "destination": "/blog/celestia-unveils-1-gigabyte-block-plan"
+  },
+  {
+    "source": "/blog/the-highly-anticipated-cati-token-launch-for-catizen-new-date-set-for-september-20",
+    "destination": "/blog/the-highly-anticipated-cati-token-launch"
+  },
+  {
+    "source": "/blog/pavel-durov-defends-telegrams-practices-following-arrest-in-france",
+    "destination": "/blog/pavel-durov-defends-telegrams-practices-following"
+  },
+  {
+    "source": "/blog/robinhood-crypto-reaches-39-million-settlement-with-california-doj-over-withdrawal-practices",
+    "destination": "/blog/robinhood-crypto-reaches-39-million-settlement"
+  },
+  {
+    "source": "/blog/dogwifhat-futures-surge-traders-anticipate-major-reversal",
+    "destination": "/blog/dogwifhat-futures-surge-traders-anticipate-major"
+  },
+  {
+    "source": "/blog/ethereum-underperforms-bitcoin-44-since-pos-switch-faces-potential-further-declines",
+    "destination": "/blog/ethereum-underperforms-bitcoin-44-since-pos"
+  },
+  {
+    "source": "/blog/zurich-cantonal-bank-unveils-bitcoin-and-ethereum-trading-for-swiss-customers",
+    "destination": "/blog/zurich-cantonal-bank-unveils-bitcoin-and"
+  },
+  {
+    "source": "/blog/helium-hnt-soars-by-18-amidst-growing-ecosystem-momentum-defying-broader-crypto-market-weakness",
+    "destination": "/blog/helium-hnt-soars-by-18-amidst"
+  },
+  {
+    "source": "/blog/polygon-unveils-new-pol-token-paving-the-way-for-polygon-20",
+    "destination": "/blog/polygon-unveils-new-pol-token-paving"
+  },
+  {
+    "source": "/blog/21co-launches-wrapped-bitcoin-21btc-on-ethereum-a-new-era-for-wrapped-assets",
+    "destination": "/blog/21co-launches-wrapped-bitcoin-21btc-on"
+  },
+  {
+    "source": "/blog/analyzing-the-synchronization-slowdown-of-bitcoin-core-280rc1-on-windows-10",
+    "destination": "/blog/analyzing-the-synchronization-slowdown-of-bitcoin"
+  },
+  {
+    "source": "/blog/coordinating-optimization-and-debugging-flags-in-cmake-passing-options-from-depends-build-to-main-build",
+    "destination": "/blog/coordinating-optimization-and-debugging-flags-in"
+  },
+  {
+    "source": "/blog/moving-forward-deprecating-uint256s-in-favor-of-base_blobfromhex-in-crypto-development",
+    "destination": "/blog/moving-forward-deprecating-uint256s-in-favor"
+  },
+  {
+    "source": "/blog/vitalik-buterins-10-million-eth-transfer-sparks-speculation",
+    "destination": "/blog/vitalik-buterins-10-million-eth-transfer"
+  },
+  {
+    "source": "/blog/elon-musk-hints-at-leading-hypothetical-department-of-government-efficiency-under-trump-administration",
+    "destination": "/blog/elon-musk-hints-at-leading-hypothetical"
+  },
+  {
+    "source": "/blog/sonic-the-new-frontier-in-blockchain-transaction-speed",
+    "destination": "/blog/sonic-the-new-frontier-in-blockchain"
+  },
+  {
+    "source": "/blog/bitmex-co-founder-arthur-hayes-shifts-bitcoin-outlook-predicts-rally-on-horizon",
+    "destination": "/blog/bitmex-co-founder-arthur-hayes-shifts"
+  },
+  {
+    "source": "/blog/tether-diversifies-portfolio-with-100m-investment-in-adecoagro",
+    "destination": "/blog/tether-diversifies-portfolio-with-100m-investment"
+  },
+  {
+    "source": "/blog/apibara-adding-ethereum-data-to-the-open-source-data-platform",
+    "destination": "/blog/apibara-adding-ethereum-data-to-the"
+  },
+  {
+    "source": "/blog/unveiling-dotpics-revolutionizing-ethereum-dashboards-data-and-tools",
+    "destination": "/blog/unveiling-dotpics-revolutionizing-ethereum-dashboards-data"
+  },
+  {
+    "source": "/blog/establishing-healthy-network-baselines-for-ethereum-with-xatu",
+    "destination": "/blog/establishing-healthy-network-baselines-for-ethereum"
+  },
+  {
+    "source": "/blog/mapping-the-future-of-ethereum-inside-migalabs-groundbreaking-data-collection-efforts",
+    "destination": "/blog/mapping-the-future-of-ethereum-inside"
+  },
+  {
+    "source": "/blog/enhancing-privacy-and-security-anonymous-client-information-submission-in-ethereum",
+    "destination": "/blog/enhancing-privacy-and-security-anonymous-client"
+  },
+  {
+    "source": "/blog/anonymous-validator-data-collection-using-zero-knowledge-proofs-enhancing-ethereums-performance-and-security",
+    "destination": "/blog/anonymous-validator-data-collection-using-zero"
+  },
+  {
+    "source": "/blog/core-platform-expansion-enhancing-growthepie-for-a-transparent-ethereum-layer-2-ecosystem",
+    "destination": "/blog/core-platform-expansion-enhancing-growthepie-for"
+  },
+  {
+    "source": "/blog/revolutionizing-blockchain-data-standardised-and-crowdsourced-smart-contract-labels-abis",
+    "destination": "/blog/revolutionizing-blockchain-data-standardised-and-crowdsourced"
+  },
+  {
+    "source": "/blog/economic-analysis-of-layer-2-solutions-calldata-costs-l1-security-fees-and-the-dynamics-of-eip-4844",
+    "destination": "/blog/economic-analysis-of-layer-2-solutions"
+  },
+  {
+    "source": "/blog/analysis-of-l2-finality-and-economics-of-l2-security",
+    "destination": "/blog/analysis-of-l2-finality-and-economics"
+  },
+  {
+    "source": "/blog/walletlabels-standardizing-enriching-ethereum-account-labels-for-transparency-and-utility",
+    "destination": "/blog/walletlabels-standardizing-enriching-ethereum-account-labels"
+  },
+  {
+    "source": "/blog/federal-reserve-cuts-interest-rates-impacts-on-traditional-and-cryptocurrency-markets",
+    "destination": "/blog/federal-reserve-cuts-interest-rates-impacts"
+  },
+  {
+    "source": "/blog/jamie-dimon-acknowledges-jpmorgans-embrace-of-blockchain-technology-a-shift-in-perspective",
+    "destination": "/blog/jamie-dimon-acknowledges-jpmorgans-embrace-of"
+  },
+  {
+    "source": "/blog/ethereum-faces-challenges-amidst-slowing-dapp-activity-what-lies-ahead",
+    "destination": "/blog/ethereum-faces-challenges-amidst-slowing-dapp"
+  },
+  {
+    "source": "/blog/louisiana-embraces-cryptocurrency-a-new-era-for-state-payments",
+    "destination": "/blog/louisiana-embraces-cryptocurrency-a-new-era"
+  },
+  {
+    "source": "/blog/texas-judge-dismisses-consensys-lawsuit-against-sec-a-setback-for-ethereum-classification-appeals",
+    "destination": "/blog/texas-judge-dismisses-consensys-lawsuit-against"
+  },
+  {
+    "source": "/blog/circles-strategic-expansion-integrating-usdc-with-brazil-and-mexicos-local-payment-systems",
+    "destination": "/blog/circles-strategic-expansion-integrating-usdc-with"
+  },
+  {
+    "source": "/blog/michael-saylor-predicts-bitcoin-could-reach-13-million-by-2045",
+    "destination": "/blog/michael-saylor-predicts-bitcoin-could-reach"
+  },
+  {
+    "source": "/blog/plan-bs-stock-to-flow-model-predicts-800000-bitcoin-price-by-2025",
+    "destination": "/blog/plan-bs-stock-to-flow-model"
+  },
+  {
+    "source": "/blog/cathie-woods-bold-new-bitcoin-price-prediction-38-million-by-2030",
+    "destination": "/blog/cathie-woods-bold-new-bitcoin-price"
+  },
+  {
+    "source": "/blog/jamie-dimons-bitcoin-skepticism-a-2024-forecast-that-shakes-the-crypto-world",
+    "destination": "/blog/jamie-dimons-bitcoin-skepticism-a-2024"
+  },
+  {
+    "source": "/blog/raoul-pal-predicts-bitcoin-to-soar-to-250000-what-this-means-for-investors",
+    "destination": "/blog/raoul-pal-predicts-bitcoin-to-soar"
+  },
+  {
+    "source": "/blog/bingx-reports-security-breach-a-deep-dive-into-the-impact-on-users-and-operations",
+    "destination": "/blog/bingx-reports-security-breach-a-deep"
+  },
+  {
+    "source": "/blog/sky-divests-wrapped-bitcoin-a-strategic-move-post-governance-vote",
+    "destination": "/blog/sky-divests-wrapped-bitcoin-a-strategic"
+  },
+  {
+    "source": "/blog/germanys-big-crackdown-47-cryptocurrency-exchanges-shut-down",
+    "destination": "/blog/germanys-big-crackdown-47-cryptocurrency-exchanges"
+  },
+  {
+    "source": "/blog/kevin-svenson-predicts-bullish-trajectory-for-bitcoin-is-100k-on-the-horizon",
+    "destination": "/blog/kevin-svenson-predicts-bullish-trajectory-for"
+  },
+  {
+    "source": "/blog/bitget-and-foresight-ventures-invest-30-million-in-ton-blockchain",
+    "destination": "/blog/bitget-and-foresight-ventures-invest-30"
+  },
+  {
+    "source": "/blog/binances-vishal-sacheendran-discusses-global-crypto-regulations-ahead-of-us-elections",
+    "destination": "/blog/binances-vishal-sacheendran-discusses-global-crypto"
+  },
+  {
+    "source": "/blog/ethereum-faces-uncertain-times-amid-declining-dapp-activity",
+    "destination": "/blog/ethereum-faces-uncertain-times-amid-declining"
+  },
+  {
+    "source": "/blog/bitcoin-nears-record-high-but-pulls-back-a-market-analysis",
+    "destination": "/blog/bitcoin-nears-record-high-but-pulls"
+  },
+  {
+    "source": "/blog/unveiling-susd-solayers-innovative-stablecoin-on-solana",
+    "destination": "/blog/unveiling-susd-solayers-innovative-stablecoin-on"
+  },
+  {
+    "source": "/blog/circle-partners-with-hkt-to-transform-loyalty-rewards-in-hong-kong",
+    "destination": "/blog/circle-partners-with-hkt-to-transform"
+  },
+  {
+    "source": "/blog/south-korean-tech-stocks-soar-as-bitcoin-nears-all-time-highs",
+    "destination": "/blog/south-korean-tech-stocks-soar-as"
+  },
+  {
+    "source": "/blog/the-us-treasurys-national-strategy-for-financial-inclusion-a-cautious-approach-to-cryptocurrency",
+    "destination": "/blog/the-us-treasurys-national-strategy-for"
+  },
+  {
+    "source": "/blog/magic-eden-launches-test-token-testme-a-cautionary-exercise",
+    "destination": "/blog/magic-eden-launches-test-token-testme"
+  },
+  {
+    "source": "/blog/dogecoin-surges-to-new-heights-following-trump-rally-remarks",
+    "destination": "/blog/dogecoin-surges-to-new-heights-following"
+  },
+  {
+    "source": "/blog/geoff-kendricks-bold-bitcoin-prediction-125000-by-year-end",
+    "destination": "/blog/geoff-kendricks-bold-bitcoin-prediction-125000"
+  },
+  {
+    "source": "/blog/microstrategys-ambitious-42-billion-bitcoin-investment-plan",
+    "destination": "/blog/microstrategys-ambitious-42-billion-bitcoin-investment"
+  },
+  {
+    "source": "/blog/ondo-finance-partners-with-wellington-management-to-launch-tokenized-securities",
+    "destination": "/blog/ondo-finance-partners-with-wellington-management"
+  },
+  {
+    "source": "/blog/blackrocks-ibit-hits-record-with-875-million-inflow",
+    "destination": "/blog/blackrocks-ibit-hits-record-with-875"
+  },
+  {
+    "source": "/blog/bitcoin-faces-critical-moment-as-institutions-embrace-etfs",
+    "destination": "/blog/bitcoin-faces-critical-moment-as-institutions"
+  },
+  {
+    "source": "/blog/celebrating-16-years-of-bitcoin-the-evolution-of-a-digital-revolution",
+    "destination": "/blog/celebrating-16-years-of-bitcoin-the"
+  },
+  {
+    "source": "/blog/coinbase-ottiene-lapprovazione-cftc-per-una-clearinghouse-di-derivati-usa-usdc-e-settlement-247",
+    "destination": "/blog/coinbase-ottiene-lapprovazione-cftc-per-una"
+  },
+  {
+    "source": "/blog/bitcoin-slides-as-rising-treasury-yields-and-oil-prices-fuel-fed-rate-hike-fears",
+    "destination": "/blog/bitcoin-slides-as-rising-treasury-yields"
+  },
+  {
+    "source": "/blog/sec-staking-receipt-token-faq-what-jitosol-and-liquid-staking-etfs-need-to-know-before-september-2026",
+    "destination": "/blog/sec-staking-receipt-token-faq-what"
+  },
+  {
+    "source": "/blog/senate-fails-to-advance-clarity-act-what-a-september-2026-cloture-vote-could-mean-for-us-crypto-markets",
+    "destination": "/blog/senate-fails-to-advance-clarity-act"
+  }
+]
