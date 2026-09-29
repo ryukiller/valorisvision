@@ -106,8 +106,10 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
     };
 
     useEffect(() => {
+        // Reset search/pagination when selection changes (intentional)
         console.log('val changed')
-        setSearchTerm('');
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSearchTerm('')
         setPage(1)
     }, [value])
 
@@ -125,6 +127,8 @@ const GetCoinsData = ({ onCoinSelect, fieldName }) => {
 
     useEffect(() => {
         if (initialFetchDone && !searchTerm) {
+            // Async data load on page change (intentional)
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchCoins(page).then(newCoins => {
                 setCoins(prevCoins => [...prevCoins, ...newCoins]);
             });

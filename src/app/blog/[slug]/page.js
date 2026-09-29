@@ -2,7 +2,8 @@ import { Suspense } from 'react';
 import ClientPost from './ClientPost';
 export async function generateMetadata({ params }) {
     // Fetch article data
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/${params.slug}`);
+    const { slug } = await params;
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/${slug}`);
     const data = await response.json();
     const article = data.success ? data.data : null;
 
@@ -37,10 +38,11 @@ const Loading = () => {
 }
 
 
-export default function Post({ params }) {
+export default async function Post({ params }) {
+    const { slug } = await params;
     return (
         <Suspense fallback={<Loading />}>
-            <ClientPost params={params} />
+            <ClientPost slug={slug} />
         </Suspense>
     );
 }

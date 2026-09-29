@@ -36,7 +36,7 @@ export default function RecentArticles({ category, count }) {
         }
 
         fetchArticles();
-    }, [category, currentPage]);
+    }, [category, currentPage, count]);
 
     if (loading) {
         const articles = [1, 2, 3, 4, 5, 6];
