@@ -1,4 +1,4 @@
-import { Inter } from 'next/font/google'
+import { Unbounded, IBM_Plex_Sans, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
 import Head from 'next/head'
@@ -9,7 +9,11 @@ import { Header } from '@/rgcomponents/Header'
 import { Footer } from '@/rgcomponents/Footer'
 import { Toaster } from "@/components/ui/toaster"
 
-const inter = Inter({ subsets: ['latin'] })
+const display = Unbounded({ subsets: ['latin'], weight: ['400', '600', '800'], variable: '--font-display', display: 'swap' })
+
+const body = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-body', display: 'swap' })
+
+const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '600', '700'], variable: '--font-mono', display: 'swap' })
 
 export const metadata = {
   metadataBase: new URL('https://valorisvisio.top'),
@@ -74,8 +78,8 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
-        <meta name="msapplication-TileColor" content="#da532c" />
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="msapplication-TileColor" content="#05060c" />
+        <meta name="theme-color" content="#05060c" />
       </Head>
       <Script strategy="lazyOnload" async src="https://www.googletagmanager.com/gtag/js?id=G-ETPN827MV5" />
       <Script strategy="afterInteractive" id="service-worker">
@@ -182,11 +186,10 @@ export default function RootLayout({ children }) {
         }
         `}
       </Script>
-      <body className={inter.className}>
+      <body className={`${display.variable} ${body.variable} ${mono.variable}` + ' font-body'}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem
           disableTransitionOnChange
         >
           <Header />

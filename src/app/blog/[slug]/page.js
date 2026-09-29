@@ -23,8 +23,8 @@ const Loading = () => {
         <article className="container mx-auto px-4 py-8 main-content">
             <div className="mt-[100px] flex flex-col md:flex-row items-start gap-4 w-full">
 
-                <div className="w-full md:w-8/12 prose lg:prose-xl">
-                    <span className="text-xs text-gray-200 border border-gray-200 rounded-full px-2 py-1">Category</span>
+                <div className="w-full md:w-8/12 prose-cyber">
+                    <span className="inline-block font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground border border-line px-3 py-1.5">Category</span>
                     <div
 
                         className={`min-w-[345px] min-h-[385px] block md:hidden w-full object-cover mb-2 mr-4 transition-all duration-300`}

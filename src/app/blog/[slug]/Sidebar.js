@@ -43,24 +43,28 @@ export default function Sidebar({ currentArticle }) {
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1">
-                <h6 className="text-2xl font-bold mt-2">Categories</h6>
+            <div className="flex flex-col gap-2 border border-line bg-panel/50 p-5 cyber-cut-sm">
+                <h6 className="font-mono text-[11px] uppercase tracking-[0.3em] text-neon-cyan mb-2">{'// categories'}</h6>
                 <ul className="flex flex-col">
                     {categories.map((category) => (
                         <li key={category.id}>
-                            <Link href={`/blog/category/${category.slug}`}><h6 className="text-md font-bold m-1">{category.name}</h6></Link>
+                            <Link href={`/blog/category/${category.slug}`}>
+                                <h6 className="text-sm font-medium m-1 text-muted-foreground hover:text-neon-cyan transition-colors">
+                                    <span className="text-neon-magenta/70 mr-2">›</span>{category.name}
+                                </h6>
+                            </Link>
                         </li>
                     ))}
                 </ul>
             </div>
 
-            <div className="flex flex-col gap-2">
-                <h6 className="text-2xl font-bold my-2">Recent Posts in: {currentArticle.category}</h6>
-                <ul className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3 border border-line bg-panel/50 p-5 cyber-cut-sm">
+                <h6 className="font-mono text-[11px] uppercase tracking-[0.3em] text-neon-cyan">{'// more_in: '}{currentArticle.category || 'grid'}</h6>
+                <ul className="flex flex-col gap-3">
                     {recentPosts.map((post) => (
-                        <li key={post.id} className="flex flex-row items-center gap-2 border border-gray-300">
-                            <Image src={post.imageUrl} alt={post.title} width={100} height={100} className="w-20 h-20 object-cover rounded-sm" />
-                            <Link href={`/blog/${post.slug}`}><h6 className="text-md font-bold m-2">{post.title}</h6></Link>
+                        <li key={post.id} className="flex flex-row items-center gap-3 border border-line bg-void/40 p-2 hover:border-neon-cyan/50 transition-colors">
+                            <Image src={post.imageUrl} alt={post.title} width={100} height={100} className="w-16 h-16 object-cover cyber-cut-sm" />
+                            <Link href={`/blog/${post.slug}`}><h6 className="text-sm font-medium text-foreground line-clamp-2">{post.title}</h6></Link>
                         </li>
                     ))}
                 </ul>

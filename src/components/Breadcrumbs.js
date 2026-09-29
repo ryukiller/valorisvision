@@ -9,12 +9,12 @@ export default function Breadcrumbs({ items }) {
       <motion.ol 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400"
+        className="flex items-center font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground"
       >
         <li>
           <Link 
             href="/" 
-            className="flex items-center hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            className="flex items-center hover:text-neon-cyan transition-colors duration-200"
           >
             <Home className="w-4 h-4 mr-1" />
             Home
@@ -27,12 +27,12 @@ export default function Breadcrumbs({ items }) {
             {item.href ? (
               <Link 
                 href={item.href}
-                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                className="hover:text-neon-cyan transition-colors duration-200"
               >
                 {item.label}
               </Link>
             ) : (
-              <span className="text-gray-800 dark:text-gray-200 font-medium">
+              <span className="text-foreground font-semibold">
                 {item.label}
               </span>
             )}
