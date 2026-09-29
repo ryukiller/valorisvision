@@ -109,11 +109,12 @@ export const POST = requireAuth(async (req) => {
 
         // Generate article content with the OpenAI Responses API
         const textModel = process.env.OPENAI_TEXT_MODEL || "gpt-6-luna";
+        // NB: gpt-6-series models do not accept `temperature` (and some reasoning
+        // models reject it) - keep the call to the minimal supported params.
         const post = await openai.responses.create({
             model: textModel,
             instructions: systemMessage,
-            input: postprompt,
-            temperature: 0.7 // Balanced creativity and accuracy
+            input: postprompt
         });
 
         // The model returns JSON (possibly wrapped in markdown fences) - normalize before parsing
