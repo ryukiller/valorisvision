@@ -1,8 +1,7 @@
 import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
 import path from 'path';
-import { writeFile, readFile } from 'fs/promises';
-import xml2js from 'xml2js';
+import { writeFile } from 'fs/promises';
 import OpenAI from 'openai';
 import { requireAuth } from '@/lib/auth';
 
@@ -234,11 +233,8 @@ export const POST = requireAuth(async (req) => {
             }
         };
 
-        // Save to MongoDB (reuse existing connection)
+        // Save to MongoDB (the sitemap is generated dynamically from the DB)
         const result = await blogCollection.insertOne(enhancedArticleData);
-
-        // Update sitemap.xml
-        await updateSitemap(slug);
 
         return NextResponse.json({
             success: true,
@@ -313,49 +309,5 @@ export async function GET(req) {
     } catch (error) {
         console.error("Error fetching blog posts:", error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-    }
-}
-
-async function updateSitemap(slug) {
-    const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
-
-    try {
-        // Read existing sitemap
-        const xmlData = await readFile(sitemapPath, 'utf8');
-
-        // Parse XML
-        const parser = new xml2js.Parser({ xmldec: { 'version': '1.0', 'encoding': 'UTF-8' } });
-        const result = await parser.parseStringPromise(xmlData);
-
-        // Add new URL
-        const newUrl = {
-            loc: [`https://valorisvisio.top/blog/${slug}`],
-            lastmod: [new Date().toISOString().split('T')[0]],
-            changefreq: ['weekly'],
-            priority: ['0.8']
-        };
-
-        // Add new URL to existing urls
-        result.urlset.url.push(newUrl);
-
-        // Convert back to XML
-        const builder = new xml2js.Builder({
-            xmldec: { 'version': '1.0', 'encoding': 'UTF-8' },
-            renderOpts: { pretty: true, indent: '  ', newline: '\n' },
-            xmlns: result.urlset.$
-        });
-        let updatedXml = builder.buildObject(result);
-
-        // Ensure the XML declaration is correct
-        updatedXml = updatedXml.replace(
-            '<?xml?>',
-            '<?xml version="1.0" encoding="UTF-8"?>'
-        );
-
-        // Write updated sitemap
-        await writeFile(sitemapPath, updatedXml, 'utf8');
-        console.log('Sitemap updated successfully');
-    } catch (error) {
-        console.error('Error updating sitemap:', error);
     }
 }

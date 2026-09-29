@@ -5,13 +5,16 @@ import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
 import Sidebar from './Sidebar';
 
-export default function ClientPost({ slug }) {
-    const [article, setArticle] = useState(null);
-    const [loading, setLoading] = useState(true);
+export default function ClientPost({ slug, article: articleProp }) {
+    // `articleProp` is passed server-side when the page already fetched the post;
+    // fall back to client fetch when absent.
+    const [article, setArticle] = useState(articleProp || null);
+    const [loading, setLoading] = useState(!articleProp);
     const [isScrolled, setIsScrolled] = useState(false);
     const sidebarRef = useRef(null);
 
     useEffect(() => {
+        if (articleProp) return;
         async function fetchArticle() {
             try {
                 // Use the full URL here, including the base URL

@@ -1,48 +1,88 @@
-import { Suspense } from 'react';
+import { notFound } from 'next/navigation';
+import { getBlogPostBySlug } from '@/lib/blog';
 import ClientPost from './ClientPost';
+
+// Re-render periodically so metadata/content stay fresh (previous caching model:
+// the page would otherwise be frozen at build time since it reads MongoDB directly).
+export const revalidate = 3600;
+
 export async function generateMetadata({ params }) {
-    // Fetch article data
     const { slug } = await params;
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/${slug}`);
-    const data = await response.json();
-    const article = data.success ? data.data : null;
+    const article = await getBlogPostBySlug(slug);
+
+    if (!article) {
+        return {
+            title: 'Article Not Found | ValorisVisio Blog',
+            robots: { index: false, follow: true },
+        };
+    }
+
+    const title = article.seo_title || article.title;
+    const description = article.seo_description || article.summary || `Read ${article.title}`;
 
     return {
-        title: article ? article.seo_title || article.title : 'Article Not Found',
-        description: article ? article.seo_description || `Read ${article.title}` : 'Article not found',
-        openGraph: article ? {
-            title: article.seo_title || article.title,
-            description: article ? article.seo_description || `Read ${article.title}` : 'Article not found',
-            images: [{ url: article.imageUrl }],
-        } : {},
+        title,
+        description,
+        alternates: { canonical: `/blog/${article.slug}` },
+        openGraph: {
+            type: 'article',
+            title,
+            description,
+            url: `/blog/${article.slug}`,
+            images: [{ url: article.imageUrl, alt: article.title, width: 1536, height: 1024 }],
+            publishedTime: article.createdAt,
+            modifiedTime: article.updatedAt || article.createdAt,
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: [article.imageUrl],
+        },
     };
 }
 
-const Loading = () => {
+function JsonLd({ data }) {
     return (
-        <article className="container mx-auto px-4 py-8 main-content">
-            <div className="mt-[100px] flex flex-col md:flex-row items-start gap-4 w-full">
-
-                <div className="w-full md:w-8/12 prose-cyber">
-                    <span className="inline-block font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground border border-line px-3 py-1.5">Category</span>
-                    <div
-
-                        className={`min-w-[345px] min-h-[385px] block md:hidden w-full object-cover mb-2 mr-4 transition-all duration-300`}
-                    />
-                    <div className="w-full min-h-[200px]"></div>
-                </div>
-            </div>
-
-        </article>
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }}
+        />
     );
 }
 
-
 export default async function Post({ params }) {
     const { slug } = await params;
+    const article = await getBlogPostBySlug(slug);
+
+    if (!article) notFound();
+
+    const base = 'https://valorisvisio.top';
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        mainEntityOfPage: `${base}/blog/${article.slug}`,
+        headline: article.seo_title || article.title,
+        description: article.seo_description || article.summary,
+        image: `${base}${article.imageUrl}`,
+        datePublished: article.createdAt,
+        dateModified: article.updatedAt || article.createdAt,
+        author: { '@type': 'Person', name: article.author || 'ValorisVisio Editorial' },
+        publisher: {
+            '@type': 'Organization',
+            name: 'ValorisVisio',
+            logo: { '@type': 'ImageObject', url: `${base}/logo.svg` },
+        },
+        articleSection: article.category,
+        keywords: [article.seo_keywords?.primary, ...(article.seo_keywords?.secondary || [])]
+            .filter(Boolean)
+            .join(', '),
+    };
+
     return (
-        <Suspense fallback={<Loading />}>
-            <ClientPost slug={slug} />
-        </Suspense>
+        <>
+            <JsonLd data={jsonLd} />
+            <ClientPost slug={slug} article={article} />
+        </>
     );
 }

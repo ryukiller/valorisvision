@@ -44,7 +44,6 @@ export const metadata = {
     template: '%s | ValorisVisio - Crypto Calculator'
   },
   description: 'Calculate potential cryptocurrency profits with our advanced scenario calculator. Compare market caps, visualize gains, and make informed crypto investment decisions with real-time data.',
-  keywords: ['crypto calculator', 'cryptocurrency calculator', 'crypto scenario calculator', 'market cap comparison', 'crypto profit calculator', 'bitcoin calculator', 'ethereum calculator', 'crypto investment tool'],
   authors: [{ name: 'ValorisVisio Team' }],
   creator: 'ValorisVisio',
   publisher: 'ValorisVisio',
@@ -86,9 +85,9 @@ export const metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    google: 'google-site-verification-code',
-  },
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 }
 
 export default function RootLayout({ children }) {

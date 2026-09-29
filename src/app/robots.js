@@ -6,6 +6,5 @@ export default function robots() {
       disallow: ['/api/', '/admin/'],
     },
     sitemap: 'https://valorisvisio.top/sitemap.xml',
-    host: 'https://valorisvisio.top',
   }
 }

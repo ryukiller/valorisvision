@@ -18,8 +18,8 @@ export default function RecentArticles({ category, count }) {
         async function fetchArticles() {
             try {
                 const url = category
-                    ? `/api/blog?category=${encodeURIComponent(category)}&page=${currentPage} &limit=${count}`
-                    : `/api/blog?page=${currentPage} &limit=${count}`;
+                    ? `/api/blog?category=${encodeURIComponent(category)}&page=${currentPage}&limit=${count}`
+                    : `/api/blog?page=${currentPage}&limit=${count}`;
                 const response = await fetch(url);
                 const data = await response.json();
                 if (data.success) {
