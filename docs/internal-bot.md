@@ -88,6 +88,28 @@ curl -X POST http://localhost:3000/api/admin/prices \
   -d '{"pages":5,"delayMs":30000}'
 ```
 
+## Problemi noti e fix
+
+### CoinGecko 403 sui prezzi
+L'endpoint `/coins/markets` restituisce **403** senza API key. Fix: imposta nel `.env`
+`COINGECKO_API_KEY` (key demo gratis da https://www.coingecko.com/en/api) e **riavvia**
+il dev server (le variabili d'ambiente vengono lette all'avvio).
+
+In caso di 429 (rate limit) il tool fa 3 retry per pagina con backoff crescente
+(delayMs × tentativo). Se la prima pagina fallisce definitivamente il tool aborte
+con `502` e il motivo preciso, senza sprecare le altre pagine.
+
+### MongoDB: DNS SRV fallisce al primo avvio
+Se `MONGODB` usa `mongodb+srv://` e il lookup DNS-SRV fallisce al primo avvio
+del dev server, usa una URI piana invece, es.:
+
+```
+MONGODB=mongodb://user:pass@host1:27017,host2:27017/?replicaSet=RS0&authSource=admin
+```
+
+(oppure più semplicemente: riavvia il dev server una volta — spesso al secondo
+tentativo il DNS risponde). Il workaround va applicato nel `.env` prima del riavvio.
+
 ## Note importanti
 
 - **Autenticazione**: `POST /api/blog`, `POST/GET /api/admin/prices` richiedono
@@ -103,8 +125,10 @@ curl -X POST http://localhost:3000/api/admin/prices \
 - **Errori**: in caso di errore il tool esce con codice 1 e stampa
   `ERROR: <motivo>` sull'stderr. Errori comuni:
   - `Login failed` → credenziali errate o dev server non avviato
-  - `429` da CoinGecko → aumenta `delayMs`
+  - `Aborting: CoinGecko rejected the first page (HTTP 403...)` → imposta `COINGECKO_API_KEY` nel `.env` e riavvia il dev server
+  - `HTTP 429` da CoinGecko → aumenta `delayMs`
   - errori OpenAI → controlla `OPENAI_API_KEY` e crediti
+  - errori MongoDB DNS/SRV → vedi sezione "Problemi noti e fix"
 
 ## Piano di lavoro tipico (es. giornaliero)
 

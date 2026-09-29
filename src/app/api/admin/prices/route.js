@@ -25,28 +25,31 @@ export const POST = requireAuth(async (req) => {
   try {
     const { pages = 5, delayMs = 30000 } = await req.json()
     
+    // Throws on failure so the caller can record/abort with the real reason
     const fetchCoins = async (pageNum) => {
-      try {
         const response = await fetch(
           `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${pageNum}&sparkline=false&locale=en`,
           {
             headers: {
               'Accept': 'application/json',
-              'User-Agent': 'ValorisVisio/1.0'
+              'User-Agent': 'ValorisVisio/1.0',
+              // Free-tier requests get 403 without a demo key on the markets endpoint
+              ...(process.env.COINGECKO_API_KEY ? { 'x-cg-demo-api-key': process.env.COINGECKO_API_KEY } : {})
             }
           }
         )
-        
+
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+          throw new Error(
+            `CoinGecko HTTP ${response.status} on page ${pageNum}` +
+            (response.status === 403 && !process.env.COINGECKO_API_KEY
+              ? ' - blocked: set COINGECKO_API_KEY in .env (free key from https://www.coingecko.com/en/api)' : '') +
+            (response.status === 429
+              ? ' - rate limited: increase delayMs' : '')
+          )
         }
-        
-        const data = await response.json()
-        return data
-      } catch (err) {
-        console.error(`Error fetching page ${pageNum}:`, err)
-        return null
-      }
+
+        return response.json()
     }
     
     const collection = await connectToMongoDB()
@@ -54,10 +57,36 @@ export const POST = requireAuth(async (req) => {
     let errors = []
     
     for (let page = 1; page <= pages; page++) {
-      try {
-        const coins = await fetchCoins(page)
-        
-        if (coins && coins.length > 0) {
+      let coins = null
+      const maxAttempts = 3
+
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          coins = await fetchCoins(page)
+          break
+        } catch (error) {
+          console.error(`Error fetching page ${page} (attempt ${attempt}/${maxAttempts}):`, error.message)
+          if (attempt < maxAttempts) {
+            const backoff = delayMs * attempt
+            console.log(`Retrying page ${page} in ${backoff}ms`)
+            await delay(backoff)
+          } else {
+            errors.push(`Page ${page}: ${error.message}`)
+          }
+        }
+      }
+
+      if (!coins && page === 1) {
+        // First page lost after all retries (403/429): abort early, no point continuing
+        cache.clear()
+        return NextResponse.json({
+          success: false,
+          message: `Aborting: CoinGecko rejected the first page (${errors[0]}). No further attempts.`
+        }, { status: 502 })
+      }
+
+      if (coins && coins.length > 0) {
+        try {
           // Batch update operations
           const operations = coins.map(coin => ({
             updateOne: {
@@ -76,15 +105,15 @@ export const POST = requireAuth(async (req) => {
           totalUpdated += result.upsertedCount + result.modifiedCount
           
           console.log(`Page ${page}: Updated ${result.upsertedCount + result.modifiedCount} coins`)
+        } catch (error) {
+          console.error(`Error writing page ${page} to MongoDB:`, error)
+          errors.push(`Page ${page} (db): ${error.message}`)
         }
-        
+
         // Rate limiting delay
         if (page < pages) {
           await delay(delayMs)
         }
-      } catch (error) {
-        console.error(`Error processing page ${page}:`, error)
-        errors.push(`Page ${page}: ${error.message}`)
       }
     }
     
