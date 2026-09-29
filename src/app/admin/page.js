@@ -102,11 +102,6 @@ export default function AdminDashboard() {
   const [articleForm, setArticleForm] = useState({ topic: '' })
   const [articleLoading, setArticleLoading] = useState(false)
 
-  useEffect(() => {
-    checkAuthStatus()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const checkAuthStatus = async () => {
     try {
       const response = await fetch('/api/blog?limit=1')
@@ -125,6 +120,12 @@ export default function AdminDashboard() {
     }
     setLoading(false)
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- checkAuthStatus updates auth state
+    checkAuthStatus()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -164,7 +165,7 @@ export default function AdminDashboard() {
     }
   }
 
-  const loadDashboardData = async () => {
+  async function loadDashboardData() {
     try {
       // Load articles from blog API
       const articlesResponse = await fetch('/api/blog?limit=100')

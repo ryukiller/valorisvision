@@ -56,7 +56,7 @@ export function authenticateUser(username, password) {
 // Middleware to check authentication
 export function requireAuth(handler) {
   return async (req) => {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const sessionToken = cookieStore.get('admin_session')?.value
 
     const session = verifySessionToken(sessionToken)
@@ -71,8 +71,8 @@ export function requireAuth(handler) {
 }
 
 // Get current user from cookies
-export function getCurrentUser() {
-  const cookieStore = cookies()
+export async function getCurrentUser() {
+  const cookieStore = await cookies()
   const sessionToken = cookieStore.get('admin_session')?.value
 
   return verifySessionToken(sessionToken)

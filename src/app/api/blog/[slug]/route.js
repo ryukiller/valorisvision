@@ -16,7 +16,7 @@ async function connectToMongoDB() {
 }
 
 export async function GET(req, { params }) {
-    const { slug } = params;
+    const { slug } = await params;
 
     try {
         const collection = await connectToMongoDB();

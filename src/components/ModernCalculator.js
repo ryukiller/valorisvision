@@ -95,6 +95,8 @@ export default function ModernCalculator() {
       }, 1000)
       return () => clearTimeout(debounceTimer)
     } else {
+      // Clear stale result when inputs are incomplete (intentional)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowResult(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

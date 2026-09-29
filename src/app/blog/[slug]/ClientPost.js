@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
 import Sidebar from './Sidebar';
 
-export default function ClientPost({ params }) {
+export default function ClientPost({ slug }) {
     const [article, setArticle] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -15,7 +15,7 @@ export default function ClientPost({ params }) {
         async function fetchArticle() {
             try {
                 // Use the full URL here, including the base URL
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/${params.slug}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/${slug}`);
                 const data = await response.json();
                 if (data.success) {
                     setArticle(data.data);
@@ -39,7 +39,7 @@ export default function ClientPost({ params }) {
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [params.slug]);
+    }, [slug]);
 
     if (loading) {
         return (

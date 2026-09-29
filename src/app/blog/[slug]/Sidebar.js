@@ -39,7 +39,7 @@ export default function Sidebar({ currentArticle }) {
         }
         fetchRecentPosts();
         fetchCategories();
-    }, [currentArticle.slug]);
+    }, [currentArticle.slug, currentArticle.category_slug]);
 
     return (
         <div className="flex flex-col gap-4">

@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
-import { HelpingHand, Bug, Copy } from 'lucide-react';
+import { CircleHelp, Bug, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -262,7 +262,7 @@ export default function FeedBack() {
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="icon" title="Donate me some Crypto" className="bg-white dark:bg-slate-800">
-                        <HelpingHand size={32} strokeWidth={1.5} className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100" />
+                        <CircleHelp size={32} strokeWidth={1.5} className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100" />
                         <span className="sr-only">Donate</span>
                     </Button>
                 </DropdownMenuTrigger>
