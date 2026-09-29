@@ -22,8 +22,8 @@ export async function generateMetadata({ params, searchParams }) {
 
     return {
         title: page === 1
-            ? `${name} Articles, News & Analysis | ValorisVisio`
-            : `${name} Articles (Page ${page}) | ValorisVisio`,
+            ? `${name} Articles, News & Analysis`
+            : `${name} Articles (Page ${page})`,
         description: `The latest ${name} articles on ValorisVisio — market analysis, trends, and expert insights on ${name}.`,
         alternates: {
             canonical: page === 1

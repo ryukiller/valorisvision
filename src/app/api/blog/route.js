@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import path from 'path';
 import { writeFile } from 'fs/promises';
 import OpenAI from 'openai';
+import sharp from 'sharp';
 import { requireAuth } from '@/lib/auth';
 
 // MongoDB setup
@@ -39,10 +40,11 @@ export const POST = requireAuth(async (req) => {
             projection: { slug: 1, title: 1, _id: 0 }
         }).limit(100).toArray();
 
-        const urls = existingPosts.map(post => "https://valorisvisio.top/blog/" + post.slug);
-
-        // Step 2: Prepare the URLs string
-        const urlsString = urls.join('\n');
+        // Titles included so the model can judge topical relevance and
+        // derive keyword-rich anchor text.
+        const urlsString = existingPosts
+            .map((post) => `- https://valorisvisio.top/blog/${post.slug} — "${post.title}"`)
+            .join('\n');
 
         const today = new Date().toISOString().slice(0, 10);
 
@@ -60,8 +62,10 @@ export const POST = requireAuth(async (req) => {
 - Use real, current market data where possible. Never invent statistics. Use the current year and trending terms naturally.
 - Use at most 2 emojis, only if they fit.
 
-## INTERNAL LINKS
-- Weave 3-5 links to these existing posts at contextually relevant places (not clustered at the end), using descriptive keyword-rich anchor text:
+## INTERNAL LINKS (archive)
+- From the archive below, pick the 5-8 posts that are most topically relevant to this article and link to them where the topic naturally comes up (distributed through the body, never clustered at the end).
+- Anchor text must be a specific 2-4 word phrase from the linked article's subject (keyword-oriented), not generic text like "this article" or "read more". If fewer than 3 archive posts are truly relevant, include only those.
+- Archive:
 ${urlsString}
 
 ## SEO FIELDS (character limits are hard limits)
@@ -205,10 +209,12 @@ The content must be original, fact-based, and genuinely useful to crypto investo
         }
 
         const publicDir = path.join(process.cwd(), 'public');
-        const fileName = `${slug}-${Date.now()}.png`;
+        // Compress to WebP (quality 80): a raw OpenAI PNG is ~2-3 MB, the
+        // WebP version lands well under 500 KB — better LCP and social previews.
+        const fileName = `${slug}-${Date.now()}.webp`;
         const filePath = path.join(publicDir, "imgs", fileName);
 
-        await writeFile(filePath, buffer);
+        await sharp(buffer).webp({ quality: 80, effort: 4 }).toFile(filePath);
 
         articleData.imageUrl = `/imgs/${fileName}`; // Use a URL path for client-side usage
 

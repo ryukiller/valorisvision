@@ -13,8 +13,8 @@ export async function generateMetadata({ searchParams }) {
 
     return {
         title: page === 1
-            ? 'Crypto Insights: Latest News and Analysis on Cryptocurrencies'
-            : `Crypto Insights: Latest News and Analysis (Page ${page})`,
+            ? 'Crypto News, Market Trends & Analysis'
+            : `Crypto News & Analysis (Page ${page})`,
         description: 'Stay informed with our expert analysis, market trends, and in-depth articles on Bitcoin, Ethereum, and emerging cryptocurrencies. Your go-to source for crypto knowledge.',
         alternates: {
             canonical: page === 1 ? `${BASE}/blog` : `${BASE}/blog?page=${page}`,

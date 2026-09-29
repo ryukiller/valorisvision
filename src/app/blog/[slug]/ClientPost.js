@@ -84,8 +84,8 @@ export default function ClientPost({ slug, article: articleProp }) {
                     <Image
                         src={article.imageUrl}
                         alt={article.title}
-                        width={800}
-                        height={800}
+                        width={1536}
+                        height={1024}
                         priority={true}
                         className={`block md:hidden w-full object-cover mb-2 mr-4 transition-all duration-300 border border-line ${isScrolled ? 'h-44' : 'h-96'}`}
                     />
@@ -98,8 +98,8 @@ export default function ClientPost({ slug, article: articleProp }) {
                     <Image
                         src={article.imageUrl}
                         alt={article.title}
-                        width={800}
-                        height={800}
+                        width={1536}
+                        height={1024}
                         className={`hidden md:block w-full object-cover mb-2 mr-4 transition-all duration-300 border border-line ${isScrolled ? 'h-44' : 'h-96'}`}
                     />
                     <Sidebar currentArticle={article} />

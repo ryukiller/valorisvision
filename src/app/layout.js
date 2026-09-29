@@ -40,8 +40,8 @@ const mono = localFont({
 export const metadata = {
   metadataBase: new URL('https://valorisvisio.top'),
   title: {
-    default: 'ValorisVisio - Advanced Crypto Scenario Calculator & Market Analysis Tool',
-    template: '%s | ValorisVisio - Crypto Calculator'
+    default: 'ValorisVisio - Crypto Profit Scenario Calculator',
+    template: '%s | ValorisVisio'
   },
   description: 'Calculate potential cryptocurrency profits with our advanced scenario calculator. Compare market caps, visualize gains, and make informed crypto investment decisions with real-time data.',
   authors: [{ name: 'ValorisVisio Team' }],
