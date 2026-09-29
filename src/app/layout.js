@@ -1,4 +1,4 @@
-import { Unbounded, IBM_Plex_Sans, JetBrains_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 
 import Head from 'next/head'
@@ -9,11 +9,33 @@ import { Header } from '@/rgcomponents/Header'
 import { Footer } from '@/rgcomponents/Footer'
 import { Toaster } from "@/components/ui/toaster"
 
-const display = Unbounded({ subsets: ['latin'], weight: ['400', '600', '800'], variable: '--font-display', display: 'swap' })
+// Self-hosted (latin woff2, variable) — avoids build-time Google Fonts fetches
+const display = localFont({
+  src: [{ path: './fonts/unbounded-latin.woff2', weight: '400', style: 'normal' }],
+  variable: '--font-display',
+  display: 'swap',
+})
 
-const body = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-body', display: 'swap' })
+const body = localFont({
+  src: [
+    { path: './fonts/ibm-plex-sans-latin.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/ibm-plex-sans-latin.woff2', weight: '500', style: 'normal' },
+    { path: './fonts/ibm-plex-sans-latin.woff2', weight: '600', style: 'normal' },
+    { path: './fonts/ibm-plex-sans-latin.woff2', weight: '700', style: 'normal' },
+  ],
+  variable: '--font-body',
+  display: 'swap',
+})
 
-const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '600', '700'], variable: '--font-mono', display: 'swap' })
+const mono = localFont({
+  src: [
+    { path: './fonts/jetbrains-mono-latin.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/jetbrains-mono-latin.woff2', weight: '600', style: 'normal' },
+    { path: './fonts/jetbrains-mono-latin.woff2', weight: '700', style: 'normal' },
+  ],
+  variable: '--font-mono',
+  display: 'swap',
+})
 
 export const metadata = {
   metadataBase: new URL('https://valorisvisio.top'),

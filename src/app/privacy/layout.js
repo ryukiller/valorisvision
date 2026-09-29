@@ -3,12 +3,12 @@ import '../globals.css'
 import { Footer } from '@/rgcomponents/Footer'
 import Head from 'next/head'
 import { Header } from '@/rgcomponents/Header'
-import { Inter } from 'next/font/google'
+import localFont from 'next/font/local'
 import Script from 'next/script'
 import { ThemeProvider } from '@/rgcomponents/ThemeProvider'
 import { Toaster } from "@/components/ui/toaster"
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = localFont({ src: [{ path: '../fonts/inter-latin.woff2', weight: '400', style: 'normal' }] })
 
 export const metadata = {
     title: 'Privacy Policy - ValorisVisio',
