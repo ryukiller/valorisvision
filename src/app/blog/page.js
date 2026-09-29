@@ -15,13 +15,14 @@ export async function generateMetadata({ params }) {
 export default function Blog() {
     return (
         <div className="container mx-auto px-4 py-8 main-content">
-            <div className="pt-[100px] mb-8">
+            <div className="pt-[100px] mb-10">
                 <Breadcrumbs items={[{ label: 'Blog' }]} />
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-                    Crypto Insights & Analysis
+                <p className="term-label mb-3">{'// grid_transmissions'}</p>
+                <h1 className="glitch font-display text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mb-4" data-text="CRYPTO INSIGHTS & ANALYSIS">
+                    CRYPTO <span className="text-neon-cyan">INSIGHTS</span> & <span className="text-neon-magenta">ANALYSIS</span>
                 </h1>
-                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl">
-                    Stay informed with the latest cryptocurrency news, market trends, and expert analysis to make better investment decisions.
+                <p className="text-base text-muted-foreground max-w-2xl">
+                    Signal from the noise — the latest cryptocurrency news, market trends, and expert analysis to make sharper investment decisions.
                 </p>
             </div>
             <RecentArticles />
