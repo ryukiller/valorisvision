@@ -5,8 +5,8 @@ import sharp from 'sharp';
 import { requireAuth } from '@/lib/auth';
 import { getDbCollection } from '@/lib/mongodb';
 
-/** Long-running AI generation (Netlify / Vercel serverless). */
-export const maxDuration = 300;
+/** Long-running AI generation; capped at 60s for Vercel Hobby (plan max). */
+export const maxDuration = 60;
 
 async function connectToMongoDB() {
     return getDbCollection('blog');
