@@ -137,8 +137,7 @@ export default function ModernCalculator() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="glitch font-display text-3xl md:text-4xl font-extrabold tracking-tight text-foreground"
-            data-text="SCENARIO CALCULATOR"
+            className="font-display text-3xl md:text-4xl font-extrabold tracking-tight text-foreground"
           >
             SCENARIO <span className="text-neon-cyan">CALCULATOR</span>
           </motion.h1>
@@ -307,7 +306,7 @@ export default function ModernCalculator() {
                             <span className={fieldLabel}>Potential Gain</span>
                             <Badge
                               variant={percentageGain >= 0 ? "default" : "destructive"}
-                              className={percentageGain >= 0 ? "bg-neon-acid text-void hover:bg-neon-acid font-mono" : ""}
+                              className={percentageGain >= 0 ? "bg-neon-acid text-void hover:bg-neon-acid hover:text-void font-mono" : "font-mono"}
                             >
                               {percentageGain >= 0 ? '+' : ''}{percentageGain.toFixed(2)}%
                             </Badge>
@@ -336,7 +335,7 @@ export default function ModernCalculator() {
               <Button
                 onClick={calculatePotentialValue}
                 disabled={!from || !to || !holdings || isCalculating}
-                className="flex-1 h-12 cyber-cut bg-neon-cyan text-void font-mono text-xs uppercase tracking-[0.25em] hover:brightness-110 hover:shadow-neon-cyan disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-none"
+                className="cta-primary flex-1 h-12 px-6 disabled:opacity-30 disabled:cursor-not-allowed rounded-none"
               >
                 <Calculator className="w-4 h-4 mr-2" />
                 Calculate
@@ -344,7 +343,7 @@ export default function ModernCalculator() {
               <Button
                 onClick={resetCalculator}
                 variant="outline"
-                className="h-12 px-6 cyber-cut border-line text-foreground font-mono text-xs uppercase tracking-[0.25em] hover:border-neon-magenta/60 hover:text-neon-magenta transition-all rounded-none"
+                className="cta-ghost h-12 px-6 rounded-none hover:border-neon-magenta/70 hover:text-neon-magenta"
               >
                 Reset
               </Button>

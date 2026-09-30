@@ -120,20 +120,12 @@ export default async function LearnArticlePage({ params }) {
             ]}
           />
           <p className="term-label mb-3">
-            {'// '}
-            {article.contentType}
-            {' · cluster_'}
-            {(cluster?.id || 'a').toLowerCase()}
+            {'// learn / '}
+            {article.clusterSlug}
           </p>
-          <h1
-            className="glitch font-display text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mb-4"
-            data-text={article.title.toUpperCase()}
-          >
+          <h1 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mb-4">
             {article.title}
           </h1>
-          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-neon-magenta mb-4">
-            Primary keyword: {article.primaryKeyword}
-          </p>
           <p className="text-base text-muted-foreground max-w-3xl">{article.summary}</p>
         </div>
 
@@ -152,7 +144,7 @@ export default async function LearnArticlePage({ params }) {
             </p>
             <Link
               href="/#calculator"
-              className="inline-block cyber-cut bg-neon-cyan text-void font-mono text-xs uppercase tracking-[0.25em] px-6 py-3 hover:shadow-neon-cyan hover:brightness-110 transition-all"
+              className="cta-primary inline-block px-6 py-3"
             >
               Launch calculator
             </Link>

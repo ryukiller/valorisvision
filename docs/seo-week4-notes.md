@@ -51,15 +51,11 @@ Section C lists ~26 **THIN-OR-OUTDATED-2024** posts (price predictions, personal
 3. **Keep as thin archive (noindex later if traffic is near-zero):** Meme/hype one-offs (`dogwifhat-futures-surge-traders-anticipate-major`, `the-highly-anticipated-cati-token-launch`, `helium-hnt-soars-by-18-amidst`).
 4. **Do not noindex KEEP / EVERGREEN-CANDIDATE** posts from the week 1 audit without a second pass.
 
-### Code-side noindex — document only this week
+### Code-side noindex — implemented
 
-Existing robots patterns in the app:
+See **`docs/seo-blog-hygiene.md`** and `src/lib/seo/noindex-blog-slugs.js`. Blog `generateMetadata` sets `robots: { index: false, follow: true }` for listed thin 2024 slugs and for Mongo `noindex: true` / `seo.robots` when present.
 
-- Global `src/app/robots.js` — allow `/`, disallow `/api/`, `/admin/`.
-- Not-found metadata: `robots: { index: false }` on missing learn/blog pages.
-- Static noindex meta on `/privacy` and `/cookies` layouts.
-
-There is **no** per-slug blog noindex / `robots` field on Mongo articles today. Implementing thin-post noindex would need a CMS flag (e.g. `noindex: true` on the article document) wired into `src/app/blog/[slug]/page.js` `generateMetadata`. **Out of scope for week 4 code** — track as a follow-up once editorial confirms the slug list.
+Blog → Learn further-reading: `src/lib/seo/blog-to-learn-map.js` + `RelatedLearnLinks` on article pages.
 
 ## Constraints respected
 

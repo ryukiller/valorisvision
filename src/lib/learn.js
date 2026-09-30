@@ -65,7 +65,20 @@ export const LEARN_CLUSTERS = [
       'crypto holdings profit simulator',
     ],
     intro:
-      'Use ValorisVisio’s scenario calculator to model what your holdings could be worth if they reached another coin’s market cap. This hub covers how crypto profit calculators work, market-cap comparison math, and practical ways to stress-test upside — without treating any scenario as financial advice.',
+      'Use ValorisVisio’s free scenario calculator to model what your holdings could be worth if they reached another coin’s market cap. This hub explains how crypto profit calculators work, how market-cap comparisons are built, and how to stress-test upside without treating any scenario as financial advice.',
+    hubOverview: `## Who this hub is for
+
+If you have already bought crypto and wonder “what if this coin’s market cap looked more like that one?”, you are in the right place. Traders, long-term holders, and curious beginners all use market-cap what-ifs to put size and upside in context — without needing a spreadsheet from scratch.
+
+## What you will learn
+
+- How a **crypto profit calculator** / market-cap scenario tool actually computes illustrative bag value
+- Why **circulating market cap** and **fully diluted valuation (FDV)** are not interchangeable
+- Practical checks before you trust a what-if number (supply unlocks, liquidity, unrealistic mega-cap leaps)
+- How to run the same scenario on ValorisVisio’s live homepage calculator
+
+Start with the guide below, then open the [scenario calculator](/#calculator) and try a few targets. Outputs are educational illustrations, not forecasts or investment advice.
+`,
     metaTitle: 'Crypto Profit Calculator & Market-Cap Scenarios',
     metaDescription:
       'Learn how a crypto profit calculator works, compare market-cap scenarios, and model what-if gains with ValorisVisio’s free scenario tool.',
@@ -108,7 +121,20 @@ export const LEARN_CLUSTERS = [
       'Glamsterdam ePBS',
     ],
     intro:
-      'Ethereum’s scaling roadmap is shifting how data availability and block building work — from PeerDAS and Fusaka to ePBS / Glamsterdam and the L2 stack that depends on them. Start with the PeerDAS explainer, then read ePBS for investors and L2 users, and the shorter guide on what PeerDAS means for rollup fees. Protocol timing can change; treat dates as educational context, not a fixed mainnet schedule.',
+      'Ethereum’s scaling roadmap is changing how data availability and block building work — from PeerDAS and Fusaka to ePBS / Glamsterdam and the Layer 2 stack that depends on them. This hub gathers plain-English explainers for investors and L2 users who want the mechanism, the limits, and the metrics that matter.',
+    hubOverview: `## Who this hub is for
+
+Rollup users, app builders, and investors who keep hearing “PeerDAS,” “blobs,” or “ePBS” in upgrade headlines and want a durable explanation — not just a launch-day news flash.
+
+## What you will learn
+
+- What **PeerDAS** (peer data availability sampling) does for blob capacity and why L2 fees care
+- How **ePBS / Glamsterdam** reframes block building and proposer–builder separation for everyday users
+- How to read capacity and fee claims without treating fork calendars as fixed promises
+- Where daily Fusaka / Glamsterdam coverage on the [blog](/blog) fits next to these evergreen guides
+
+Protocol timing can change; treat dates as educational context and verify against current Ethereum client and developer documentation.
+`,
     metaTitle: 'Ethereum L2 Scaling — PeerDAS, ePBS & Fees',
     metaDescription:
       'Ethereum L2 scaling hub: PeerDAS explained, ePBS / Glamsterdam for investors and L2 users, and what PeerDAS means for rollup fees.',
@@ -156,10 +182,24 @@ export const LEARN_CLUSTERS = [
       'Solana consensus finality',
     ],
     intro:
-      'A stub hub for Solana finality, confirmation times, and upgrades that change how quickly transactions settle. Full explainers land in a later week.',
-    metaTitle: 'Solana Finality Explained (Coming Soon)',
+      'How fast does a Solana transaction really settle — and what do “confirmed,” “finalized,” and upgrades like Alpenglow change for traders and builders? This hub will host clear explainers on Solana finality and confirmation times. Guides are still being written; bookmark this page for the first deep dives.',
+    hubOverview: `## Who this hub is for
+
+Anyone who uses Solana wallets, DEXs, or NFT markets and wants to understand settlement speed without drowning in consensus jargon — plus investors comparing Solana’s UX story to other L1s.
+
+## What you will learn
+
+- What Solana **finality** and confirmation levels mean in practice
+- How proposed upgrades (including Alpenglow) aim to change time-to-settle
+- How to separate marketing “speed” claims from what wallets and explorers actually show
+
+## Coming next
+
+An Alpenglow explainer and related confirmation-time guides are on the way. Until then, check the [blog](/blog) for timely Solana upgrade coverage, and use the [scenario calculator](/#calculator) if you are modeling market-cap what-ifs across Solana assets.
+`,
+    metaTitle: 'Solana Finality Explained',
     metaDescription:
-      'Stub hub for Solana finality, confirmation speed, and upgrades like Alpenglow. Evergreen guides coming soon on ValorisVisio Learn.',
+      'Learn Solana finality and confirmation speed: what settlement means for users, and upcoming guides on upgrades like Alpenglow.',
     depth: 'stub',
     plannedArticles: [
       {
@@ -185,7 +225,7 @@ export const LEARN_CLUSTERS = [
       'how crypto ETFs work',
     ],
     intro:
-      'A crypto ETF explained in plain English: exchange-traded funds that track digital assets so investors can get price exposure through a brokerage account instead of holding coins directly. This hub covers spot vs futures products, how flows show up in market narratives, and where ValorisVisio’s evergreen guides sit next to daily ETF news on /blog.',
+      'A crypto ETF explained in plain English: exchange-traded funds that track digital assets so investors can get price exposure through a brokerage account instead of holding coins directly. This hub covers spot vs futures products, how flows show up in market narratives, and evergreen guides next to daily ETF news on the blog.',
     hubOverview: `## Crypto ETF explained
 
 A **crypto ETF** is an exchange-traded fund whose value is designed to follow one or more cryptocurrencies (or related strategies). You buy and sell shares on a traditional exchange during market hours. The fund issuer handles custody, creation/redemption, and regulatory filings — you do not need a self-custody wallet for the underlying coins.
@@ -203,12 +243,15 @@ A **crypto ETF** is an exchange-traded fund whose value is designed to follow on
 
 Daily **inflow/outflow** figures measure whether authorized participants created or redeemed shares. Large creations can coincide with issuer buying of the underlying; redemptions can coincide with selling. Flows are **one input** next to macro rates, spot liquidity, and leverage — not a standalone price forecast.
 
+### Who this hub is for
+
+Brokerage investors evaluating spot Bitcoin or Ethereum ETFs, readers following alt-asset ETF launches (such as NEAR), and anyone who wants evergreen context beside daily flow headlines.
+
 ### What this hub links to
 
-- Short supporting guide: [NEAR ETF explained](/learn/crypto-etfs/near-etf-explained) (alt-asset spot context; pairs with Bitwise NEAR launch news on /blog).
-- Planned later: Bitcoin spot ETF deep dive.
-- Related market-cap what-ifs (educational only): [scenario calculator](/#calculator).
-- Daily flow and launch coverage stays on [/blog](/blog) — for example BlackRock IBIT flow snapshots and product launches.
+- Short supporting guide: [NEAR ETF explained](/learn/crypto-etfs/near-etf-explained)
+- Related market-cap what-ifs (educational only): [scenario calculator](/#calculator)
+- Daily flow and launch coverage on [/blog](/blog)
 
 This is educational framing, **not** investment advice. ETF shares and self-custody assets have different operational, tax, and counterparty profiles depending on your jurisdiction.
 `,
@@ -248,7 +291,20 @@ This is educational framing, **not** investment advice. ETF shares and self-cust
       'staking receipt tokens',
     ],
     intro:
-      'Liquid staking tokens (LSTs) let you earn staking rewards while keeping a tradable receipt for staked assets. This hub is the IA home for LST mechanics, risk checks, and how staking receipt tokens show up in ETF and regulatory conversations — start with the liquid staking explained pillar, then the LST risks guide.',
+      'Liquid staking tokens (LSTs) let you earn staking rewards while keeping a tradable receipt for staked assets. This hub explains LST mechanics, risk checks, and how staking receipt tokens show up in ETF and regulatory conversations — start with the liquid staking explained guide, then the LST risks compare.',
+    hubOverview: `## Who this hub is for
+
+Stakers who want liquidity without fully exiting a position, DeFi users who collateralize LSTs, and readers following staking-receipt / ETF headlines who need the fundamentals first.
+
+## What you will learn
+
+- How **liquid staking** works end-to-end (stake → receipt token → rewards accounting)
+- What **liquid staking tokens** share across Ethereum, Solana, and other networks — and what differs
+- Practical **LST risks**: smart-contract, oracle, depeg, and operator concentration
+- How news about staking receipt tokens relates to the evergreen guides here
+
+Start with [liquid staking explained](/learn/liquid-staking/liquid-staking-explained), then [JitoSOL & LST risks](/learn/liquid-staking/lst-risks). Timely SEC or product news stays on the [blog](/blog). Nothing here is financial or legal advice.
+`,
     metaTitle: 'Liquid Staking Tokens — LST Hub',
     metaDescription:
       'Liquid staking tokens hub: LST mechanics, risks, and staking receipt context. Start with liquid staking explained and LST risk checks.',
@@ -296,10 +352,24 @@ This is educational framing, **not** investment advice. ETF shares and self-cust
       'crypto tax rules US',
     ],
     intro:
-      'Stub hub for jurisdiction-by-jurisdiction crypto tax overviews. Not tax advice — structured explainers and checklists will be added later.',
-    metaTitle: 'Crypto Tax by Jurisdiction (Coming Soon)',
+      'Crypto tax rules vary by country and sometimes by state or province. This hub will collect plain-language overviews and checklists so you can find jurisdiction-specific context fast. Guides are educational only — not tax, legal, or accounting advice. Always confirm with a qualified professional and official sources.',
+    hubOverview: `## Who this hub is for
+
+Holders and traders who need a starting map of how cryptocurrency is often taxed in their region — capital gains, income from staking or mining, and record-keeping basics — before they talk to a tax professional.
+
+## What you will learn
+
+- How “crypto tax by jurisdiction” usually splits between capital gains and income-style events
+- US-oriented basics (first planned guide), with room for more regions later
+- Practical habits: cost basis, timestamps, and separating personal notes from filing software
+
+## Coming next
+
+A US crypto tax basics guide is on the way, with more jurisdictions to follow. For timely policy news (for example state-level draft rules), see the [blog](/blog). Nothing on ValorisVisio Learn replaces advice from a licensed tax professional.
+`,
+    metaTitle: 'Crypto Tax by Jurisdiction',
     metaDescription:
-      'Stub hub for crypto tax by jurisdiction. Evergreen, non-advice guides and checklists coming soon on ValorisVisio Learn.',
+      'Crypto tax by jurisdiction: upcoming plain-language guides and checklists. Educational only — not tax advice.',
     depth: 'stub',
     plannedArticles: [
       {
