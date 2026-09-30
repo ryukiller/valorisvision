@@ -141,21 +141,41 @@ export default async function LearnArticlePage({ params }) {
           <ReactMarkdown>{article.markdown}</ReactMarkdown>
         </article>
 
-        <aside className="max-w-3xl mb-12 border border-neon-cyan/40 p-6 cyber-cut-sm bg-panel/50">
-          <p className="term-label mb-3">{'// run_scenario'}</p>
-          <h2 className="font-display text-xl font-bold tracking-tight mb-3">
-            Try it on ValorisVisio
-          </h2>
-          <p className="text-muted-foreground mb-5">
-            Open the free crypto scenario calculator and model a market-cap what-if with live data.
-          </p>
-          <Link
-            href="/#calculator"
-            className="inline-block cyber-cut bg-neon-cyan text-void font-mono text-xs uppercase tracking-[0.25em] px-6 py-3 hover:shadow-neon-cyan hover:brightness-110 transition-all"
-          >
-            Launch calculator
-          </Link>
-        </aside>
+        {article.clusterSlug === 'crypto-profit-calculator' ? (
+          <aside className="max-w-3xl mb-12 border border-neon-cyan/40 p-6 cyber-cut-sm bg-panel/50">
+            <p className="term-label mb-3">{'// run_scenario'}</p>
+            <h2 className="font-display text-xl font-bold tracking-tight mb-3">
+              Try it on ValorisVisio
+            </h2>
+            <p className="text-muted-foreground mb-5">
+              Open the free crypto scenario calculator and model a market-cap what-if with live data.
+            </p>
+            <Link
+              href="/#calculator"
+              className="inline-block cyber-cut bg-neon-cyan text-void font-mono text-xs uppercase tracking-[0.25em] px-6 py-3 hover:shadow-neon-cyan hover:brightness-110 transition-all"
+            >
+              Launch calculator
+            </Link>
+          </aside>
+        ) : article.clusterSlug === 'ethereum-scaling' ? (
+          <aside className="max-w-3xl mb-12 border border-line/70 p-6 cyber-cut-sm bg-panel/40">
+            <p className="term-label mb-3">{'// optional_scenario'}</p>
+            <h2 className="font-display text-xl font-bold tracking-tight mb-3">
+              Optional: ETH market-cap what-if
+            </h2>
+            <p className="text-muted-foreground mb-5">
+              Scaling upgrades are not price forecasts. If you still want to explore illustrative ETH
+              market-cap scenarios for your holdings, the free calculator is available — treat
+              outputs as conditional math only.
+            </p>
+            <Link
+              href="/#calculator"
+              className="inline-block border border-neon-cyan/50 text-neon-cyan font-mono text-xs uppercase tracking-[0.25em] px-6 py-3 hover:border-neon-cyan transition-colors"
+            >
+              Open calculator
+            </Link>
+          </aside>
+        ) : null}
 
         <nav className="flex flex-wrap gap-4 font-mono text-xs uppercase tracking-[0.2em]">
           <Link
