@@ -25,6 +25,7 @@ export function Footer() {
                     <span className="term-label">{'// navigate'}</span>
                     {[
                         { label: "Scenario Calculator", href: "/" },
+                        { label: "Learn", href: "/learn" },
                         { label: "Blog", href: "/blog" },
                         { label: "Privacy Policy", href: "/privacy" },
                         { label: "Cookie Policy", href: "/cookies" },
