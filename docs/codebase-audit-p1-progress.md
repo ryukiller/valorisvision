@@ -22,7 +22,7 @@
 | --- | --- | --- |
 | **P1-8 remainder** | Unify `articles` → `blog` | Admin CRUD (`/api/admin/articles`) now uses collection `blog`. Removed broken `client.close()`. Safe one-off migration script (see below). |
 | **P1-9** | `create-article` proxy | Route returns **410** with pointer to `POST /api/blog` (no cookie-less re-fetch, no port 3001). |
-| **P1-10** | OpenAI / article errors | Preflight `OPENAI_API_KEY`; sanitized client errors; safe JSON parse; image failure no longer aborts text save (`status: published_no_image` + warning); `maxDuration = 300`. |
+| **P1-10** | OpenAI / article errors | Preflight `OPENAI_API_KEY`; sanitized client errors; safe JSON parse; image failure no longer aborts text save (`status: published_no_image` + warning); `maxDuration = 60` (Vercel Hobby max). |
 | **P1-11** | `NEXT_PUBLIC_API_URL` | `ClientPost` + `Sidebar` use relative `/api/blog...` URLs. |
 | **P1-13** | Password KDF | `scrypt$salt$hash` via `hashPassword` / `verifyPassword`; legacy SHA-256 hex still accepted. `.env.example` updated. |
 

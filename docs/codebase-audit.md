@@ -119,7 +119,7 @@ This PR ships the audit plus **surgical P0 fixes only** (auth defaults, `POST /a
 **Evidence:** `src/app/api/blog/route.js` (catch returns `error.message`; no `OPENAI_API_KEY` pre-check). CLI: `scripts/internal-bot.mjs`, `docs/internal-bot.md`.  
 **Fix:** Preflight env checks; sanitize errors; optional two-phase save (draft without image); set route `maxDuration` on host.  
 **Effort:** M  
-**Status:** **Fixed in follow-up P1 PR** — preflight, sanitized errors, safe JSON parse, save without image on image failure, `maxDuration = 300`.
+**Status:** **Fixed in follow-up P1 PR** — preflight, sanitized errors, safe JSON parse, save without image on image failure, `maxDuration = 60` (Vercel Hobby max).
 
 ### P1-11 — Client fetches depend on unset `NEXT_PUBLIC_API_URL`  
 **Problem:** Sidebar / fallback client post fetch use `` `${process.env.NEXT_PUBLIC_API_URL}/api/blog...` ``. If unset → `undefined/api/...` broken URLs. Server-rendered path mostly avoids this now.  
