@@ -4,15 +4,15 @@
 **Status column:** `live` / `live-stub` / `in-progress` / `planned`.  
 **Base:** `https://valorisvisio.top`
 
-## Cluster hubs (live in week 1)
+## Cluster hubs
 
 | Cluster | Primary KW | Secondary KWs | Target URL | Content type | Status |
 | --- | --- | --- | --- | --- | --- |
 | A — Calculator / market-cap scenarios | crypto profit calculator | market cap scenario calculator; crypto what-if calculator; compare crypto market caps; crypto holdings profit simulator | `/learn/crypto-profit-calculator` | hub | live-stub (solid intro) |
 | B — Ethereum scaling | Ethereum L2 scaling | PeerDAS explained; ePBS Ethereum; blob data availability; Fusaka upgrade; Glamsterdam ePBS | `/learn/ethereum-scaling` | hub | **live (week 3)** — intro + 3 guides linked |
 | C — Solana finality | Solana finality explained | Solana Alpenglow; Solana confirmation time; Solana consensus finality | `/learn/solana-finality` | hub | live-stub (light) |
-| D — Crypto ETFs | crypto ETF explained | Bitcoin spot ETF; Ethereum ETF; crypto ETF flows | `/learn/crypto-etfs` | hub | live-stub (light) |
-| E — Liquid staking / LST | liquid staking explained | liquid staking token; LST crypto; stETH explained; JitoSOL; staking receipt tokens | `/learn/liquid-staking` | hub | live-stub (solid intro) |
+| D — Crypto ETFs | crypto ETF explained | Bitcoin spot ETF; Ethereum ETF; crypto ETF flows; NEAR ETF; how crypto ETFs work | `/learn/crypto-etfs` | hub | **live (week 4)** — overview + NEAR supporting |
+| E — Liquid staking / LST | liquid staking tokens | liquid staking explained; liquid staking token; LST crypto; stETH explained; JitoSOL; staking receipt tokens | `/learn/liquid-staking` | hub | **live (week 4)** — intro + 2 guides linked |
 | F — Tax by jurisdiction | crypto tax by jurisdiction | crypto tax guide; cryptocurrency capital gains; crypto tax rules US | `/learn/crypto-tax` | hub | live-stub (light) |
 
 ## Index
@@ -39,8 +39,10 @@
 | B | PeerDAS L2 benefits | PeerDAS rollups; L2 data availability PeerDAS; rollup blob fees | `/learn/ethereum-scaling/peerdas-and-l2s` | supporting | **done (week 3)** |
 | B | Ethereum blob data availability | blob throughput; PeerDAS blobs | `/learn/ethereum-scaling/blob-data-availability` | supporting | planned |
 | C | Solana Alpenglow explained | Solana faster finality; Alpenglow upgrade | `/learn/solana-finality/alpenglow-explained` | supporting | planned |
+| D | NEAR ETF explained | Bitwise NEAR ETF; spot NEAR ETF; altcoin ETF | `/learn/crypto-etfs/near-etf-explained` | supporting | **done (week 4)** |
 | D | Bitcoin spot ETF explained | BTC ETF flows; IBIT vs peers | `/learn/crypto-etfs/bitcoin-spot-etf-explained` | supporting | planned |
-| E | liquid staking risks | LST depeg; liquid staking slashing | `/learn/liquid-staking/lst-risks` | supporting | planned |
+| E | liquid staking explained | liquid staking token; LST crypto; stETH explained; staking receipt token | `/learn/liquid-staking/liquid-staking-explained` | pillar | **done (week 4)** |
+| E | liquid staking risks | JitoSOL risks; LST depeg; liquid staking slashing; staking receipt token risks | `/learn/liquid-staking/lst-risks` | supporting | **done (week 4)** |
 | E | staking receipt token ETF | LST ETF; SEC staking receipt FAQ context | `/learn/liquid-staking/receipt-tokens-and-etfs` | supporting | planned |
 | E | stETH vs liquid staking tokens | stETH vs rETH; major LST comparison | `/learn/liquid-staking/steth-vs-lsts` | supporting | planned |
 | F | US crypto tax basics | IRS crypto tax; capital gains crypto US | `/learn/crypto-tax/us-basics` | supporting | planned |
@@ -59,6 +61,14 @@
 - Soft calculator CTAs only where ETH market-cap scenarios are natural; Cluster B article aside is optional/soft (not the Cluster A hard CTA).
 - Blog posts left in Mongo; see `docs/seo-week3-notes.md` for recommended internal links from blog → Learn.
 - Sitemap: same `getLearnSitemapEntries()` helper as week 2 picks up new `LEARN_ARTICLES`.
+
+## Week 4 notes (Cluster E + D)
+
+- Hub E primary KW shifted to **liquid staking tokens** so **liquid staking explained** owns the pillar.
+- Live E guides: liquid staking explained (pillar), JitoSOL & LST risks (supporting compare) — pick driven by existing SEC/JitoSOL blog coverage.
+- Hub D promoted from stub → solid with on-hub **crypto ETF explained** overview (`hubOverview`) + NEAR ETF supporting page.
+- Blog→Learn targets and thin-2024 hygiene proposals: `docs/seo-week4-notes.md` (noindex documented only; no per-slug blog robots flag in app yet).
+- Sitemap: `getLearnSitemapEntries()` picks up new articles automatically.
 
 ## Routing convention
 
