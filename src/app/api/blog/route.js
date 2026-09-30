@@ -1,24 +1,13 @@
-import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
 import path from 'path';
 import { writeFile } from 'fs/promises';
 import OpenAI from 'openai';
 import sharp from 'sharp';
 import { requireAuth } from '@/lib/auth';
-
-// MongoDB setup
-const uri = process.env.MONGODB;
-const client = new MongoClient(uri);
+import { getDbCollection } from '@/lib/mongodb';
 
 async function connectToMongoDB() {
-    try {
-        await client.connect();
-        console.log("Connected to MongoDB");
-        return client.db("valorisvisio").collection("blog");
-    } catch (error) {
-        console.error("Error connecting to MongoDB:", error);
-        throw error;
-    }
+    return getDbCollection('blog');
 }
 
 export const POST = requireAuth(async (req) => {

@@ -1,19 +1,12 @@
 import { NextResponse } from 'next/server'
-import { MongoClient } from 'mongodb'
 import { requireAuth } from '@/lib/auth'
 import cache, { getCacheKey, CACHE_TTL } from '@/lib/cache'
+import { getDbCollection } from '@/lib/mongodb'
 
-const uri = process.env.MONGODB
-const client = new MongoClient(uri)
-
+// NOTE: still writes collection "articles" while public blog uses "blog" —
+// unifying collections is follow-up work (see docs/codebase-audit-p1-progress.md).
 async function connectToMongoDB() {
-  try {
-    await client.connect()
-    return client.db("valorisvisio").collection("articles")
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error)
-    throw error
-  }
+  return getDbCollection('articles')
 }
 
 // GET - List all articles (admin view)

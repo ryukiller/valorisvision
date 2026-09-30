@@ -1,18 +1,8 @@
-import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
-
-const uri = process.env.MONGODB;
-const client = new MongoClient(uri);
+import { getDbCollection } from '@/lib/mongodb';
 
 async function connectToMongoDB() {
-    try {
-        await client.connect();
-        console.log("Connected to MongoDB");
-        return client.db("valorisvisio").collection("blog");
-    } catch (error) {
-        console.error("Error connecting to MongoDB:", error);
-        throw error;
-    }
+    return getDbCollection('blog');
 }
 
 export async function GET(req, { params }) {

@@ -1,19 +1,10 @@
 import { NextResponse } from 'next/server'
-import { MongoClient } from 'mongodb'
 import { requireAuth } from '@/lib/auth'
 import cache, { getCacheKey, CACHE_TTL } from '@/lib/cache'
-
-const uri = process.env.MONGODB
-const client = new MongoClient(uri)
+import { getDbCollection } from '@/lib/mongodb'
 
 async function connectToMongoDB() {
-  try {
-    await client.connect()
-    return client.db("valorisvisio").collection("coins")
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error)
-    throw error
-  }
+  return getDbCollection('coins')
 }
 
 function delay(ms) {

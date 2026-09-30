@@ -1,5 +1,6 @@
 import { getBlogPosts, getCategories } from '@/lib/blog';
 import { getLearnSitemapEntries } from '@/lib/learn';
+import { shouldNoindexBlogPost } from '@/lib/seo/noindex-blog-slugs';
 
 const baseUrl = 'https://valorisvisio.top';
 
@@ -7,13 +8,20 @@ const baseUrl = 'https://valorisvisio.top';
 // newly published articles appear in the sitemap.
 export const revalidate = 3600;
 
+function toArticleUrl(a) {
+  return {
+    url: `${baseUrl}/blog/${a.slug}`,
+    lastModified: a.updatedAt || a.createdAt,
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  };
+}
+
 export default async function sitemap() {
+  // Omit /privacy, /cookies (noindex intent) and typo utility page from sitemap.
   const staticPages = [
     { url: `${baseUrl}/`, changeFrequency: 'daily', priority: 1 },
     { url: `${baseUrl}/blog`, changeFrequency: 'daily', priority: 0.8 },
-    { url: `${baseUrl}/privacy`, changeFrequency: 'monthly', priority: 0.2 },
-    { url: `${baseUrl}/cookies`, changeFrequency: 'monthly', priority: 0.2 },
-    { url: `${baseUrl}/highlithed-word-counter`, changeFrequency: 'monthly', priority: 0.3 },
   ];
 
   const learnPages = getLearnSitemapEntries();
@@ -26,12 +34,9 @@ export default async function sitemap() {
     // Large limit: blogs are small, one pass is fine
     const { data: articles, pagination } = await getBlogPosts({ page: 1, limit: 500 });
 
-    articleUrls = articles.map((a) => ({
-      url: `${baseUrl}/blog/${a.slug}`,
-      lastModified: a.updatedAt || a.createdAt,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    }));
+    articleUrls = articles
+      .filter((a) => !shouldNoindexBlogPost(a.slug, a))
+      .map(toArticleUrl);
 
     // Remaining articles beyond the first 500 (unlikely, but keep the sitemap complete)
     if (pagination.totalPages > 1) {
@@ -40,14 +45,10 @@ export default async function sitemap() {
           getBlogPosts({ page: i + 2, limit: 500 })
         )
       );
-      moreUrls = rest.flatMap(
-        ({ data }) =>
-          data.map((a) => ({
-            url: `${baseUrl}/blog/${a.slug}`,
-            lastModified: a.updatedAt || a.createdAt,
-            changeFrequency: 'weekly',
-            priority: 0.8,
-          }))
+      moreUrls = rest.flatMap(({ data }) =>
+        data
+          .filter((a) => !shouldNoindexBlogPost(a.slug, a))
+          .map(toArticleUrl)
       );
     }
 

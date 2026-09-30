@@ -55,49 +55,57 @@ This PR ships the audit plus **surgical P0 fixes only** (auth defaults, `POST /a
 **Problem:** `POST /api/admin/auth` accepts unlimited password attempts. SHA-256 password hashing is fast → online brute force is cheap.  
 **Evidence:** `src/app/api/admin/auth/route.js`; `authenticateUser` in `src/lib/auth.js`.  
 **Fix:** Rate-limit by IP (middleware, Netlify edge, or in-memory token bucket); consider slow hash (scrypt/argon2) for stored passwords.  
-**Effort:** S–M
+**Effort:** S–M  
+**Status:** **Fixed in P1 PR** — in-memory IP limiter (10 / 15 min). Per-instance only on serverless; KDF upgrade still open (P1-13).
 
 ### P1-2 — Admin UI cannot see `httpOnly` session cookie  
 **Problem:** After refresh, auth check uses `document.cookie.includes('admin_session')`, but the cookie is `httpOnly: true`, so the client never sees it → false logged-out state (or broken “session present” detection).  
 **Evidence:** `src/app/admin/page.js` (`checkAuthStatus`); cookie set in `src/app/api/admin/auth/route.js`.  
 **Fix:** Add `GET /api/admin/auth` (or `/api/admin/me`) that uses `getCurrentUser()` server-side.  
-**Effort:** S
+**Effort:** S  
+**Status:** **Fixed in P1 PR** — `GET /api/admin/me` + admin client update.
 
 ### P1-3 — Contact honeypot field name mismatch  
 **Problem:** UI sends `website`; API checks `honeypot`. Spam bots are not filtered; real bots filling `website` are ignored.  
 **Evidence:** `src/rgcomponents/FeedBack.js` (`name="website"`); `src/app/api/send/route.js` (`honeypot`).  
 **Fix:** Align names (prefer hidden `honeypot`) and add basic rate limiting on `/api/send`.  
-**Effort:** S
+**Effort:** S  
+**Status:** **Fixed in P1 PR**.
 
 ### P1-4 — `EMAIL_PASS` trailing space  
 **Problem:** `process.env.EMAIL_PASS + " "` appends a space, which commonly breaks SMTP auth.  
 **Evidence:** `src/app/api/send/route.js` line 9.  
 **Fix:** Use `process.env.EMAIL_PASS` only; document `EMAIL` / `EMAIL_PASS` in `.env.example`.  
-**Effort:** S
+**Effort:** S  
+**Status:** **Fixed in P1 PR**.
 
 ### P1-5 — Service worker cache-first for navigations  
 **Problem:** `public/sw.js` caches `/` and `/blog` on install and serves `caches.match` before network → stale homepage/blog after deploys.  
 **Evidence:** `public/sw.js`; registered from `src/app/layout.js`.  
 **Fix:** Network-first for HTML; versioned cache name + skip waiting; or remove SW until a real PWA strategy exists.  
-**Effort:** S
+**Effort:** S  
+**Status:** **Fixed in P1 PR** — network-first navigations; cache `valorisvisio-v2`.
 
 ### P1-6 — Sitemap includes noindex blog URLs  
 **Problem:** `shouldNoindexBlogPost` is applied in post metadata but **not** when building the sitemap → Google still discovers thin/outdated URLs.  
 **Evidence:** `src/app/sitemap.js` maps all `getBlogPosts` results; list in `src/lib/seo/noindex-blog-slugs.js`; hygiene notes in `docs/seo-blog-hygiene.md`.  
 **Fix:** Filter with `shouldNoindexBlogPost(a.slug, a)` before emitting URLs; optionally omit `/privacy` and `/cookies` (noindex intent) and the typo utility page.  
-**Effort:** S
+**Effort:** S  
+**Status:** **Fixed in P1 PR**.
 
 ### P1-7 — Nested root layouts + `next/head` on App Router pages  
 **Problem:** `privacy`, `cookies`, and `highlithed-word-counter` each render a full `<html>` tree and use `next/head` (Pages-router API). In App Router this duplicates/ignores metadata and can break noindex/theme/fonts.  
 **Evidence:** `src/app/privacy/layout.js`, `src/app/cookies/layout.js`, `src/app/highlithed-word-counter/layout.js` vs root `src/app/layout.js`.  
 **Fix:** Delete nested `<html>` layouts; move robots/title into `export const metadata`.  
-**Effort:** S–M
+**Effort:** S–M  
+**Status:** **Fixed in P1 PR** — nested layouts removed; metadata on pages.
 
 ### P1-8 — Mongo connection pattern inconsistent / fragile  
 **Problem:** Most API routes create module-level `new MongoClient(uri)` and connect/close per request (or never reuse). Undefined `MONGODB` constructs an invalid client at import. Historical SRV DNS issues are noted in `.env.example`. Admin **articles** API writes collection `articles` while the live blog uses `blog`.  
 **Evidence:** `src/app/api/admin/articles/route.js` (`"articles"`); `src/lib/blog.js` (`'blog'`); per-route clients in `getdata`, `blog`, `admin/prices`.  
 **Fix:** One shared `clientPromise` helper; fail fast if `MONGODB` missing; point admin CRUD at `blog` or drop dead `articles` path. Prefer non-SRV URI when SRV fails (already documented).  
-**Effort:** M
+**Effort:** M  
+**Status:** **Partial in P1 PR** — `src/lib/mongodb.js`; `blog.js` + API routes migrated to shared lazy client. Collection unify (`articles`→`blog`) still open.
 
 ### P1-9 — `create-article` proxy drops auth + wrong default port  
 **Problem:** Server-side `fetch` to `/api/blog` does not forward the admin cookie, and defaults to `localhost:3001`.  
