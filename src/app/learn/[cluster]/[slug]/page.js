@@ -157,16 +157,18 @@ export default async function LearnArticlePage({ params }) {
               Launch calculator
             </Link>
           </aside>
-        ) : article.clusterSlug === 'ethereum-scaling' ? (
+        ) : article.clusterSlug === 'ethereum-scaling' ||
+          article.clusterSlug === 'liquid-staking' ||
+          article.clusterSlug === 'crypto-etfs' ? (
           <aside className="max-w-3xl mb-12 border border-line/70 p-6 cyber-cut-sm bg-panel/40">
             <p className="term-label mb-3">{'// optional_scenario'}</p>
             <h2 className="font-display text-xl font-bold tracking-tight mb-3">
-              Optional: ETH market-cap what-if
+              Optional: market-cap what-if
             </h2>
             <p className="text-muted-foreground mb-5">
-              Scaling upgrades are not price forecasts. If you still want to explore illustrative ETH
-              market-cap scenarios for your holdings, the free calculator is available — treat
-              outputs as conditional math only.
+              Guides in this cluster are educational, not price forecasts. If you still want to
+              explore illustrative market-cap scenarios for your holdings, the free calculator is
+              available — treat outputs as conditional math only.
             </p>
             <Link
               href="/#calculator"

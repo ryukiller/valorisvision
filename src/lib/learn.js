@@ -1,6 +1,7 @@
 /**
  * Evergreen /learn IA — shared by index, cluster hubs, articles, and sitemap.
  * Week 1: hubs. Week 2: cluster A. Week 3: cluster B (Ethereum scaling).
+ * Week 4: cluster E (liquid staking) + cluster D (crypto ETFs, light hub).
  */
 
 export const LEARN_BASE = 'https://valorisvisio.top';
@@ -42,6 +43,7 @@ export const LEARN_BASE = 'https://valorisvisio.top';
  * @property {string} primaryKeyword
  * @property {string[]} secondaryKeywords
  * @property {string} intro
+ * @property {string} [hubOverview] - optional markdown for solid hubs (no leading H1)
  * @property {string} metaTitle
  * @property {string} metaDescription
  * @property {HubDepth} depth
@@ -172,21 +174,56 @@ export const LEARN_CLUSTERS = [
   {
     id: 'D',
     slug: 'crypto-etfs',
-    title: 'Crypto ETFs',
+    title: 'Crypto ETFs Explained',
     shortTitle: 'Crypto ETFs',
     primaryKeyword: 'crypto ETF explained',
     secondaryKeywords: [
       'Bitcoin spot ETF',
       'Ethereum ETF',
       'crypto ETF flows',
+      'NEAR ETF',
+      'how crypto ETFs work',
     ],
     intro:
-      'Stub hub for spot and other crypto ETFs — how they work, how flows relate to price narratives, and how to read filings without the hype. Guides planned for a later week.',
-    metaTitle: 'Crypto ETFs Explained (Coming Soon)',
+      'A crypto ETF explained in plain English: exchange-traded funds that track digital assets so investors can get price exposure through a brokerage account instead of holding coins directly. This hub covers spot vs futures products, how flows show up in market narratives, and where ValorisVisio’s evergreen guides sit next to daily ETF news on /blog.',
+    hubOverview: `## Crypto ETF explained
+
+A **crypto ETF** is an exchange-traded fund whose value is designed to follow one or more cryptocurrencies (or related strategies). You buy and sell shares on a traditional exchange during market hours. The fund issuer handles custody, creation/redemption, and regulatory filings — you do not need a self-custody wallet for the underlying coins.
+
+### Spot vs futures (keep them separate)
+
+| Type | What it tracks | Common takeaway |
+| --- | --- | --- |
+| **Spot** crypto ETF | Aims to reflect the spot price of the asset (e.g. Bitcoin or Ether held by custodians) | Often what headlines mean by “Bitcoin ETF” / “Ethereum ETF” after U.S. spot approvals |
+| **Futures** crypto ETF | Holds futures contracts, not (primarily) the spot coins | Roll costs and basis can make tracking differ from spot |
+
+“Crypto ETF explained” does **not** mean every ticker works the same. Read the prospectus for holdings, fees, creation mechanism, and risks.
+
+### How flows enter the conversation
+
+Daily **inflow/outflow** figures measure whether authorized participants created or redeemed shares. Large creations can coincide with issuer buying of the underlying; redemptions can coincide with selling. Flows are **one input** next to macro rates, spot liquidity, and leverage — not a standalone price forecast.
+
+### What this hub links to
+
+- Short supporting guide: [NEAR ETF explained](/learn/crypto-etfs/near-etf-explained) (alt-asset spot context; pairs with Bitwise NEAR launch news on /blog).
+- Planned later: Bitcoin spot ETF deep dive.
+- Related market-cap what-ifs (educational only): [scenario calculator](/#calculator).
+- Daily flow and launch coverage stays on [/blog](/blog) — for example BlackRock IBIT flow snapshots and product launches.
+
+This is educational framing, **not** investment advice. ETF shares and self-custody assets have different operational, tax, and counterparty profiles depending on your jurisdiction.
+`,
+    metaTitle: 'Crypto ETF Explained — Spot, Flows & Guides',
     metaDescription:
-      'Stub hub for crypto ETFs, Bitcoin and Ethereum spot products, and flow analysis. Evergreen guides coming soon on ValorisVisio Learn.',
-    depth: 'stub',
+      'Crypto ETF explained: how spot and futures crypto ETFs work, how flows relate to price narratives, and links to ValorisVisio Learn guides.',
+    depth: 'solid',
     plannedArticles: [
+      {
+        title: 'NEAR ETF explained',
+        primaryKeyword: 'NEAR ETF explained',
+        slugHint: 'near-etf-explained',
+        contentType: 'supporting',
+        status: 'live',
+      },
       {
         title: 'Bitcoin spot ETF explained',
         primaryKeyword: 'Bitcoin spot ETF explained',
@@ -201,8 +238,9 @@ export const LEARN_CLUSTERS = [
     slug: 'liquid-staking',
     title: 'Liquid Staking & LSTs',
     shortTitle: 'Liquid Staking',
-    primaryKeyword: 'liquid staking explained',
+    primaryKeyword: 'liquid staking tokens',
     secondaryKeywords: [
+      'liquid staking explained',
       'liquid staking token',
       'LST crypto',
       'stETH explained',
@@ -210,18 +248,25 @@ export const LEARN_CLUSTERS = [
       'staking receipt tokens',
     ],
     intro:
-      'Liquid staking lets you earn staking rewards while keeping a tradable receipt token (an LST). This hub explains liquid staking from first principles — how LSTs work, where risks sit, and how receipt tokens show up in ETF and regulatory conversations.',
-    metaTitle: 'Liquid Staking Explained — LST Hub',
+      'Liquid staking tokens (LSTs) let you earn staking rewards while keeping a tradable receipt for staked assets. This hub is the IA home for LST mechanics, risk checks, and how staking receipt tokens show up in ETF and regulatory conversations — start with the liquid staking explained pillar, then the LST risks guide.',
+    metaTitle: 'Liquid Staking Tokens — LST Hub',
     metaDescription:
-      'Liquid staking explained: how LSTs work, key risks, and how staking receipt tokens fit into DeFi and ETF discussions.',
+      'Liquid staking tokens hub: LST mechanics, risks, and staking receipt context. Start with liquid staking explained and LST risk checks.',
     depth: 'solid',
     plannedArticles: [
       {
-        title: 'LST risks and depeg scenarios',
+        title: 'Liquid staking explained',
+        primaryKeyword: 'liquid staking explained',
+        slugHint: 'liquid-staking-explained',
+        contentType: 'pillar',
+        status: 'live',
+      },
+      {
+        title: 'JitoSOL & LST risks',
         primaryKeyword: 'liquid staking risks',
         slugHint: 'lst-risks',
         contentType: 'supporting',
-        status: 'planned',
+        status: 'live',
       },
       {
         title: 'Staking receipt tokens & ETFs',
@@ -605,6 +650,276 @@ Only if demand, capacity, and the rollup’s pricing policy line up that way. Ca
 ### Is PeerDAS the same as cheaper L1 gas for swaps on mainnet?
 
 No. PeerDAS targets rollup **data availability** via blobs. Ordinary L1 execution gas is a different market.
+`,
+  },
+  {
+    clusterSlug: 'liquid-staking',
+    slug: 'liquid-staking-explained',
+    title: 'Liquid Staking Explained: How LSTs Work',
+    shortTitle: 'Liquid staking explained',
+    primaryKeyword: 'liquid staking explained',
+    secondaryKeywords: [
+      'liquid staking token',
+      'LST crypto',
+      'stETH explained',
+      'staking receipt token',
+      'how liquid staking works',
+    ],
+    metaTitle: 'Liquid Staking Explained — How LSTs & Receipt Tokens Work',
+    metaDescription:
+      'Liquid staking explained: how LSTs work, how rewards accrue, what differs from locked staking, and how receipt tokens fit DeFi and ETF conversations.',
+    contentType: 'pillar',
+    summary:
+      'A plain-English pillar on liquid staking: staking vs liquid staking, how LST receipt tokens work, major design patterns, and what to read next on risks.',
+    markdown: `**Liquid staking explained** in one sentence: you stake assets with a protocol (or its operators), receive a **liquid staking token (LST)** that represents your claim, and can often trade or use that receipt in DeFi while staking rewards continue to accrue according to the protocol’s rules.
+
+This pillar sits under the [liquid staking hub](/learn/liquid-staking). For risk-focused reading (including JitoSOL / Solana LST context and staking-receipt regulatory themes), see [JitoSOL & LST risks](/learn/liquid-staking/lst-risks).
+
+Educational only — not financial, legal, or tax advice. Protocols, fees, and rules change; verify current docs before interacting with any product.
+
+## Staking vs liquid staking
+
+**Native / locked staking** typically bonds coins to validators. Rewards may accrue, but the bonded position is often illiquid until an unbonding or withdrawal queue completes.
+
+**Liquid staking** aims to keep economic exposure to staking rewards **and** give you a transferable receipt:
+
+1. You deposit (or stake through) a liquid-staking protocol.
+2. You receive an **LST** (sometimes called a staking receipt token) that represents your staked claim plus, depending on design, accrued rewards.
+3. You may hold, transfer, or use that LST elsewhere — subject to market liquidity and smart-contract risk.
+4. Exiting usually means redeeming through the protocol (possible queue / rate limits) or selling the LST on a secondary market (price can differ from “fair” redemption value).
+
+Liquid staking does **not** remove consensus risk, operator risk, or smart-contract risk. It changes **liquidity and composability**, not the fact that something can go wrong.
+
+## How LST designs usually work
+
+Two common accounting patterns (names vary by chain and issuer):
+
+| Pattern | Idea | Example framing |
+| --- | --- | --- |
+| **Rebase / balance-changing** | Your token balance rises as rewards accrue | Often associated with designs like stETH-style balances |
+| **Reward-bearing / exchange-rate** | Balance stays fixed; each token is worth more underlying over time | Common in many LST vaults (e.g. rETH-style rate) |
+
+Neither pattern is “safer” by default. What matters is **who runs validators**, **how withdrawals work**, **oracle/rate updates**, **fees**, and **where the LST trades**.
+
+Major ecosystems you will see in headlines:
+
+- **Ethereum LSTs** — e.g. stETH (Lido), rETH (Rocket Pool), and others. Designs differ on node-operator sets, fees, and decentralization assumptions.
+- **Solana LSTs** — e.g. **JitoSOL** and peer products that wrap staked SOL (sometimes with MEV-related reward narratives). Same core idea: receipt token + staking economics + secondary market.
+
+A planned compare page will go deeper on stETH vs other major LSTs; this pillar stays mechanism-first.
+
+## Why people use LSTs (and why that is not a recommendation)
+
+Common motivations in educational literature:
+
+- Keep staking exposure while retaining a transferable token.
+- Use the LST as collateral or LP inventory in DeFi (adds **protocol + liquidation** risk on top of staking risk).
+- Bridge operational complexity to a specialized operator set.
+
+None of those motives imply positive expected returns after fees, depegs, or hacks. Treat every LST as a **claim on a system**, not as “the same as holding the native coin in a cold wallet.”
+
+## Staking receipt tokens, ETFs, and news context
+
+Regulators and product issuers sometimes discuss **staking receipt tokens** in ETF or fund contexts — whether a wrapper that represents staked assets fits a given product rule set. ValorisVisio covered related news on /blog (left in place): [SEC staking receipt token FAQ — JitoSOL & liquid staking ETFs context](/blog/sec-staking-receipt-token-faq-what).
+
+Use news for **dated policy snapshots**. Use this Learn pillar for **evergreen mechanics**. A later supporting page will expand receipt-token × ETF mapping; until then, prefer primary sources (SEC FAQs, prospectuses, protocol docs).
+
+## Practical checklist before you treat an LST as “just the coin”
+
+1. **Redemption path** — Instant secondary market only, or protocol withdraw with a queue?
+2. **Operator set** — Permissionless node set, curated set, or single operator risk?
+3. **Fees** — Protocol fee on rewards; any exit fee?
+4. **Market basis** — Does the LST trade at a premium/discount to implied redemption?
+5. **Composability stack** — Extra venues (lending, LP) multiply failure modes.
+
+Risk detail: [liquid staking risks](/learn/liquid-staking/lst-risks).
+
+Optional soft check: if you are comparing an LST’s **market-cap size** to another asset for a what-if bag illustration, the [scenario calculator](/#calculator) can show conditional math — it cannot price slashing, depeg, or smart-contract failure.
+
+## FAQ
+
+### What is liquid staking?
+
+Liquid staking is a design where you stake assets through a protocol and receive a tradable liquid staking token (LST) that represents your staked claim, so you can often move or use the receipt while rewards accrue under the protocol’s rules.
+
+### What is an LST (liquid staking token)?
+
+An LST is the receipt token issued when you liquid-stake. It is not automatically identical to holding the native asset unstaked: secondary-market price, redemption rules, fees, and smart-contract risk all matter.
+
+### How is liquid staking different from regular staking?
+
+Regular staking often locks or queues the asset until unbonding finishes. Liquid staking issues a transferable receipt so liquidity can exist before protocol withdrawal completes — at the cost of extra protocol and market risks.
+
+### Is an LST the same as the underlying coin?
+
+No. An LST is a claim mediated by smart contracts, operators, and (often) a secondary market. Pegs can break; redemption can be delayed; additional DeFi use adds risk.
+`,
+  },
+  {
+    clusterSlug: 'liquid-staking',
+    slug: 'lst-risks',
+    title: 'JitoSOL & LST Risks: Depeg, Slashing & Receipt Tokens',
+    shortTitle: 'LST risks',
+    primaryKeyword: 'liquid staking risks',
+    secondaryKeywords: [
+      'JitoSOL risks',
+      'LST depeg',
+      'liquid staking slashing',
+      'staking receipt token risks',
+      'stETH depeg',
+    ],
+    metaTitle: 'Liquid Staking Risks — JitoSOL, Depeg & Receipt Tokens',
+    metaDescription:
+      'Liquid staking risks explained: LST depeg, slashing, smart-contract and liquidity risk, with JitoSOL / staking receipt context from regulatory news.',
+    contentType: 'supporting',
+    summary:
+      'A compare-style risk guide for LSTs: depeg vs redemption, slashing and operator failure, liquidity, and how staking-receipt / JitoSOL headlines fit the picture.',
+    markdown: `**Liquid staking risks** are easy to understate when an LST “tracks” a familiar coin. This supporting guide pairs with [liquid staking explained](/learn/liquid-staking/liquid-staking-explained) and focuses on failure modes — including themes that showed up in Solana **JitoSOL** and **staking receipt token** news.
+
+Hub: [liquid staking](/learn/liquid-staking). Dated policy snapshot on /blog (unchanged): [SEC staking receipt token FAQ — what JitoSOL and liquid staking ETFs need to know](/blog/sec-staking-receipt-token-faq-what).
+
+Not financial advice. Risk lists are incomplete by nature; always read live protocol docs and disclosures.
+
+## Risk map (compare dimensions)
+
+| Risk | What it looks like | Why LSTs are exposed |
+| --- | --- | --- |
+| **Smart contract / protocol** | Bug, misconfiguration, governance attack | LST logic + oracles + withdrawal contracts |
+| **Validator / operator** | Poor performance, downtime, correlated failures | Stake is delegated to operators the protocol selects or incentivizes |
+| **Slashing / penalties** | Consensus penalties reduce underlying | Receipt value depends on remaining claim after penalties (rules vary) |
+| **Depeg / basis** | Secondary market price ≠ implied redemption | Liquidity crunches, fear, or exit queues |
+| **Liquidity** | Wide spreads, thin books, stalled redemptions | “Liquid” is market-dependent |
+| **Composability** | Cascading liquidations in lending/LP | Using LST as collateral stacks protocols |
+| **Regulatory / product wrapper** | Uncertain treatment of staking receipts in funds/ETFs | Affects product design and narratives — not your on-chain positions directly |
+
+## Depeg vs slow redemption
+
+A **depeg** usually means the LST’s **market price** diverges from the value you would expect if you could redeem one-for-one (or at the official exchange rate) right now.
+
+That can happen when:
+
+- traders sell the LST faster than the protocol can process exits,
+- redemption is queued or rate-limited,
+- confidence in operators or contracts drops,
+- or leveraged DeFi unwind forces LST dumps.
+
+A discount is a **market signal**, not proof the protocol is insolvent — and a small premium is not proof it is safe. Compare **market price**, **protocol exchange rate**, and **time-to-exit** as three different numbers.
+
+## Slashing, MEV narratives, and Solana LST context
+
+On proof-of-stake networks, validators can be penalized for certain failures or violations. Liquid-staking users inherit a share of that risk according to how the protocol socializes losses.
+
+**JitoSOL** (and similar Solana LSTs) often appear in coverage that mixes staking yield with **MEV-related** reward stories. Extra reward sources can mean extra operational and smart-contract surface area. Treat “higher rewards” marketing as a prompt to read **fee schedules and risk disclosures**, not as a safety rating.
+
+Ethereum LSTs (stETH, rETH, and peers) share the same broad categories above even when brand names differ. A later page will compare stETH vs other majors feature-by-feature; this page stays risk-first.
+
+## Staking receipt tokens & ETF headlines
+
+When regulators publish FAQs on **staking receipt tokens**, the debate is often about whether a tokenized claim on staked assets fits a particular investment-product framework. That is adjacent to — not identical with — using an LST in a self-custody wallet.
+
+Practical split:
+
+- **On-chain LST holder** — protocol, market, and key-management risks dominate.
+- **ETF / fund investor** — prospectus, issuer, custody, and fee risks dominate; you may never touch the LST directly.
+
+Use Learn for mechanisms; use /blog for timestamped FAQ coverage; confirm against primary legal text before drawing product conclusions.
+
+## Checklist: stress-test an LST narrative
+
+1. What is the **exit path** under stress (queue length, caps, guardians)?
+2. Who can pause or upgrade contracts?
+3. How are losses socialized after slashing or exploits?
+4. Where does secondary liquidity live (which venues, how deep)?
+5. If you use the LST in DeFi, what is the **liquidation** path if the LST discounts?
+
+Optional: comparing LST **market caps** as a size thought experiment is fine on the [calculator](/#calculator) — it will not model depeg severity.
+
+## FAQ
+
+### What are the main liquid staking risks?
+
+Smart-contract failure, validator/operator issues, slashing or penalty socialization, secondary-market depegs, thin liquidity, and extra risk if you reuse the LST in DeFi. Regulatory headlines about staking receipts mainly affect product wrappers and narratives.
+
+### Can an LST permanently lose value vs the underlying?
+
+Yes. Exploits, unresolved bad debt, or severe confidence failure can impair claims. Even without a total failure, discounts can last while exits are constrained.
+
+### Is JitoSOL risk-free because SOL staking is familiar?
+
+No. JitoSOL is an LST with its own contracts, operators, liquidity, and reward design. Familiarity with SOL does not erase those layers.
+
+### Does an SEC FAQ make liquid staking ETFs “safe”?
+
+No. FAQs clarify regulatory interpretations for product designers and the public. They are not endorsements of any token, yield, or fund. Read prospectuses and protocol docs separately.
+`,
+  },
+  {
+    clusterSlug: 'crypto-etfs',
+    slug: 'near-etf-explained',
+    title: 'NEAR ETF Explained: Spot Altcoin ETFs in Context',
+    shortTitle: 'NEAR ETF explained',
+    primaryKeyword: 'NEAR ETF explained',
+    secondaryKeywords: [
+      'Bitwise NEAR ETF',
+      'spot NEAR ETF',
+      'altcoin ETF',
+      'crypto ETF vs holding NEAR',
+    ],
+    metaTitle: 'NEAR ETF Explained — Spot Altcoin ETF Basics',
+    metaDescription:
+      'NEAR ETF explained in plain English: how a spot NEAR ETF differs from holding NEAR, what to read in a prospectus, and how it fits the crypto ETF hub.',
+    contentType: 'supporting',
+    summary:
+      'A short supporting guide to spot NEAR ETF mechanics vs self-custody, with links to the crypto ETF hub and Bitwise launch news on /blog.',
+    markdown: `**NEAR ETF explained** simply: a spot **NEAR** exchange-traded fund aims to track NEAR Protocol’s market price by holding NEAR (via custodians) or an equivalent creation/redemption design disclosed in its filings — so brokerage investors can trade fund shares without managing wallets or on-chain staking themselves.
+
+This page supports the hub overview [crypto ETF explained](/learn/crypto-etfs). Launch-style news stays on /blog: [Bitwise launches first US spot NEAR ETF](/blog/bitwise-launches-first-us-spot-near).
+
+Not investment advice. Tickers, fees, and listings change — verify the live prospectus and exchange listing details.
+
+## ETF shares vs holding NEAR
+
+| | Spot NEAR ETF shares | Holding NEAR directly |
+| --- | --- | --- |
+| Access | Brokerage account | Wallet / exchange account |
+| Custody | Fund custodian / issuer stack | You or your exchange |
+| Staking | Usually **not** the same as solo staking NEAR (check prospectus) | Optional on-chain staking / liquid staking |
+| Trading hours | Exchange hours + fund rules | Crypto markets ~24/7 |
+| Tracking | Fees, cash drag, creation frictions | Spot inventory you control |
+
+A NEAR ETF is a **securities product**. NEAR tokens are **network assets**. Similar price charts do not mean identical risk, tax treatment, or rights.
+
+## What “first US spot NEAR ETF” style headlines mean
+
+Product-launch coverage usually signals that an issuer listed a NEAR-focused spot ETF in a given jurisdiction. That is a **market-structure** event: new brokerage rails for NEAR price exposure. It does **not** by itself prove lasting inflows, protocol success, or upside for NEAR holders.
+
+When you read launch posts (including ValorisVisio’s Bitwise NEAR piece), separate:
+
+1. **Listing / issuer facts** — who sponsors the fund, what it holds, expense ratio.
+2. **Flow narratives** — creations/redemptions after launch (noisy early on).
+3. **Protocol fundamentals** — NEAR usage, supply, staking — mostly outside the ETF wrapper.
+
+## How this fits the wider crypto ETF cluster
+
+Bitcoin and Ether spot ETFs normalized the “spot crypto ETF” pattern for larger assets. Altcoin spot ETFs extend the same wrapper idea to thinner, more idiosyncratic assets — which can mean **wider spreads**, **different liquidity**, and **higher sensitivity** to single-asset news.
+
+Return to the hub for the general **crypto ETF explained** overview (spot vs futures, flows). A deeper Bitcoin spot ETF guide remains planned.
+
+Soft optional tool link: if you are only exploring **market-cap size** what-ifs for NEAR vs another asset, use the [scenario calculator](/#calculator) as conditional math — not as a view on ETF demand.
+
+## FAQ
+
+### What is a NEAR ETF?
+
+A NEAR ETF is an exchange-traded fund designed to provide price exposure to NEAR, typically through a spot holdings model described in its prospectus, traded as shares on a securities exchange.
+
+### Is a spot NEAR ETF the same as staking NEAR?
+
+Almost never by default. ETF shareholders receive fund economics (price tracking minus fees and frictions). On-chain staking rewards and liquid-staking LSTs are separate designs unless a specific product explicitly includes staking and discloses it.
+
+### Where should I read launch news vs evergreen explainers?
+
+Use [/blog](/blog) for dated launch and flow coverage; use [/learn/crypto-etfs](/learn/crypto-etfs) for the evergreen crypto ETF explained hub and this short NEAR ETF page for altcoin-ETF context.
 `,
   },
 ];

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import {
   getLearnClusterBySlug,
@@ -131,6 +132,59 @@ export default async function LearnClusterPage({ params }) {
               .
             </p>
           )}
+          {cluster.id === 'D' && (
+            <p className="text-muted-foreground">
+              Read the{' '}
+              <a href="#crypto-etf-explained" className="text-neon-cyan hover:underline">
+                crypto ETF explained
+              </a>{' '}
+              overview below, then the short{' '}
+              <Link
+                href="/learn/crypto-etfs/near-etf-explained"
+                className="text-neon-cyan hover:underline"
+              >
+                NEAR ETF explained
+              </Link>{' '}
+              guide. Flow and launch coverage stays on{' '}
+              <Link href="/blog" className="text-neon-cyan hover:underline">
+                /blog
+              </Link>
+              .
+            </p>
+          )}
+          {cluster.id === 'E' && (
+            <p className="text-muted-foreground">
+              Start with{' '}
+              <Link
+                href="/learn/liquid-staking/liquid-staking-explained"
+                className="text-neon-cyan hover:underline"
+              >
+                liquid staking explained
+              </Link>
+              , then the risk compare{' '}
+              <Link
+                href="/learn/liquid-staking/lst-risks"
+                className="text-neon-cyan hover:underline"
+              >
+                JitoSOL &amp; LST risks
+              </Link>
+              . SEC staking-receipt news remains on{' '}
+              <Link href="/blog" className="text-neon-cyan hover:underline">
+                /blog
+              </Link>
+              .
+            </p>
+          )}
+        </section>
+      )}
+
+      {cluster.hubOverview && (
+        <section
+          id={cluster.id === 'D' ? 'crypto-etf-explained' : undefined}
+          className="prose-cyber cyber-frame border border-line bg-panel/40 p-6 md:p-10 max-w-3xl mb-12"
+          aria-label={`${cluster.shortTitle} overview`}
+        >
+          <ReactMarkdown>{cluster.hubOverview}</ReactMarkdown>
         </section>
       )}
 
