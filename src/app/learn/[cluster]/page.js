@@ -4,6 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import {
   getLearnClusterBySlug,
   getLearnClusters,
+  getLiveArticlesForCluster,
 } from '@/lib/learn';
 import { SITE_NAME, OG_LOCALE } from '@/lib/site';
 
@@ -40,6 +41,8 @@ export default async function LearnClusterPage({ params }) {
   if (!cluster) notFound();
 
   const isStub = cluster.depth === 'stub';
+  const liveArticles = getLiveArticlesForCluster(cluster.slug);
+  const plannedOnly = cluster.plannedArticles.filter((a) => a.status !== 'live');
 
   return (
     <div className="container mx-auto px-4 py-8 main-content">
@@ -75,7 +78,7 @@ export default async function LearnClusterPage({ params }) {
           <p className="text-muted-foreground mb-4">
             This hub is the IA landing page for the{' '}
             <strong className="text-foreground">{cluster.primaryKeyword}</strong> topic cluster.
-            Full pillar and supporting articles are planned below — placeholders only for week 1.
+            Live guides appear below; remaining pillars stay planned until later SEO weeks.
             Daily news stays on{' '}
             <Link href="/blog" className="text-neon-cyan hover:underline">
               /blog
@@ -87,6 +90,13 @@ export default async function LearnClusterPage({ params }) {
               Ready to run a scenario now?{' '}
               <Link href="/" className="text-neon-cyan hover:underline">
                 Open the ValorisVisio crypto profit calculator
+              </Link>
+              . Or read the guide:{' '}
+              <Link
+                href="/learn/crypto-profit-calculator/market-cap-scenarios-explained"
+                className="text-neon-cyan hover:underline"
+              >
+                How to use a crypto market cap scenario calculator
               </Link>
               .
             </p>
@@ -106,34 +116,60 @@ export default async function LearnClusterPage({ params }) {
         </section>
       )}
 
-      <section className="mb-12 max-w-3xl" aria-labelledby="planned-articles">
-        <h2 id="planned-articles" className="font-display text-xl font-bold tracking-tight mb-4">
-          Planned articles
-        </h2>
-        <ul className="space-y-3">
-          {cluster.plannedArticles.map((article) => (
-            <li
-              key={article.slugHint}
-              className="border border-line/60 px-4 py-3 cyber-cut-sm opacity-80"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
-                    {article.contentType} · placeholder
+      {liveArticles.length > 0 && (
+        <section className="mb-12 max-w-3xl" aria-labelledby="live-articles">
+          <h2 id="live-articles" className="font-display text-xl font-bold tracking-tight mb-4">
+            Guides in this cluster
+          </h2>
+          <ul className="space-y-3">
+            {liveArticles.map((article) => (
+              <li key={article.slug}>
+                <Link
+                  href={`/learn/${article.clusterSlug}/${article.slug}`}
+                  className="block border border-neon-cyan/40 px-4 py-3 cyber-cut-sm hover:border-neon-cyan/70 transition-colors"
+                >
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-neon-cyan mb-1">
+                    {article.contentType} · live
                   </p>
                   <p className="text-foreground font-medium">{article.title}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    KW: {article.primaryKeyword}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{article.summary}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {plannedOnly.length > 0 && (
+        <section className="mb-12 max-w-3xl" aria-labelledby="planned-articles">
+          <h2 id="planned-articles" className="font-display text-xl font-bold tracking-tight mb-4">
+            Planned articles
+          </h2>
+          <ul className="space-y-3">
+            {plannedOnly.map((article) => (
+              <li
+                key={article.slugHint}
+                className="border border-line/60 px-4 py-3 cyber-cut-sm opacity-80"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
+                      {article.contentType} · placeholder
+                    </p>
+                    <p className="text-foreground font-medium">{article.title}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      KW: {article.primaryKeyword}
+                    </p>
+                  </div>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground shrink-0">
+                    /learn/{cluster.slug}/{article.slugHint}
+                  </span>
                 </div>
-                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground shrink-0">
-                  /learn/{cluster.slug}/{article.slugHint}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {!isStub && cluster.secondaryKeywords?.length > 0 && (
         <section className="mb-12 max-w-3xl" aria-labelledby="secondary-kws">

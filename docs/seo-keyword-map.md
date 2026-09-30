@@ -1,7 +1,7 @@
 # SEO keyword map — ValorisVisio Learn
 
 **Rule:** one primary keyword → one target URL.  
-**Status column:** all rows are `planned` or `live-stub` for week 1 (hubs published as stubs/solid intros; full copy later).  
+**Status column:** `live` / `live-stub` / `in-progress` / `planned`.  
 **Base:** `https://valorisvisio.top`
 
 ## Cluster hubs (live in week 1)
@@ -21,17 +21,17 @@
 | --- | --- | --- | --- | --- | --- |
 | — | crypto learn guides | evergreen crypto explainers; ValorisVisio learn | `/learn` | hub | live-stub |
 
-## Product surface (existing — do not duplicate primary on Learn)
+## Product surface (homepage — Cluster A tool)
 
 | Cluster | Primary KW | Secondary KWs | Target URL | Content type | Status |
 | --- | --- | --- | --- | --- | --- |
-| A (tool) | crypto scenario calculator | market cap comparison tool; crypto profit simulator online | `/` | tool | live |
+| A (tool) | crypto scenario calculator | crypto profit calculator; crypto market cap calculator; market cap comparison tool | `/` | tool | **done (week 2)** — title/meta/H1/copy refreshed |
 
-## Planned supporting / pillar URLs (not built in week 1)
+## Supporting / pillar URLs
 
 | Cluster | Primary KW | Secondary KWs | Target URL | Content type | Status |
 | --- | --- | --- | --- | --- | --- |
-| A | crypto market cap calculator | market cap what-if; fully diluted valuation scenario | `/learn/crypto-profit-calculator/market-cap-scenarios-explained` | pillar | planned |
+| A | crypto market cap calculator | market cap what-if; fully diluted valuation scenario | `/learn/crypto-profit-calculator/market-cap-scenarios-explained` | pillar | **done (week 2)** |
 | A | crypto ROI calculator | crypto profit vs ROI; holdings return formula | `/learn/crypto-profit-calculator/profit-vs-roi` | supporting | planned |
 | A | crypto market cap comparison limitations | scenario calculator caveats; market cap myth | `/learn/crypto-profit-calculator/scenario-limitations` | supporting | planned |
 | B | ePBS Ethereum explained | enshrined PBS; Glamsterdam ePBS | `/learn/ethereum-scaling/epbs-explained` | supporting | planned |
@@ -44,18 +44,26 @@
 | E | stETH vs liquid staking tokens | stETH vs rETH; major LST comparison | `/learn/liquid-staking/steth-vs-lsts` | supporting | planned |
 | F | US crypto tax basics | IRS crypto tax; capital gains crypto US | `/learn/crypto-tax/us-basics` | supporting | planned |
 
+## Week 2 notes (Cluster A)
+
+- Homepage on-page SEO aligned to long-tail intent without stuffing; brand ValorisVisio kept in title/meta.
+- Pillar guide live with `## FAQ` (FAQPage JSON-LD via `extractFaq`).
+- Soft CTAs: homepage hero + under-calculator link; hub `/learn/crypto-profit-calculator` links the live guide.
+- Sitemap: `getLearnSitemapEntries()` includes live article URLs under `/learn/[cluster]/[slug]`.
+
 ## Routing convention
 
 ```
 /learn                          → evergreen index
 /learn/[cluster]                → cluster hub (week 1)
-/learn/[cluster]/[slug]         → pillar / supporting (later weeks)
+/learn/[cluster]/[slug]         → pillar / supporting (week 2+)
 /blog                           → daily news (unchanged)
-/                               → calculator tool (unchanged)
+/                               → calculator tool (week 2 on-page SEO)
 ```
 
 Implemented in App Router as:
 
 - `src/app/learn/page.js`
 - `src/app/learn/[cluster]/page.js`
+- `src/app/learn/[cluster]/[slug]/page.js`
 - Shared IA data: `src/lib/learn.js`

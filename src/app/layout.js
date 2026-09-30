@@ -41,10 +41,11 @@ const mono = localFont({
 export const metadata = {
   metadataBase: new URL('https://valorisvisio.top'),
   title: {
-    default: 'ValorisVisio - Crypto Profit Scenario Calculator',
+    default: 'ValorisVisio — Crypto Profit & Scenario Calculator',
     template: '%s | ValorisVisio'
   },
-  description: 'Calculate potential cryptocurrency profits with our advanced scenario calculator. Compare market caps, visualize gains, and make informed crypto investment decisions with real-time data.',
+  description:
+    'Free crypto scenario calculator from ValorisVisio. Model market-cap what-ifs, estimate potential profits, and compare your holdings against other coins with live CoinGecko data.',
   authors: [{ name: 'ValorisVisio Team' }],
   creator: 'ValorisVisio',
   publisher: 'ValorisVisio',
@@ -58,8 +59,9 @@ export const metadata = {
     locale: OG_LOCALE,
     url: 'https://valorisvisio.top',
     siteName: SITE_NAME,
-    title: 'ValorisVisio - Advanced Crypto Scenario Calculator & Market Analysis Tool',
-    description: 'Calculate potential cryptocurrency profits with our advanced scenario calculator. Compare market caps, visualize gains, and make informed crypto investment decisions.',
+    title: 'ValorisVisio — Crypto Profit & Market Cap Scenario Calculator',
+    description:
+      'Model crypto profit scenarios and market-cap what-ifs with ValorisVisio. Compare holdings against other coins using live market data.',
     images: [
       {
         url: 'https://valorisvisio.top/displaycard.png',
@@ -72,8 +74,9 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     ...twitterSite(),
-    title: 'ValorisVisio - Advanced Crypto Scenario Calculator',
-    description: 'Calculate potential cryptocurrency profits with our advanced scenario calculator. Compare market caps and visualize gains.',
+    title: 'ValorisVisio — Crypto Profit & Scenario Calculator',
+    description:
+      'Free crypto market cap scenario calculator: compare holdings, model what-ifs, and visualize potential gains.',
     images: ['https://valorisvisio.top/displaycard.png'],
   },
   robots: {
