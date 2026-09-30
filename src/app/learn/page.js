@@ -1,0 +1,108 @@
+import Link from 'next/link';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import { getLearnClusters } from '@/lib/learn';
+import { SITE_NAME, OG_LOCALE } from '@/lib/site';
+
+const BASE = 'https://valorisvisio.top';
+
+export const metadata = {
+  title: 'Learn Crypto — Evergreen Guides & Explainers',
+  description:
+    'Evergreen crypto guides from ValorisVisio: profit calculators, PeerDAS and Ethereum scaling, liquid staking, Solana finality, ETFs, and tax hubs.',
+  alternates: { canonical: `${BASE}/learn` },
+  openGraph: {
+    locale: OG_LOCALE,
+    siteName: SITE_NAME,
+    title: 'Learn Crypto — Evergreen Guides & Explainers',
+    description:
+      'Evergreen crypto guides: scenario calculators, Ethereum scaling, liquid staking, and more.',
+    url: `${BASE}/learn`,
+  },
+};
+
+export default function LearnIndexPage() {
+  const clusters = getLearnClusters();
+  const solid = clusters.filter((c) => c.depth === 'solid');
+  const stubs = clusters.filter((c) => c.depth === 'stub');
+
+  return (
+    <div className="container mx-auto px-4 py-8 main-content">
+      <div className="pt-[100px] mb-12">
+        <Breadcrumbs items={[{ label: 'Learn' }]} />
+        <p className="term-label mb-3">{'// knowledge_grid'}</p>
+        <h1
+          className="glitch font-display text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mb-4"
+          data-text="LEARN CRYPTO"
+        >
+          LEARN <span className="text-neon-cyan">CRYPTO</span>
+        </h1>
+        <p className="text-base text-muted-foreground max-w-2xl">
+          Evergreen explainers and hubs — separate from daily{' '}
+          <Link href="/blog" className="text-neon-cyan hover:underline">
+            blog news
+          </Link>
+          . Start with a cluster, then follow planned pillars as they ship.
+        </p>
+      </div>
+
+      <section className="mb-14" aria-labelledby="learn-featured">
+        <h2 id="learn-featured" className="font-display text-xl font-bold tracking-tight mb-6">
+          Featured hubs
+        </h2>
+        <ul className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
+          {solid.map((cluster) => (
+            <li key={cluster.slug}>
+              <Link
+                href={`/learn/${cluster.slug}`}
+                className="block h-full border border-line p-6 cyber-cut-sm hover:border-neon-cyan/60 transition-all group"
+              >
+                <p className="term-label mb-2">
+                  {'// cluster_'}
+                  {cluster.id.toLowerCase()}
+                </p>
+                <h3 className="font-display text-lg font-bold text-foreground group-hover:text-neon-cyan transition-colors mb-3">
+                  {cluster.shortTitle}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{cluster.intro}</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neon-magenta/80">
+                  Primary: {cluster.primaryKeyword}
+                </p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="learn-coming">
+        <h2 id="learn-coming" className="font-display text-xl font-bold tracking-tight mb-6">
+          Coming soon
+        </h2>
+        <ul className="grid gap-4 md:grid-cols-3">
+          {stubs.map((cluster) => (
+            <li key={cluster.slug}>
+              <Link
+                href={`/learn/${cluster.slug}`}
+                className="block border border-line/70 p-5 cyber-cut-sm hover:border-neon-cyan/40 transition-all"
+              >
+                <p className="term-label mb-2">
+                  {'// stub_'}
+                  {cluster.id.toLowerCase()}
+                </p>
+                <h3 className="font-mono text-sm uppercase tracking-[0.15em] text-foreground mb-2">
+                  {cluster.shortTitle}
+                </h3>
+                <p className="text-sm text-muted-foreground line-clamp-2">{cluster.intro}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <p className="mt-14 font-mono text-xs text-muted-foreground tracking-widest">
+        <Link href="/" className="hover:text-neon-cyan transition-colors">
+          › Open the scenario calculator
+        </Link>
+      </p>
+    </div>
+  );
+}

@@ -9,6 +9,7 @@ import Ticker from "./Ticker"
 
 const NAV = [
     { label: "Calculator", href: "/" },
+    { label: "Learn", href: "/learn" },
     { label: "Blog", href: "/blog" },
     { label: "Privacy", href: "/privacy" },
 ]

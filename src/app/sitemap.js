@@ -1,4 +1,5 @@
 import { getBlogPosts, getCategories } from '@/lib/blog';
+import { getLearnSitemapEntries } from '@/lib/learn';
 
 const baseUrl = 'https://valorisvisio.top';
 
@@ -15,42 +16,52 @@ export default async function sitemap() {
     { url: `${baseUrl}/highlithed-word-counter`, changeFrequency: 'monthly', priority: 0.3 },
   ];
 
-  // Large limit: blogs are small, one pass is fine
-  const { data: articles, pagination } = await getBlogPosts({ page: 1, limit: 500 });
+  const learnPages = getLearnSitemapEntries();
 
-  const articleUrls = articles.map((a) => ({
-    url: `${baseUrl}/blog/${a.slug}`,
-    lastModified: a.updatedAt || a.createdAt,
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }));
-
-  // Remaining articles beyond the first 500 (unlikely, but keep the sitemap complete)
+  let articleUrls = [];
   let moreUrls = [];
-  if (pagination.totalPages > 1) {
-    const rest = await Promise.all(
-      Array.from({ length: pagination.totalPages - 1 }, (_, i) =>
-        getBlogPosts({ page: i + 2, limit: 500 })
-      )
-    );
-    moreUrls = rest.flatMap(
-      ({ data }) =>
-        data.map((a) => ({
-          url: `${baseUrl}/blog/${a.slug}`,
-          lastModified: a.updatedAt || a.createdAt,
-          changeFrequency: 'weekly',
-          priority: 0.8,
-        }))
-    );
+  let categoryUrls = [];
+
+  try {
+    // Large limit: blogs are small, one pass is fine
+    const { data: articles, pagination } = await getBlogPosts({ page: 1, limit: 500 });
+
+    articleUrls = articles.map((a) => ({
+      url: `${baseUrl}/blog/${a.slug}`,
+      lastModified: a.updatedAt || a.createdAt,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }));
+
+    // Remaining articles beyond the first 500 (unlikely, but keep the sitemap complete)
+    if (pagination.totalPages > 1) {
+      const rest = await Promise.all(
+        Array.from({ length: pagination.totalPages - 1 }, (_, i) =>
+          getBlogPosts({ page: i + 2, limit: 500 })
+        )
+      );
+      moreUrls = rest.flatMap(
+        ({ data }) =>
+          data.map((a) => ({
+            url: `${baseUrl}/blog/${a.slug}`,
+            lastModified: a.updatedAt || a.createdAt,
+            changeFrequency: 'weekly',
+            priority: 0.8,
+          }))
+      );
+    }
+
+    categoryUrls = (await getCategories()).map((c) => ({
+      url: `${baseUrl}/blog/category/${c.slug}`,
+      changeFrequency: 'daily',
+      priority: 0.5,
+    }));
+  } catch (err) {
+    // Build/preview without MongoDB should still emit static + /learn URLs.
+    console.warn('[sitemap] Skipping blog URLs:', err?.message || err);
   }
 
-  const categoryUrls = (await getCategories()).map((c) => ({
-    url: `${baseUrl}/blog/category/${c.slug}`,
-    changeFrequency: 'daily',
-    priority: 0.5,
-  }));
-
-  return [...staticPages, ...articleUrls, ...moreUrls, ...categoryUrls].map((p) => ({
+  return [...staticPages, ...learnPages, ...articleUrls, ...moreUrls, ...categoryUrls].map((p) => ({
     ...p,
     lastModified: p.lastModified || new Date(),
   }));
