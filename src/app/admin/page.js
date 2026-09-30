@@ -104,19 +104,20 @@ export default function AdminDashboard() {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch('/api/blog?limit=1')
+      // httpOnly session cookie is not visible via document.cookie — probe server
+      const response = await fetch('/api/admin/me', { credentials: 'same-origin' })
       if (response.ok) {
-        // Check if we have admin session cookie
-        const hasSession = document.cookie.includes('admin_session')
-        setIsAuthenticated(hasSession)
-        if (hasSession) {
-          loadDashboardData()
-        }
+        const data = await response.json()
+        setIsAuthenticated(true)
+        setUser(data.user || null)
+        loadDashboardData()
       } else {
         setIsAuthenticated(false)
+        setUser(null)
       }
     } catch (error) {
       setIsAuthenticated(false)
+      setUser(null)
     }
     setLoading(false)
   }
@@ -145,6 +146,8 @@ export default function AdminDashboard() {
         setIsAuthenticated(true)
         setUser(data.user)
         loadDashboardData()
+      } else if (response.status === 429) {
+        setLoginError(data.error || 'Too many login attempts. Please try again later.')
       } else {
         setLoginError(data.error || 'Login failed')
       }

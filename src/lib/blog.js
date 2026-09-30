@@ -1,15 +1,7 @@
-import { MongoClient } from 'mongodb';
-
-// Shared, promise-cached MongoDB client for server components
-let clientPromise;
+import { getDbCollection } from '@/lib/mongodb';
 
 async function getCollection() {
-  if (!clientPromise) {
-    const client = new MongoClient(process.env.MONGODB);
-    clientPromise = client.connect().then(() => client);
-  }
-  const client = await clientPromise;
-  return client.db('valorisvisio').collection('blog');
+  return getDbCollection('blog');
 }
 
 function serialize(doc) {

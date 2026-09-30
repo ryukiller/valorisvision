@@ -67,7 +67,7 @@ const FeedBackForm = () => {
             email: "",
             subject: "",
             feedback: "",
-            website: "",
+            honeypot: "",
         },
     })
 
@@ -172,11 +172,17 @@ const FeedBackForm = () => {
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="website"
+                                    name="honeypot"
                                     render={({ field }) => (
-                                        <FormItem>
+                                        <FormItem className="hidden" aria-hidden="true">
                                             <FormControl>
-                                                <Textarea className="hidden" placeholder="Feedback..." {...field} />
+                                                <input
+                                                    type="text"
+                                                    tabIndex={-1}
+                                                    autoComplete="off"
+                                                    className="hidden"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}

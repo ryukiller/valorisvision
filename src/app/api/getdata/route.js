@@ -1,21 +1,10 @@
-import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
 import cache, { getCacheKey, CACHE_TTL } from '@/lib/cache';
 import { requireAuth } from '@/lib/auth';
-
-// MongoDB setup
-const uri = process.env.MONGODB;
-const client = new MongoClient(uri);
+import { getDbCollection } from '@/lib/mongodb';
 
 async function connectToMongoDB() {
-    try {
-        await client.connect();
-        console.log("Connected to MongoDB");
-        return client.db("valorisvisio").collection("coins");
-    } catch (error) {
-        console.error("Error connecting to MongoDB:", error);
-        throw error;
-    }
+    return getDbCollection('coins');
 }
 
 function delay(ms) {
@@ -73,17 +62,8 @@ export const POST = requireAuth(async (_req) => {
     } catch (error) {
         console.error('Error importing coins:', error);
         return NextResponse.json({ message: "Failed to import coin data" }, { status: 500 });
-    } finally {
-        try {
-            await client.close();
-        } catch {
-            /* ignore */
-        }
     }
 });
-
-
-
 
 export async function GET(req) {
     const { searchParams } = new URL(req.url)
@@ -104,11 +84,8 @@ export async function GET(req) {
         return NextResponse.json(cachedData, { status: 200 })
     }
 
-    const client = new MongoClient(process.env.MONGODB);
-
     try {
-        await client.connect();
-        const collection = client.db("valorisvisio").collection("coins");
+        const collection = await connectToMongoDB();
 
         let query = {
             $and: [
@@ -145,7 +122,5 @@ export async function GET(req) {
     } catch (error) {
         console.error("Failed to fetch coins:", error);
         return NextResponse.json({ message: "Failed to fetch coins" }, { status: 500 });
-    } finally {
-        await client.close();
     }
 }
