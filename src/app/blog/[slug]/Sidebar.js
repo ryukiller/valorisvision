@@ -10,7 +10,7 @@ export default function Sidebar({ currentArticle }) {
     useEffect(() => {
         const fetchRecentPosts = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/?category=${currentArticle.category_slug}`);
+                const response = await fetch(`/api/blog/?category=${encodeURIComponent(currentArticle.category_slug || '')}`);
                 const data = await response.json();
                 // Check if data is an array before filtering
                 if (Array.isArray(data.data)) {
@@ -27,7 +27,7 @@ export default function Sidebar({ currentArticle }) {
         };
         const fetchCategories = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/?getCategories=true`);
+                const response = await fetch('/api/blog/?getCategories=true');
                 const data = await response.json();
                 // Filter out empty values
                 const filteredCategories = data.data.filter(category => category && Object.keys(category).length > 0);

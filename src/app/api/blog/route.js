@@ -1,13 +1,30 @@
 import { NextResponse } from 'next/server';
 import path from 'path';
-import { writeFile } from 'fs/promises';
 import OpenAI from 'openai';
 import sharp from 'sharp';
 import { requireAuth } from '@/lib/auth';
 import { getDbCollection } from '@/lib/mongodb';
 
+/** Long-running AI generation (Netlify / Vercel serverless). */
+export const maxDuration = 300;
+
 async function connectToMongoDB() {
     return getDbCollection('blog');
+}
+
+/** Never leak stack traces / provider internals to clients. */
+function publicCreateError(error) {
+    const msg = String(error?.message || '');
+    if (/OPENAI_API_KEY|api key|not configured/i.test(msg)) {
+        return 'OpenAI is not configured';
+    }
+    if (/JSON|Unexpected token|parse/i.test(msg)) {
+        return 'Failed to parse AI article response';
+    }
+    if (/MONGODB|Mongo/i.test(msg)) {
+        return 'Database unavailable';
+    }
+    return 'Failed to create article';
 }
 
 export const POST = requireAuth(async (req) => {
@@ -18,7 +35,22 @@ export const POST = requireAuth(async (req) => {
     // generate also a short description, title, slug for the article
     // save it to mongo db
 
-    const { topic } = await req.json();
+    if (!process.env.OPENAI_API_KEY) {
+        return NextResponse.json(
+            { success: false, error: 'OpenAI is not configured' },
+            { status: 503 }
+        );
+    }
+
+    const body = await req.json().catch(() => null);
+    const topic = body?.topic;
+    if (!topic || typeof topic !== 'string' || !topic.trim()) {
+        return NextResponse.json(
+            { success: false, error: 'Topic is required' },
+            { status: 400 }
+        );
+    }
+
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     try {
@@ -104,7 +136,15 @@ The content must be original, fact-based, and genuinely useful to crypto investo
             .trim()
             .replace(/^```(?:json)?\s*/i, "")
             .replace(/\s*```$/, "");
-        const articleData = JSON.parse(rawText);
+        let articleData;
+        try {
+            articleData = JSON.parse(rawText);
+        } catch {
+            throw new Error('Failed to parse AI article response as JSON');
+        }
+        if (!articleData || typeof articleData !== 'object') {
+            throw new Error('Failed to parse AI article response as JSON');
+        }
 
         // Function to slugify the title
         function slugify(text) {
@@ -162,52 +202,55 @@ The content must be original, fact-based, and genuinely useful to crypto investo
         // Randomly select an art style
         const randomStyle = mangakaStyles[Math.floor(Math.random() * mangakaStyles.length)];
 
-        // Generate image with random professional art style via the Responses API image tool
-        const imagePrompt = `Cryptocurrency article illustration about ${title} in ${randomStyle}. High quality, suitable for blog header, 16:9 aspect ratio, professional and clean design.`;
+        // Image is best-effort: text gen is expensive — still save the article if image fails (P1-10).
+        let imageUrl = null;
+        let imageWarning = null;
+        try {
+            const imagePrompt = `Cryptocurrency article illustration about ${title} in ${randomStyle}. High quality, suitable for blog header, 16:9 aspect ratio, professional and clean design.`;
 
-        const imageResponse = await openai.responses.create({
-            model: textModel,
-            input: imagePrompt,
-            tools: [{
-                type: "image_generation",
-                model: process.env.OPENAI_IMAGE_MODEL || "gpt-image-2.5-flare",
-                size: "1536x1024", // Better aspect ratio for blog headers
-                quality: "medium"
-            }]
-        });
+            const imageResponse = await openai.responses.create({
+                model: textModel,
+                input: imagePrompt,
+                tools: [{
+                    type: "image_generation",
+                    model: process.env.OPENAI_IMAGE_MODEL || "gpt-image-2.5-flare",
+                    size: "1536x1024",
+                    quality: "medium"
+                }]
+            });
 
-        // Extract the generated image from the response output
-        const imgItem = (imageResponse.output || []).find(
-            (o) => o.type === "image_generation_call" || o.type === "image"
-        );
+            const imgItem = (imageResponse.output || []).find(
+                (o) => o.type === "image_generation_call" || o.type === "image"
+            );
 
-        let buffer;
-        if (imgItem?.result) {
-            // Base64 payload
-            buffer = Buffer.from(imgItem.result, "base64");
-        } else if (imgItem?.image_url) {
-            const url = imgItem.image_url;
-            if (url.startsWith("data:")) {
-                buffer = Buffer.from(url.split(",")[1], "base64");
+            let buffer;
+            if (imgItem?.result) {
+                buffer = Buffer.from(imgItem.result, "base64");
+            } else if (imgItem?.image_url) {
+                const url = imgItem.image_url;
+                if (url.startsWith("data:")) {
+                    buffer = Buffer.from(url.split(",")[1], "base64");
+                } else {
+                    const imageRes = await fetch(url);
+                    buffer = Buffer.from(await imageRes.arrayBuffer());
+                }
             } else {
-                const imageRes = await fetch(url);
-                buffer = Buffer.from(await imageRes.arrayBuffer());
+                throw new Error("No image returned by the model");
             }
-        } else {
-            throw new Error("No image returned by the model");
+
+            const publicDir = path.join(process.cwd(), 'public');
+            const fileName = `${slug}-${Date.now()}.webp`;
+            const filePath = path.join(publicDir, "imgs", fileName);
+            await sharp(buffer).webp({ quality: 80, effort: 4 }).toFile(filePath);
+            imageUrl = `/imgs/${fileName}`;
+        } catch (imgErr) {
+            console.error("Image generation failed; saving article without header image:", imgErr);
+            imageWarning = "Article saved without header image (image generation failed)";
         }
 
-        const publicDir = path.join(process.cwd(), 'public');
-        // Compress to WebP (quality 80): a raw OpenAI PNG is ~2-3 MB, the
-        // WebP version lands well under 500 KB — better LCP and social previews.
-        const fileName = `${slug}-${Date.now()}.webp`;
-        const filePath = path.join(publicDir, "imgs", fileName);
+        articleData.imageUrl = imageUrl;
 
-        await sharp(buffer).webp({ quality: 80, effort: 4 }).toFile(filePath);
-
-        articleData.imageUrl = `/imgs/${fileName}`; // Use a URL path for client-side usage
-
-        // Prepare enhanced article data for MongoDB
+        const hasImage = Boolean(imageUrl);
         const enhancedArticleData = {
             ...articleData,
             createdAt: new Date(),
@@ -216,7 +259,8 @@ The content must be original, fact-based, and genuinely useful to crypto investo
             views: 0,
             likes: 0,
             author: "ValorisVisio Editorial",
-            status: "published",
+            // Keep public; flag missing image for ops (list endpoints do not filter drafts yet)
+            status: hasImage ? "published" : "published_no_image",
             featured: false,
             reading_time: articleData.estimated_read_time || "5 min read",
             seo_keywords: {
@@ -230,7 +274,6 @@ The content must be original, fact-based, and genuinely useful to crypto investo
             }
         };
 
-        // Save to MongoDB (the sitemap is generated dynamically from the DB)
         const result = await blogCollection.insertOne(enhancedArticleData);
 
         return NextResponse.json({
@@ -241,13 +284,20 @@ The content must be original, fact-based, and genuinely useful to crypto investo
                 slug: slug,
                 category: articleData.category,
                 estimated_read_time: articleData.estimated_read_time || "5 min read",
-                image_url: `/imgs/${fileName}`
+                image_url: imageUrl,
+                status: enhancedArticleData.status
             },
-            message: "Article created successfully with enhanced SEO optimization!"
+            warning: imageWarning || undefined,
+            message: hasImage
+                ? "Article created successfully with enhanced SEO optimization!"
+                : "Article saved without header image (generation failed); text and SEO fields were kept."
         });
     } catch (error) {
         console.error("Error creating blog post:", error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        return NextResponse.json(
+            { success: false, error: publicCreateError(error) },
+            { status: 500 }
+        );
     }
     });
 
@@ -305,6 +355,6 @@ export async function GET(req) {
         });
     } catch (error) {
         console.error("Error fetching blog posts:", error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: 'Failed to fetch blog posts' }, { status: 500 });
     }
 }

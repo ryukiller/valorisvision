@@ -2,9 +2,10 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import crypto from 'crypto'
 
-// Simple hash-based authentication
-// In production, use proper JWT tokens and database storage
 const isProd = process.env.NODE_ENV === 'production'
+
+/** scrypt params — keep stable so stored hashes remain verifiable */
+const SCRYPT = { N: 16384, r: 8, p: 1, keylen: 64 }
 
 function requireProdSecrets() {
   // Skip during `next build` (routes are analyzed without runtime env).
@@ -35,6 +36,56 @@ function safeEqualHex(a, b) {
   }
 }
 
+function safeEqualBuf(a, b) {
+  try {
+    if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) return false
+    if (a.length === 0 || a.length !== b.length) return false
+    return crypto.timingSafeEqual(a, b)
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Hash a password for ADMIN_PASSWORD_HASH.
+ * Format: scrypt$<saltHex>$<hashHex>
+ */
+export function hashPassword(password) {
+  const salt = crypto.randomBytes(16)
+  const derived = crypto.scryptSync(password, salt, SCRYPT.keylen, {
+    N: SCRYPT.N,
+    r: SCRYPT.r,
+    p: SCRYPT.p,
+  })
+  return `scrypt$${salt.toString('hex')}$${derived.toString('hex')}`
+}
+
+/**
+ * Verify password against stored hash.
+ * Supports scrypt$… (preferred) and legacy bare SHA-256 hex (transition).
+ */
+export function verifyPassword(password, storedHash) {
+  if (typeof password !== 'string' || typeof storedHash !== 'string') return false
+
+  if (storedHash.startsWith('scrypt$')) {
+    const parts = storedHash.split('$')
+    if (parts.length !== 3) return false
+    const salt = Buffer.from(parts[1], 'hex')
+    const expected = Buffer.from(parts[2], 'hex')
+    if (salt.length === 0 || expected.length === 0) return false
+    const actual = crypto.scryptSync(password, salt, expected.length, {
+      N: SCRYPT.N,
+      r: SCRYPT.r,
+      p: SCRYPT.p,
+    })
+    return safeEqualBuf(actual, expected)
+  }
+
+  // Legacy SHA-256 hex (pre–P1-13)
+  const passwordHash = crypto.createHash('sha256').update(password).digest('hex')
+  return safeEqualHex(passwordHash, storedHash)
+}
+
 // Create a simple session token
 export function createSessionToken(username) {
   requireProdSecrets()
@@ -59,18 +110,15 @@ export function verifySessionToken(token) {
     const [payload, signature] = token.split('.')
     if (!payload || !signature) return null
 
-    // Verify signature (constant-time)
     const expectedSignature = crypto.createHmac('sha256', SESSION_SECRET).update(payload).digest('hex')
     if (!safeEqualHex(signature, expectedSignature)) return null
 
-    // Parse payload
     const data = JSON.parse(Buffer.from(payload, 'base64').toString())
 
-    // Check expiration
     if (Date.now() > data.exp) return null
 
     return data
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -78,9 +126,7 @@ export function verifySessionToken(token) {
 // Authenticate user
 export function authenticateUser(username, password) {
   requireProdSecrets()
-  const passwordHash = crypto.createHash('sha256').update(password).digest('hex')
-
-  return username === ADMIN_USERNAME && safeEqualHex(passwordHash, ADMIN_PASSWORD_HASH)
+  return username === ADMIN_USERNAME && verifyPassword(password, ADMIN_PASSWORD_HASH)
 }
 
 // Middleware to check authentication
@@ -94,7 +140,6 @@ export function requireAuth(handler) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Add user info to request
     req.user = session
     return handler(req)
   }
@@ -106,9 +151,4 @@ export async function getCurrentUser() {
   const sessionToken = cookieStore.get('admin_session')?.value
 
   return verifySessionToken(sessionToken)
-}
-
-// Hash password utility (for setup)
-export function hashPassword(password) {
-  return crypto.createHash('sha256').update(password).digest('hex')
 }

@@ -20,6 +20,6 @@ export async function GET(req, { params }) {
         return NextResponse.json({ success: true, data: article });
     } catch (error) {
         console.error("Error fetching article:", error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: 'Failed to fetch article' }, { status: 500 });
     }
 }

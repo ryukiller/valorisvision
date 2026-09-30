@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "tool:article": "node --env-file=.env scripts/internal-bot.mjs article",
     "tool:prices": "node --env-file=.env scripts/internal-bot.mjs prices",
-    "tool:status": "node --env-file=.env scripts/internal-bot.mjs status"
+    "tool:status": "node --env-file=.env scripts/internal-bot.mjs status",
+    "migrate:articles-to-blog": "node --env-file=.env scripts/migrate-articles-to-blog.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
