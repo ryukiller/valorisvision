@@ -11,7 +11,7 @@ async function connectToMongoDB() {
         return client.db("valorisvisio").collection("blog");
     } catch (error) {
         console.error("Error connecting to MongoDB:", error);
-        process.exit(1);
+        throw error;
     }
 }
 

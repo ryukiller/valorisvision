@@ -4,12 +4,40 @@ import crypto from 'crypto'
 
 // Simple hash-based authentication
 // In production, use proper JWT tokens and database storage
+const isProd = process.env.NODE_ENV === 'production'
+
+function requireProdSecrets() {
+  // Skip during `next build` (routes are analyzed without runtime env).
+  if (!isProd || process.env.NEXT_PHASE === 'phase-production-build') return
+  if (!process.env.ADMIN_PASSWORD_HASH || !process.env.SESSION_SECRET) {
+    throw new Error(
+      'ADMIN_PASSWORD_HASH and SESSION_SECRET must be set in production (refusing insecure defaults)'
+    )
+  }
+}
+
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin'
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || crypto.createHash('sha256').update('admin123').digest('hex')
+const ADMIN_PASSWORD_HASH =
+  process.env.ADMIN_PASSWORD_HASH ||
+  crypto.createHash('sha256').update('admin123').digest('hex')
 const SESSION_SECRET = process.env.SESSION_SECRET || '12345'
+
+/** Constant-time compare for equal-length hex digests. */
+function safeEqualHex(a, b) {
+  try {
+    if (typeof a !== 'string' || typeof b !== 'string') return false
+    const ba = Buffer.from(a, 'hex')
+    const bb = Buffer.from(b, 'hex')
+    if (ba.length === 0 || ba.length !== bb.length) return false
+    return crypto.timingSafeEqual(ba, bb)
+  } catch {
+    return false
+  }
+}
 
 // Create a simple session token
 export function createSessionToken(username) {
+  requireProdSecrets()
   const payload = {
     username,
     timestamp: Date.now(),
@@ -26,13 +54,14 @@ export function createSessionToken(username) {
 export function verifySessionToken(token) {
   try {
     if (!token) return null
+    requireProdSecrets()
 
     const [payload, signature] = token.split('.')
     if (!payload || !signature) return null
 
-    // Verify signature
+    // Verify signature (constant-time)
     const expectedSignature = crypto.createHmac('sha256', SESSION_SECRET).update(payload).digest('hex')
-    if (signature !== expectedSignature) return null
+    if (!safeEqualHex(signature, expectedSignature)) return null
 
     // Parse payload
     const data = JSON.parse(Buffer.from(payload, 'base64').toString())
@@ -48,9 +77,10 @@ export function verifySessionToken(token) {
 
 // Authenticate user
 export function authenticateUser(username, password) {
+  requireProdSecrets()
   const passwordHash = crypto.createHash('sha256').update(password).digest('hex')
 
-  return username === ADMIN_USERNAME && passwordHash === ADMIN_PASSWORD_HASH
+  return username === ADMIN_USERNAME && safeEqualHex(passwordHash, ADMIN_PASSWORD_HASH)
 }
 
 // Middleware to check authentication

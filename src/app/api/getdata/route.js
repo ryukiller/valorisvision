@@ -1,6 +1,7 @@
 import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
 import cache, { getCacheKey, CACHE_TTL } from '@/lib/cache';
+import { requireAuth } from '@/lib/auth';
 
 // MongoDB setup
 const uri = process.env.MONGODB;
@@ -13,7 +14,7 @@ async function connectToMongoDB() {
         return client.db("valorisvisio").collection("coins");
     } catch (error) {
         console.error("Error connecting to MongoDB:", error);
-        process.exit(1);
+        throw error;
     }
 }
 
@@ -21,13 +22,25 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function POST(req) {
+// Bulk CoinGecko import — admin-only (unauthenticated callers can DoS Mongo + API quota)
+export const POST = requireAuth(async (_req) => {
     const fetchCoins = async (pageNum) => {
         try {
-            const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${pageNum}&sparkline=false&locale=en`);
-            const data = await response.json();
-            console.log(response)
-            return data;
+            const response = await fetch(
+                `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${pageNum}&sparkline=false&locale=en`,
+                {
+                    headers: {
+                        Accept: 'application/json',
+                        ...(process.env.COINGECKO_API_KEY
+                            ? { 'x-cg-demo-api-key': process.env.COINGECKO_API_KEY }
+                            : {}),
+                    },
+                }
+            );
+            if (!response.ok) {
+                throw new Error(`CoinGecko HTTP ${response.status} on page ${pageNum}`);
+            }
+            return await response.json();
         } catch (err) {
             console.error(err);
             return null;
@@ -36,28 +49,38 @@ export async function POST(req) {
 
     let page = 1;
     let coins;
-    const collection = await connectToMongoDB();
+    try {
+        const collection = await connectToMongoDB();
 
-    do {
-        coins = await fetchCoins(page);
-        if (coins && coins.length > 0) {
-            try {
-                // Insert or Update each coin in MongoDB
-                for (const coin of coins) {
-                    await collection.updateOne({ id: coin.id }, { $set: coin }, { upsert: true });
+        do {
+            coins = await fetchCoins(page);
+            if (coins && coins.length > 0) {
+                try {
+                    // Insert or Update each coin in MongoDB
+                    for (const coin of coins) {
+                        await collection.updateOne({ id: coin.id }, { $set: coin }, { upsert: true });
+                    }
+                } catch (err) {
+                    console.error('Error with MongoDB operation:', err);
+                    return NextResponse.json({ message: "Error with MongoDB operation" }, { status: 500 });
                 }
-            } catch (err) {
-                console.error('Error with MongoDB operation:', err);
-                return NextResponse.json({ message: "Error with MongoDB operation" }, { status: 500 });
+                page++;
+                await delay(30000); // Delay to avoid rate limits
             }
-            page++;
-            await delay(30000); // Delay to avoid rate limits
-        }
-    } while (coins && coins.length > 0);
+        } while (coins && coins.length > 0);
 
-    // If the loop completes without errors
-    return NextResponse.json({ message: "Data saved to MongoDB successfully" }, { status: 200 });
-}
+        return NextResponse.json({ message: "Data saved to MongoDB successfully" }, { status: 200 });
+    } catch (error) {
+        console.error('Error importing coins:', error);
+        return NextResponse.json({ message: "Failed to import coin data" }, { status: 500 });
+    } finally {
+        try {
+            await client.close();
+        } catch {
+            /* ignore */
+        }
+    }
+});
 
 
 
@@ -96,11 +119,12 @@ export async function GET(req) {
         };
 
         if (searchTerm) {
-            // Extend the query to include search conditions
+            // Escape regex metacharacters to avoid ReDoS / unintended patterns
+            const escaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             query.$and.push({
                 $or: [
-                    { name: new RegExp(searchTerm, 'i') },
-                    { symbol: new RegExp(searchTerm, 'i') }
+                    { name: new RegExp(escaped, 'i') },
+                    { symbol: new RegExp(escaped, 'i') }
                 ]
             });
         }
