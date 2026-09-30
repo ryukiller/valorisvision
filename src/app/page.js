@@ -59,11 +59,11 @@ export default function Home() {
             src="/shibnew.webp"
             fill
             sizes="100vw"
-            className="object-cover object-center opacity-40"
+            className="object-cover object-center opacity-30"
             alt=""
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-void/70 via-void/60 to-void" />
-          <div className="absolute inset-0 bg-gradient-to-r from-neon-cyan/10 via-transparent to-neon-magenta/10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-void/85 via-void/75 to-void" />
+          <div className="absolute inset-0 bg-gradient-to-r from-void/40 via-transparent to-void/40" />
         </div>
 
         <motion.div
@@ -72,34 +72,32 @@ export default function Home() {
           transition={{ delay: 0.3, duration: 0.8 }}
           className="relative max-w-6xl mx-auto px-4 py-24 md:py-36 text-center"
         >
-          <p className="term-label mb-6 flex items-center justify-center gap-3">
+          <p className="term-label mb-6 flex items-center justify-center gap-3 text-neon-cyan/80">
             <span className="w-8 h-px bg-neon-cyan/60" />
             {'// valorisvisio scenario calculator'}
             <span className="w-8 h-px bg-neon-cyan/60" />
           </p>
-          <h1
-            className="glitch is-glitching animate-flicker font-display text-4xl md:text-6xl font-extrabold tracking-tight leading-none text-foreground"
-            data-text="CRYPTO PROFIT & SCENARIO CALCULATOR"
-          >
-            CRYPTO <span className="text-neon-cyan drop-shadow-[0_0_18px_rgba(0,240,255,0.55)]">PROFIT</span>
+          {/* No .glitch here: nested spans + line breaks fight the data-text overlay */}
+          <h1 className="font-display text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.05] text-foreground [text-shadow:0_2px_24px_rgba(5,6,12,0.9),0_0_1px_rgba(255,255,255,0.35)]">
+            CRYPTO <span className="text-neon-cyan [text-shadow:0_0_18px_rgba(0,240,255,0.45),0_2px_12px_rgba(5,6,12,0.8)]">PROFIT</span>
             <br />
-            &amp; <span className="text-neon-magenta drop-shadow-[0_0_18px_rgba(255,46,136,0.5)]">SCENARIO</span>{" "}
+            &amp; <span className="text-neon-magenta [text-shadow:0_0_18px_rgba(255,46,136,0.4),0_2px_12px_rgba(5,6,12,0.8)]">SCENARIO</span>{" "}
             CALCULATOR
           </h1>
-          <p className="mt-8 text-base md:text-lg text-foreground/70 max-w-2xl mx-auto">
+          <p className="mt-8 text-base md:text-lg text-foreground/90 max-w-2xl mx-auto [text-shadow:0_1px_12px_rgba(5,6,12,0.85)]">
             ValorisVisio&apos;s free crypto market cap calculator lets you model what-if profits:
             compare your holdings against another project&apos;s market cap with live data.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <a
               href="#calculator"
-              className="cyber-cut bg-neon-cyan text-void font-mono text-xs uppercase tracking-[0.25em] px-8 py-4 hover:shadow-neon-cyan hover:brightness-110 transition-all"
+              className="cta-primary px-8 py-4"
             >
               Launch Terminal
             </a>
             <Link
               href="/learn/crypto-profit-calculator/market-cap-scenarios-explained"
-              className="cyber-cut border border-neon-magenta/60 text-neon-magenta font-mono text-xs uppercase tracking-[0.25em] px-8 py-4 hover:bg-neon-magenta/10 hover:shadow-neon-magenta transition-all"
+              className="cta-secondary px-8 py-4"
             >
               How scenarios work
             </Link>

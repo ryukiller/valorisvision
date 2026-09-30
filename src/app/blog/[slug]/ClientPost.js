@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
 import Sidebar from './Sidebar';
+import RelatedLearnLinks from '@/components/RelatedLearnLinks';
 
 export default function ClientPost({ slug, article: articleProp, heading, content }) {
     // `articleProp` is passed server-side when the page already fetched the post;
@@ -96,6 +97,7 @@ export default function ClientPost({ slug, article: articleProp, heading, conten
                         </h1>
                     )}
                     <ReactMarkdown>{content ?? article.article_content}</ReactMarkdown>
+                    <RelatedLearnLinks slug={article.slug || slug} />
                 </div>
                 <div
                     ref={sidebarRef}

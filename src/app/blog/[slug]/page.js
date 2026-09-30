@@ -4,6 +4,7 @@ import { getBlogPostBySlug } from '@/lib/blog';
 import { extractFaq } from '@/lib/faq';
 import { stripH1 } from '@/lib/markdown';
 import { SITE_NAME, OG_LOCALE, twitterSite } from '@/lib/site';
+import { shouldNoindexBlogPost } from '@/lib/seo/noindex-blog-slugs';
 import ClientPost from './ClientPost';
 
 // Re-render periodically so metadata/content stay fresh (previous caching model:
@@ -45,12 +46,14 @@ export async function generateMetadata({ params }) {
 
     const seoTitle = article.seo_title || article.title;
     const description = article.seo_description || article.summary || `Read ${article.title}`;
+    const noindex = shouldNoindexBlogPost(article.slug || slug, article);
 
     return {
         // Absolute: skip the global "| ValorisVisio" suffix — the article
         // title alone fits the 60-char SERP budget.
         title: { absolute: metaTitle(seoTitle) },
         description,
+        ...(noindex ? { robots: { index: false, follow: true } } : {}),
         alternates: { canonical: `/blog/${article.slug}` },
         openGraph: {
             type: 'article',

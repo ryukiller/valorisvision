@@ -55,34 +55,26 @@ export default async function LearnClusterPage({ params }) {
           ]}
         />
         <p className="term-label mb-3">
-          {'// cluster_'}
-          {cluster.id.toLowerCase()}
-          {isStub ? ' · stub' : ''}
+          {'// learn / '}
+          {cluster.slug}
         </p>
-        <h1
-          className="glitch font-display text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mb-4"
-          data-text={cluster.title.toUpperCase()}
-        >
+        <h1 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mb-4">
           {cluster.title}
         </h1>
-        <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-neon-magenta mb-4">
-          Primary keyword: {cluster.primaryKeyword}
-        </p>
         <p className="text-base text-muted-foreground max-w-3xl">{cluster.intro}</p>
       </div>
 
-      {!isStub && (
+      {!isStub && !cluster.hubOverview && (
         <section className="mb-12 max-w-3xl" aria-labelledby="hub-overview">
           <h2 id="hub-overview" className="font-display text-xl font-bold tracking-tight mb-4">
             What you&apos;ll find here
           </h2>
           <p className="text-muted-foreground mb-4">
-            This hub is the IA landing page for the{' '}
-            <strong className="text-foreground">{cluster.primaryKeyword}</strong> topic cluster.
-            Live guides appear below; remaining pillars stay planned until later SEO weeks.
-            Daily news stays on{' '}
+            Browse the live guides below for durable explainers on{' '}
+            <strong className="text-foreground">{cluster.primaryKeyword}</strong>. Timely news and
+            product launches stay on the{' '}
             <Link href="/blog" className="text-neon-cyan hover:underline">
-              /blog
+              blog
             </Link>
             .
           </p>
@@ -102,79 +94,6 @@ export default async function LearnClusterPage({ params }) {
               .
             </p>
           )}
-          {cluster.id === 'B' && (
-            <p className="text-muted-foreground">
-              Start with{' '}
-              <Link
-                href="/learn/ethereum-scaling/peerdas-explained"
-                className="text-neon-cyan hover:underline"
-              >
-                PeerDAS explained
-              </Link>
-              , then{' '}
-              <Link
-                href="/learn/ethereum-scaling/epbs-explained"
-                className="text-neon-cyan hover:underline"
-              >
-                ePBS / Glamsterdam
-              </Link>
-              , and the shorter{' '}
-              <Link
-                href="/learn/ethereum-scaling/peerdas-and-l2s"
-                className="text-neon-cyan hover:underline"
-              >
-                PeerDAS &amp; L2 fees
-              </Link>{' '}
-              guide. Daily Fusaka / Glamsterdam news remains on{' '}
-              <Link href="/blog" className="text-neon-cyan hover:underline">
-                /blog
-              </Link>
-              .
-            </p>
-          )}
-          {cluster.id === 'D' && (
-            <p className="text-muted-foreground">
-              Read the{' '}
-              <a href="#crypto-etf-explained" className="text-neon-cyan hover:underline">
-                crypto ETF explained
-              </a>{' '}
-              overview below, then the short{' '}
-              <Link
-                href="/learn/crypto-etfs/near-etf-explained"
-                className="text-neon-cyan hover:underline"
-              >
-                NEAR ETF explained
-              </Link>{' '}
-              guide. Flow and launch coverage stays on{' '}
-              <Link href="/blog" className="text-neon-cyan hover:underline">
-                /blog
-              </Link>
-              .
-            </p>
-          )}
-          {cluster.id === 'E' && (
-            <p className="text-muted-foreground">
-              Start with{' '}
-              <Link
-                href="/learn/liquid-staking/liquid-staking-explained"
-                className="text-neon-cyan hover:underline"
-              >
-                liquid staking explained
-              </Link>
-              , then the risk compare{' '}
-              <Link
-                href="/learn/liquid-staking/lst-risks"
-                className="text-neon-cyan hover:underline"
-              >
-                JitoSOL &amp; LST risks
-              </Link>
-              . SEC staking-receipt news remains on{' '}
-              <Link href="/blog" className="text-neon-cyan hover:underline">
-                /blog
-              </Link>
-              .
-            </p>
-          )}
         </section>
       )}
 
@@ -188,22 +107,10 @@ export default async function LearnClusterPage({ params }) {
         </section>
       )}
 
-      {isStub && (
-        <section className="mb-12 max-w-3xl border border-line/70 p-6 cyber-cut-sm" aria-labelledby="stub-note">
-          <h2 id="stub-note" className="font-display text-lg font-bold tracking-tight mb-3">
-            Hub stub
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Lightweight placeholder so the URL and sitemap exist. Evergreen copy and supporting
-            pages for this cluster ship in a later SEO week — no migration from /blog yet.
-          </p>
-        </section>
-      )}
-
       {liveArticles.length > 0 && (
         <section className="mb-12 max-w-3xl" aria-labelledby="live-articles">
           <h2 id="live-articles" className="font-display text-xl font-bold tracking-tight mb-4">
-            Guides in this cluster
+            Guides in this hub
           </h2>
           <ul className="space-y-3">
             {liveArticles.map((article) => (
@@ -213,7 +120,7 @@ export default async function LearnClusterPage({ params }) {
                   className="block border border-neon-cyan/40 px-4 py-3 cyber-cut-sm hover:border-neon-cyan/70 transition-colors"
                 >
                   <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-neon-cyan mb-1">
-                    {article.contentType} · live
+                    {article.contentType === 'pillar' ? 'Guide' : 'Supporting guide'}
                   </p>
                   <p className="text-foreground font-medium">{article.title}</p>
                   <p className="text-xs text-muted-foreground mt-1">{article.summary}</p>
@@ -227,46 +134,21 @@ export default async function LearnClusterPage({ params }) {
       {plannedOnly.length > 0 && (
         <section className="mb-12 max-w-3xl" aria-labelledby="planned-articles">
           <h2 id="planned-articles" className="font-display text-xl font-bold tracking-tight mb-4">
-            Planned articles
+            Coming soon
           </h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            These guides are planned for this hub. Titles may refine slightly when they publish.
+          </p>
           <ul className="space-y-3">
             {plannedOnly.map((article) => (
               <li
                 key={article.slugHint}
-                className="border border-line/60 px-4 py-3 cyber-cut-sm opacity-80"
+                className="border border-line/60 px-4 py-3 cyber-cut-sm opacity-90"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <div>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
-                      {article.contentType} · placeholder
-                    </p>
-                    <p className="text-foreground font-medium">{article.title}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      KW: {article.primaryKeyword}
-                    </p>
-                  </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground shrink-0">
-                    /learn/{cluster.slug}/{article.slugHint}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {!isStub && cluster.secondaryKeywords?.length > 0 && (
-        <section className="mb-12 max-w-3xl" aria-labelledby="secondary-kws">
-          <h2 id="secondary-kws" className="font-display text-lg font-bold tracking-tight mb-3">
-            Related search themes
-          </h2>
-          <ul className="flex flex-wrap gap-2">
-            {cluster.secondaryKeywords.map((kw) => (
-              <li
-                key={kw}
-                className="font-mono text-[11px] tracking-wide border border-line px-3 py-1.5 text-muted-foreground"
-              >
-                {kw}
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
+                  Upcoming
+                </p>
+                <p className="text-foreground font-medium">{article.title}</p>
               </li>
             ))}
           </ul>
