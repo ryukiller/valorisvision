@@ -74,22 +74,23 @@ export default function Home() {
         >
           <p className="term-label mb-6 flex items-center justify-center gap-3">
             <span className="w-8 h-px bg-neon-cyan/60" />
-            {'// scenario simulator v2.0'}
+            {'// valorisvisio scenario calculator'}
             <span className="w-8 h-px bg-neon-cyan/60" />
           </p>
           <h1
             className="glitch is-glitching animate-flicker font-display text-4xl md:text-6xl font-extrabold tracking-tight leading-none text-foreground"
-            data-text="ADVANCED CRYPTO SCENARIO CALCULATOR"
+            data-text="CRYPTO PROFIT & SCENARIO CALCULATOR"
           >
-            ADVANCED CRYPTO<br />
-            <span className="text-neon-cyan drop-shadow-[0_0_18px_rgba(0,240,255,0.55)]">SCENARIO</span>{" "}
-            <span className="text-neon-magenta drop-shadow-[0_0_18px_rgba(255,46,136,0.5)]">CALCULATOR</span>
+            CRYPTO <span className="text-neon-cyan drop-shadow-[0_0_18px_rgba(0,240,255,0.55)]">PROFIT</span>
+            <br />
+            &amp; <span className="text-neon-magenta drop-shadow-[0_0_18px_rgba(255,46,136,0.5)]">SCENARIO</span>{" "}
+            CALCULATOR
           </h1>
           <p className="mt-8 text-base md:text-lg text-foreground/70 max-w-2xl mx-auto">
-            Discover your cryptocurrency potential with real-time market analysis.
-            Simulate the &quot;what-ifs&quot; before the market does them for you.
+            ValorisVisio&apos;s free crypto market cap calculator lets you model what-if profits:
+            compare your holdings against another project&apos;s market cap with live data.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-4">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <a
               href="#calculator"
               className="cyber-cut bg-neon-cyan text-void font-mono text-xs uppercase tracking-[0.25em] px-8 py-4 hover:shadow-neon-cyan hover:brightness-110 transition-all"
@@ -97,10 +98,10 @@ export default function Home() {
               Launch Terminal
             </a>
             <Link
-              href="/blog"
+              href="/learn/crypto-profit-calculator/market-cap-scenarios-explained"
               className="cyber-cut border border-neon-magenta/60 text-neon-magenta font-mono text-xs uppercase tracking-[0.25em] px-8 py-4 hover:bg-neon-magenta/10 hover:shadow-neon-magenta transition-all"
             >
-              Read the Grid
+              How scenarios work
             </Link>
           </div>
         </motion.div>
@@ -109,6 +110,23 @@ export default function Home() {
       {/* ============ CALCULATOR ============ */}
       <section id="calculator" className="py-16 scroll-mt-24">
         <ModernCalculator />
+      </section>
+
+      {/* ============ SOFT LEARN CTA ============ */}
+      <section className="pb-12">
+        <div className="container px-4">
+          <p className="max-w-3xl mx-auto text-center text-sm text-muted-foreground">
+            New to market-cap what-ifs?{' '}
+            <Link
+              href="/learn/crypto-profit-calculator/market-cap-scenarios-explained"
+              className="text-neon-cyan hover:underline"
+            >
+              Read how to use a crypto market cap scenario calculator
+            </Link>
+            {' '}
+            — circulating supply vs FDV, ROI math, and practical checks — then come back to the tool.
+          </p>
+        </div>
       </section>
 
       {/* ============ LATEST ARTICLES ============ */}
@@ -205,12 +223,16 @@ export default function Home() {
       <section className="py-16 border-t border-line bg-panel/20">
         <div className="container px-4">
           <div className="main-content max-w-6xl mx-auto text-left">
-            <Image src="/innerimage.webp" className="float-left mr-6 mb-4 cyber-cut-sm border border-line" width={400} height={400} alt="ValorisVisio: Unleash the Power of Your Crypto Holdings with Our Revolutionary Crypto Scenario Calculator" />
-            <h2 className="font-display text-2xl font-bold my-2">ValorisVisio: Unleash the Power of Your Crypto Holdings with Our Revolutionary Crypto Scenario Calculator</h2>
-            <h3>Introduction to the Thrilling World of ValorisVisio&apos;s Crypto Scenario Calculator:</h3>
-            <p>Ever imagined the exhilaration of watching your crypto holdings skyrocket? With ValorisVisio&apos;s Crypto Scenario Calculator, that dream is closer than ever. This isn&apos;t just a tool; it&apos;s your gateway to visualizing potential wealth in the dynamic realm of cryptocurrency. Here, we invite you to not just track, but to actively explore the &apos;what-ifs&apos; of the crypto market.</p>
-            <h3>Experience the Magic of &apos;What If&apos; with ValorisVisio:</h3>
-            <p>Imagine this: You input your current crypto holdings and select a target project. In moments, the Crypto Scenario Calculator reveals what your holdings could be worth if your chosen project reaches its market cap potential. This electrifying feature doesn&apos;t just show numbers; it paints a picture of possibilities, turning the mundane act of calculation into an adventure in financial forecasting.</p>
+            <Image src="/innerimage.webp" className="float-left mr-6 mb-4 cyber-cut-sm border border-line" width={400} height={400} alt="ValorisVisio crypto profit and market cap scenario calculator" />
+            <h2 className="font-display text-2xl font-bold my-2">ValorisVisio crypto profit &amp; market cap scenario calculator</h2>
+            <h3>Model holdings with a crypto scenario calculator</h3>
+            <p>ValorisVisio is a free crypto profit calculator built around market-cap what-ifs. Enter your holdings, pick a target project, and see an illustrative bag value if your asset&apos;s market capitalization moved toward that target — powered by live CoinGecko data, not hype charts.</p>
+            <h3>Market-cap what-ifs, explained in practice</h3>
+            <p>Input your current crypto holdings and select a target project. The crypto market cap calculator shows what those holdings could be worth under the chosen scenario. For circulating supply vs FDV and ROI caveats, see our{' '}
+              <Link href="/learn/crypto-profit-calculator/market-cap-scenarios-explained" className="text-neon-cyan hover:underline">
+                market cap scenario guide
+              </Link>
+              .</p>
             <h3>How the Crypto Scenario Calculator Ignites Your Investment Passion:</h3>
             <p>The secret sauce of ValorisVisio&apos;s Calculator is its ability to make complex calculations feel like a treasure hunt. It uses real-time data, market trends, and historical performances to give you a glimpse into the future of your investments. This isn&apos;t about dry predictions; it&apos;s about experiencing the thrill of seeing your potential gains come to life on your screen.</p>
             <h3>Beyond Calculation: Empowering Your Investment Strategy with ValorisVisio:</h3>
