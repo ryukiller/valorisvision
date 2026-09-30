@@ -187,7 +187,7 @@ Protocol timing can change; treat dates as educational context and verify agains
 
 Anyone who uses Solana wallets, DEXs, or NFT markets and wants to understand settlement speed without drowning in consensus jargon — plus investors comparing Solana’s UX story to other L1s.
 
-## What you will learn (as guides ship)
+## What you will learn
 
 - What Solana **finality** and confirmation levels mean in practice
 - How proposed upgrades (including Alpenglow) aim to change time-to-settle
@@ -195,7 +195,7 @@ Anyone who uses Solana wallets, DEXs, or NFT markets and wants to understand set
 
 ## Coming next
 
-We are preparing an Alpenglow explainer and related confirmation-time guides. Until then, check the [blog](/blog) for timely Solana upgrade coverage, and use the [scenario calculator](/#calculator) if you are modeling market-cap what-ifs across Solana assets.
+An Alpenglow explainer and related confirmation-time guides are on the way. Until then, check the [blog](/blog) for timely Solana upgrade coverage, and use the [scenario calculator](/#calculator) if you are modeling market-cap what-ifs across Solana assets.
 `,
     metaTitle: 'Solana Finality Explained',
     metaDescription:
@@ -357,7 +357,7 @@ Start with [liquid staking explained](/learn/liquid-staking/liquid-staking-expla
 
 Holders and traders who need a starting map of how cryptocurrency is often taxed in their region — capital gains, income from staking or mining, and record-keeping basics — before they talk to a tax professional.
 
-## What you will learn (as guides ship)
+## What you will learn
 
 - How “crypto tax by jurisdiction” usually splits between capital gains and income-style events
 - US-oriented basics (first planned guide), with room for more regions later
@@ -365,7 +365,7 @@ Holders and traders who need a starting map of how cryptocurrency is often taxed
 
 ## Coming next
 
-We are preparing a US crypto tax basics guide and will expand to other jurisdictions over time. For timely policy news (for example state-level draft rules), see the [blog](/blog). Nothing on ValorisVisio Learn replaces advice from a licensed tax professional.
+A US crypto tax basics guide is on the way, with more jurisdictions to follow. For timely policy news (for example state-level draft rules), see the [blog](/blog). Nothing on ValorisVisio Learn replaces advice from a licensed tax professional.
 `,
     metaTitle: 'Crypto Tax by Jurisdiction',
     metaDescription:

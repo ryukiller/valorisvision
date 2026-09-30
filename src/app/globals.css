@@ -243,7 +243,7 @@
       transition-all;
   }
   .cta-secondary {
-    @apply cyber-cut border border-neon-magenta/70 bg-void/70 text-neon-magenta font-mono text-xs uppercase tracking-[0.25em]
+    @apply cyber-cut border-2 border-neon-magenta bg-panel text-neon-magenta font-mono text-xs uppercase tracking-[0.25em]
       hover:bg-neon-magenta hover:text-void hover:border-neon-magenta hover:shadow-neon-magenta
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-magenta/60
       transition-all;

@@ -78,13 +78,13 @@ export default function Home() {
             <span className="w-8 h-px bg-neon-cyan/60" />
           </p>
           {/* No .glitch here: nested spans + line breaks fight the data-text overlay */}
-          <h1 className="font-display text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.05] text-foreground [text-shadow:0_2px_24px_rgba(5,6,12,0.9),0_0_1px_rgba(255,255,255,0.35)]">
-            CRYPTO <span className="text-neon-cyan [text-shadow:0_0_18px_rgba(0,240,255,0.45),0_2px_12px_rgba(5,6,12,0.8)]">PROFIT</span>
+          <h1 className="font-display text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.05] text-foreground [text-shadow:0_2px_20px_rgba(5,6,12,0.95)]">
+            CRYPTO <span className="text-neon-cyan [text-shadow:0_0_12px_rgba(0,240,255,0.35)]">PROFIT</span>
             <br />
-            &amp; <span className="text-neon-magenta [text-shadow:0_0_18px_rgba(255,46,136,0.4),0_2px_12px_rgba(5,6,12,0.8)]">SCENARIO</span>{" "}
+            &amp; <span className="text-neon-magenta [text-shadow:0_0_12px_rgba(255,46,136,0.3)]">SCENARIO</span>{" "}
             CALCULATOR
           </h1>
-          <p className="mt-8 text-base md:text-lg text-foreground/90 max-w-2xl mx-auto [text-shadow:0_1px_12px_rgba(5,6,12,0.85)]">
+          <p className="mt-8 text-base md:text-lg text-foreground/95 max-w-2xl mx-auto [text-shadow:0_1px_10px_rgba(5,6,12,0.9)]">
             ValorisVisio&apos;s free crypto market cap calculator lets you model what-if profits:
             compare your holdings against another project&apos;s market cap with live data.
           </p>
