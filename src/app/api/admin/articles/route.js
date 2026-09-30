@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth'
-import cache, { getCacheKey, CACHE_TTL } from '@/lib/cache'
+import cache, { getCacheKey } from '@/lib/cache'
 import { getDbCollection } from '@/lib/mongodb'
 
-// NOTE: still writes collection "articles" while public blog uses "blog" —
-// unifying collections is follow-up work (see docs/codebase-audit-p1-progress.md).
+/** Live content collection (same as public blog / content bot). */
 async function connectToMongoDB() {
-  return getDbCollection('articles')
+  return getDbCollection('blog')
 }
 
 // GET - List all articles (admin view)
@@ -16,19 +15,19 @@ export const GET = requireAuth(async (req) => {
     const page = parseInt(searchParams.get('page')) || 1
     const limit = parseInt(searchParams.get('limit')) || 20
     const skip = (page - 1) * limit
-    
+
     const collection = await connectToMongoDB()
-    
+
     const articles = await collection
       .find({})
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .toArray()
-    
+
     const total = await collection.countDocuments({})
     const totalPages = Math.ceil(total / limit)
-    
+
     return NextResponse.json({
       success: true,
       data: articles,
@@ -46,17 +45,14 @@ export const GET = requireAuth(async (req) => {
       { error: 'Failed to fetch articles' },
       { status: 500 }
     )
-  } finally {
-    await client.close()
   }
 })
 
-// POST - Create new article
+// POST - Create new article (manual admin CRUD → `blog`)
 export const POST = requireAuth(async (req) => {
   try {
     const articleData = await req.json()
-    
-    // Validate required fields
+
     const requiredFields = ['title', 'content', 'summary', 'slug']
     for (const field of requiredFields) {
       if (!articleData[field]) {
@@ -66,10 +62,9 @@ export const POST = requireAuth(async (req) => {
         )
       }
     }
-    
+
     const collection = await connectToMongoDB()
-    
-    // Check if slug already exists
+
     const existingArticle = await collection.findOne({ slug: articleData.slug })
     if (existingArticle) {
       return NextResponse.json(
@@ -77,7 +72,7 @@ export const POST = requireAuth(async (req) => {
         { status: 400 }
       )
     }
-    
+
     const article = {
       ...articleData,
       createdAt: new Date(),
@@ -86,12 +81,11 @@ export const POST = requireAuth(async (req) => {
       published: articleData.published || false,
       views: 0
     }
-    
+
     const result = await collection.insertOne(article)
-    
-    // Clear blog cache
+
     cache.delete(getCacheKey.blog(1, 20))
-    
+
     return NextResponse.json({
       success: true,
       data: { ...article, _id: result.insertedId }
@@ -102,7 +96,5 @@ export const POST = requireAuth(async (req) => {
       { error: 'Failed to create article' },
       { status: 500 }
     )
-  } finally {
-    await client.close()
   }
 })

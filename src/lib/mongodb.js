@@ -4,9 +4,8 @@ import { MongoClient } from 'mongodb'
  * Shared MongoDB client promise (reuse across server modules).
  * Prefer this over `new MongoClient` per route — see docs/codebase-audit.md P1-8.
  *
- * Remaining work (not done in P1): migrate admin/articles from collection
- * `articles` → live `blog`, and switch remaining API routes (getdata, blog,
- * admin/prices) to this helper.
+ * App code uses collection `blog` for posts (admin + public + content bot).
+ * One-off copy from legacy `articles`: scripts/migrate-articles-to-blog.mjs
  */
 
 let clientPromise
@@ -29,8 +28,8 @@ export function getMongoClient() {
 }
 
 /**
- * @param {string} [dbName='valorisvisio']
  * @param {string} collectionName
+ * @param {string} [dbName='valorisvisio']
  * @returns {Promise<import('mongodb').Collection>}
  */
 export async function getDbCollection(collectionName, dbName = 'valorisvisio') {

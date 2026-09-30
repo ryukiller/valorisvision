@@ -105,25 +105,28 @@ This PR ships the audit plus **surgical P0 fixes only** (auth defaults, `POST /a
 **Evidence:** `src/app/api/admin/articles/route.js` (`"articles"`); `src/lib/blog.js` (`'blog'`); per-route clients in `getdata`, `blog`, `admin/prices`.  
 **Fix:** One shared `clientPromise` helper; fail fast if `MONGODB` missing; point admin CRUD at `blog` or drop dead `articles` path. Prefer non-SRV URI when SRV fails (already documented).  
 **Effort:** M  
-**Status:** **Partial in P1 PR** — `src/lib/mongodb.js`; `blog.js` + API routes migrated to shared lazy client. Collection unify (`articles`→`blog`) still open.
+**Status:** **Fixed in follow-up P1 PR** — admin CRUD uses `blog`; shared client already in place; migration script `scripts/migrate-articles-to-blog.mjs` for legacy `articles` copy (non-destructive).
 
 ### P1-9 — `create-article` proxy drops auth + wrong default port  
 **Problem:** Server-side `fetch` to `/api/blog` does not forward the admin cookie, and defaults to `localhost:3001`.  
 **Evidence:** `src/app/api/admin/create-article/route.js`. Admin UI already posts directly to `/api/blog` (`src/app/admin/page.js`).  
 **Fix:** Remove the proxy or call article creation logic in-process; never re-fetch without cookies.  
-**Effort:** S
+**Effort:** S  
+**Status:** **Fixed in follow-up P1 PR** — route returns 410 pointing to `POST /api/blog`.
 
 ### P1-10 — OpenAI / article path error surface  
 **Problem:** `POST /api/blog` can return raw `error.message` to clients; long-running generation has no timeout/idempotency; `JSON.parse` of model output can throw; image failure aborts after expensive text gen.  
 **Evidence:** `src/app/api/blog/route.js` (catch returns `error.message`; no `OPENAI_API_KEY` pre-check). CLI: `scripts/internal-bot.mjs`, `docs/internal-bot.md`.  
 **Fix:** Preflight env checks; sanitize errors; optional two-phase save (draft without image); set route `maxDuration` on host.  
-**Effort:** M
+**Effort:** M  
+**Status:** **Fixed in follow-up P1 PR** — preflight, sanitized errors, safe JSON parse, save without image on image failure, `maxDuration = 300`.
 
 ### P1-11 — Client fetches depend on unset `NEXT_PUBLIC_API_URL`  
 **Problem:** Sidebar / fallback client post fetch use `` `${process.env.NEXT_PUBLIC_API_URL}/api/blog...` ``. If unset → `undefined/api/...` broken URLs. Server-rendered path mostly avoids this now.  
 **Evidence:** `src/app/blog/[slug]/ClientPost.js`, `src/app/blog/[slug]/Sidebar.js`.  
 **Fix:** Use relative `/api/...` or document required env; prefer server data only (already done for main article body).  
-**Effort:** S
+**Effort:** S  
+**Status:** **Fixed in follow-up P1 PR** — relative `/api/blog...` fetches.
 
 ### P1-12 — Unescaped user search → RegExp  
 **Problem:** Coin search built `new RegExp(searchTerm, 'i')` without escaping (ReDoS / odd matches).  
@@ -137,7 +140,7 @@ This PR ships the audit plus **surgical P0 fixes only** (auth defaults, `POST /a
 **Evidence:** `src/lib/auth.js`.  
 **Fix:** Migrate to scrypt/argon2 hashes; keep constant-time compare.  
 **Effort:** M  
-**Status:** Timing-safe hex compare **done** in this PR; KDF upgrade still recommended.
+**Status:** Timing-safe hex compare **done** in P0 PR; **scrypt KDF + legacy SHA-256 verify** in follow-up P1 PR. Ops should regenerate `ADMIN_PASSWORD_HASH` as `scrypt$…` when convenient.
 
 ---
 
@@ -263,7 +266,7 @@ Recent homepage contrast work (`src/app/page.js`, `globals.css`, button variants
 ## DX / maintainability
 
 - **JS not TS** despite user CRM rules elsewhere — fine for this repo; types absent.
-- **Dual blogs collections** (`blog` vs `articles`) confuse admin APIs.
+- **Single blog collection** — app code uses `blog`; legacy `articles` copy via `scripts/migrate-articles-to-blog.mjs`.
 - **No middleware.ts** for centralized auth/rate limits.
 - **CLAUDE.md** still describes Next 14-ish patterns; app is on Next **16.3.7**.
 - **Lint only** — `npm run lint`; no CI test gate visible in-repo from this audit.

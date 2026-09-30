@@ -18,8 +18,7 @@ export default function ClientPost({ slug, article: articleProp, heading, conten
         if (articleProp) return;
         async function fetchArticle() {
             try {
-                // Use the full URL here, including the base URL
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/${slug}`);
+                const response = await fetch(`/api/blog/${slug}`);
                 const data = await response.json();
                 if (data.success) {
                     setArticle(data.data);
