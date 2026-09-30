@@ -101,6 +101,36 @@ export default async function LearnClusterPage({ params }) {
               .
             </p>
           )}
+          {cluster.id === 'B' && (
+            <p className="text-muted-foreground">
+              Start with{' '}
+              <Link
+                href="/learn/ethereum-scaling/peerdas-explained"
+                className="text-neon-cyan hover:underline"
+              >
+                PeerDAS explained
+              </Link>
+              , then{' '}
+              <Link
+                href="/learn/ethereum-scaling/epbs-explained"
+                className="text-neon-cyan hover:underline"
+              >
+                ePBS / Glamsterdam
+              </Link>
+              , and the shorter{' '}
+              <Link
+                href="/learn/ethereum-scaling/peerdas-and-l2s"
+                className="text-neon-cyan hover:underline"
+              >
+                PeerDAS &amp; L2 fees
+              </Link>{' '}
+              guide. Daily Fusaka / Glamsterdam news remains on{' '}
+              <Link href="/blog" className="text-neon-cyan hover:underline">
+                /blog
+              </Link>
+              .
+            </p>
+          )}
         </section>
       )}
 
