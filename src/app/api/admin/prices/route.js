@@ -123,8 +123,6 @@ export const POST = requireAuth(async (req) => {
       { error: 'Failed to update prices' },
       { status: 500 }
     )
-  } finally {
-    await client.close()
   }
 })
 
@@ -164,7 +162,5 @@ export const GET = requireAuth(async (req) => {
       { error: 'Failed to get price status' },
       { status: 500 }
     )
-  } finally {
-    await client.close()
   }
 })
