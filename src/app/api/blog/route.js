@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 import sharp from 'sharp';
 import { requireAuth } from '@/lib/auth';
 import { getDbCollection } from '@/lib/mongodb';
-import { askJev, jevDisabled } from '@/lib/jev';
+import { askJev, jevAvailable, jevDisabled } from '@/lib/jev';
 
 /** Long-running AI generation; capped at 60s for Vercel Hobby (plan max). */
 export const maxDuration = 60;
@@ -170,14 +170,16 @@ The content must be original, fact-based, and genuinely useful to crypto investo
         // The writer call is the most expensive step in this route; Jev's cheap
         // judgment is spent to make it land, or to catch a miss before publish.
         async function generateAndJudge() {
-            const inputParts = [
+            // Responses API accepts a string input (or input-item objects).
+            // An array of bare strings 400s: "expected an input item".
+            const input = [
                 postprompt,
                 retryInstruction ? `REVISION REQUIRED: ${retryInstruction}` : '',
-            ].filter(Boolean);
+            ].filter(Boolean).join('\n\n');
             const post = await openai.responses.create({
                 model: textModel,
                 instructions: systemMessage + editorialDirection,
-                input: inputParts
+                input
             });
 
             // The model returns JSON (possibly wrapped in markdown fences) - normalize before parsing
