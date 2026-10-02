@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 import sharp from 'sharp';
 import { requireAuth } from '@/lib/auth';
 import { getDbCollection } from '@/lib/mongodb';
+import { askJev, jevDisabled } from '@/lib/jev';
 
 /** Long-running AI generation; capped at 60s for Vercel Hobby (plan max). */
 export const maxDuration = 60;
@@ -52,13 +53,18 @@ export const POST = requireAuth(async (req) => {
     }
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    // Explicit opt-out (request body { "noJev": true }) disables every Jev step.
+    const jevOff = Boolean(body?.noJev);
+    if (!jevDisabled(jevOff, 'noJev flag')) {
+        console.log('[jev] active (angle + QC + semantic dedupe)');
+    }
 
     try {
 
         // Get existing blog posts for internal linking
         const blogCollection = await connectToMongoDB();
         const existingPosts = await blogCollection.find({}, {
-            projection: { slug: 1, title: 1, _id: 0 }
+            projection: { slug: 1, title: 1, createdAt: 1, _id: 0 }
         }).limit(100).toArray();
 
         // Titles included so the model can judge topical relevance and
@@ -69,7 +75,41 @@ export const POST = requireAuth(async (req) => {
 
         const today = new Date().toISOString().slice(0, 10);
 
+        // JEV(1) — angle steering: one cheap Choice before the expensive write.
+        // The writer LLM still decides everything; Jev just points it.
+        const ANGLES = {
+            "news-breakdown": "Structured, factual breakdown of what happened and why it matters, with key figures and timeline",
+            "market-impact": "What this means for prices, positioning, and investor allocation in the current market cycle",
+            "explainer": "Explain the underlying concept in plain language for a smart non-expert; no hot takes, just clarity",
+            "contrarian-take": "Argue against the consensus around the topic; steelman the opposition, then dismantle it",
+            "investor-action": "What a practical investor should do about it: scenarios, risk, and how to test the thesis with the ValorisVisio calculator",
+        };
+        let angle = null;
+        if (!jevOff) {
+            const angleAnswers = await askJev(
+                `Topic for a crypto blog article: "${topic.trim()}". Today's date: ${today}.`,
+                {
+                    angle: {
+                        type: 'choice',
+                        instructions: 'Which article angle will best make this topic land with a crypto-investor audience?',
+                        criteria: ANGLES,
+                    },
+                }
+            );
+            const id = angleAnswers?.angle?.choice;
+            if (id && ANGLES[id]) {
+                angle = { id, description: ANGLES[id] };
+                console.log(`[jev] angle: ${id}`);
+            }
+        }
+
+        const editorialDirection = angle
+            ? `\n## EDITORIAL DIRECTION\nSteer the piece toward this angle: ${angle.description}. The angle shapes emphasis and structure, not the facts.`
+            : '';
+
         const postprompt = `Write a comprehensive, SEO-optimized blog post about: ${topic}. Today's date: ${today}.`;
+        // Retry carries an explicit correction instruction (set below if QC fails).
+        let retryInstruction = '';
 
         const systemMessage = `You are an expert cryptocurrency journalist and SEO specialist working for ValorisVisio, a crypto scenario calculator site. Write an original, fact-based, in-depth article that is optimized to rank in Google for its primary keyword. Topic: "${topic}". Today's date: ${today}. Follow these rules strictly.
 
@@ -125,25 +165,136 @@ The content must be original, fact-based, and genuinely useful to crypto investo
         const textModel = process.env.OPENAI_TEXT_MODEL || "gpt-6-luna";
         // NB: gpt-6-series models do not accept `temperature` (and some reasoning
         // models reject it) - keep the call to the minimal supported params.
-        const post = await openai.responses.create({
-            model: textModel,
-            instructions: systemMessage,
-            input: postprompt
-        });
 
-        // The model returns JSON (possibly wrapped in markdown fences) - normalize before parsing
-        const rawText = (post.output_text || "")
-            .trim()
-            .replace(/^```(?:json)?\s*/i, "")
-            .replace(/\s*```$/, "");
-        let articleData;
-        try {
-            articleData = JSON.parse(rawText);
-        } catch {
-            throw new Error('Failed to parse AI article response as JSON');
+        // JEV(2) — QC gate: one call, one retry, then drop the bad text (never publish bad).
+        // The writer call is the most expensive step in this route; Jev's cheap
+        // judgment is spent to make it land, or to catch a miss before publish.
+        async function generateAndJudge() {
+            const inputParts = [
+                postprompt,
+                retryInstruction ? `REVISION REQUIRED: ${retryInstruction}` : '',
+            ].filter(Boolean);
+            const post = await openai.responses.create({
+                model: textModel,
+                instructions: systemMessage + editorialDirection,
+                input: inputParts
+            });
+
+            // The model returns JSON (possibly wrapped in markdown fences) - normalize before parsing
+            const rawText = (post.output_text || "")
+                .trim()
+                .replace(/^```(?:json)?\s*/i, "")
+                .replace(/\s*```$/, "");
+            let articleData;
+            try {
+                articleData = JSON.parse(rawText);
+            } catch {
+                throw new Error('Failed to parse AI article response as JSON');
+            }
+            if (!articleData || typeof articleData !== 'object') {
+                throw new Error('Failed to parse AI article response as JSON');
+            }
+            return articleData;
         }
-        if (!articleData || typeof articleData !== 'object') {
-            throw new Error('Failed to parse AI article response as JSON');
+
+        let articleData = await generateAndJudge();
+        // Jev verdicts surfaced to the caller (CLI / admin UI) as warnings.
+        let qcWarnings = [];
+
+        if (!jevOff && jevAvailable()) {
+            // Soft gate: Jev flags, code decides. Categories from the prompt.
+            const CATEGORIES = ['Altcoins', 'Bitcoin', 'Blockchain', 'DeFi', 'Ethereum', 'GameFi', 'Metaverse', 'NFTs', 'Trading', 'Market Analysis', 'Investment Strategies', 'Technical Analysis', 'News', 'Regulations', 'Mining', 'Staking'];
+            const judgeArticle = async (data) => {
+                const state = [
+                    `TITLE: ${data.title || ''}`,
+                    `CATEGORY (proposed): ${data.category || ''}`,
+                    `EXCERPT: ${data.summary || ''}`,
+                    '',
+                    'ARTICLE:',
+                    String(data.article_content || '').slice(0, 6000),
+                ].join('\n');
+                return askJev(state, {
+                title_match: {
+                    type: 'choice',
+                    instructions: 'Does the article content deliver what the title promises?',
+                    criteria: {
+                        delivers: 'The article substantively covers the specific thing the title claims',
+                        partially: 'Related, but the title overpromises or skews the content',
+                        clickbait: 'The title is sensational and the article does not actually pay it off',
+                    },
+                },
+                honest_language: {
+                    type: 'noul',
+                    instructions: 'Does the article state precise statistics or figures as absolute fact, without any hedge, attribution, or date anchoring?',
+                    criteria: {
+                        true: 'The article presents specific numbers or claims without hedging, sourcing, or temporal anchoring',
+                        false: 'Concrete figures are hedged, attributed to a source, or dated; or the article contains no precise figures',
+                    },
+                },
+                category: {
+                    type: 'choice',
+                    instructions: 'Which category does the article actually belong to?',
+                    criteria: Object.fromEntries(CATEGORIES.map((c) => [c, c])),
+                },
+                hook: {
+                    type: 'score',
+                    instructions: 'How compelling is the excerpt (summary) as a feed hook?',
+                    criteria: [
+                        'Generic summary; a reader would skip it',
+                        'Accurate but flat; no curiosity created',
+                        'Creates a clear curiosity gap or tension',
+                        'Impossible to scroll past; makes the reader need to know more',
+                    ],
+                },
+            });
+            };
+
+            // One verdict pass: log, soft-fix the category, and (at most once)
+            // retry the writer with an explicit correction. This route publishes
+            // a single manually-chosen piece, so a still-flagged draft is kept
+            // but surfaced as a warning rather than dropped.
+            const applyVerdict = (data, qc) => {
+                const titleMatch = qc.title_match?.choice ?? null;
+                const titleConf = qc.title_match?.confidence ?? 0;
+                const unhedged = typeof qc.honest_language?.noul === 'number' ? qc.honest_language.noul : null;
+                const catChoice = qc.category?.choice;
+                const catConf = qc.category?.confidence ?? 0;
+                const hook = qc.hook?.score !== undefined ? qc.hook.score / 3 : null;
+                console.log(`[jev] QC: title=${titleMatch}(${titleConf.toFixed(2)}) unhedged=${unhedged === null ? '?' : unhedged.toFixed(2)} category=${catChoice ?? '?'}(${catConf.toFixed(2)}) hook=${hook === null ? '?' : hook.toFixed(2)}`);
+
+                if (catChoice && catConf >= 0.5) {
+                    const known = CATEGORIES.find((c) => c.toLowerCase() === String(catChoice).trim().toLowerCase());
+                    if (known && known.toLowerCase() !== String(data.category || '').trim().toLowerCase()) {
+                        console.log(`[jev] QC: category ${data.category} -> ${known}`);
+                        data.category = known;
+                    }
+                }
+
+                const clickbait = titleMatch === 'clickbait' && titleConf >= 0.5;
+                const unhedgedStats = unhedged !== null && unhedged >= 0.6;
+                const problems = [];
+                if (clickbait) problems.push('the title does not match the content — make the title honest and specific to what the article actually delivers');
+                if (unhedgedStats) problems.push('it stated precise statistics without hedging or sourcing — remove or hedge every figure, and attribute data to a source');
+                return problems;
+            };
+
+            let qc = await judgeArticle(articleData);
+            if (qc) {
+                const problems = applyVerdict(articleData, qc);
+                if (problems.length > 0) {
+                    console.warn(`[jev] QC: retrying writer (${problems.join('; ')})`);
+                    retryInstruction = problems.join('. ') + '.';
+                    articleData = await generateAndJudge();
+                    const qc2 = await judgeArticle(articleData);
+                    if (qc2) {
+                        const still = applyVerdict(articleData, qc2);
+                        if (still.length > 0) {
+                            console.warn(`[jev] QC: still flagged after retry (${still.join('; ')})`);
+                            qcWarnings.push('QC: ' + still.join('; '));
+                        }
+                    }
+                }
+            }
         }
 
         // Function to slugify the title
@@ -175,6 +326,43 @@ The content must be original, fact-based, and genuinely useful to crypto investo
             slug = candidate;
         }
         articleData.slug = slug;
+
+        // JEV(3) — semantic dedupe: "same story, different words". Token/slug
+        // rules above catch reworded slugs only. One batched Noul per pair
+        // against the most recent archive posts (small set — cost is trivial).
+        // Soft signal: a hit is surfaced as a warning, never blocks publish
+        // (single manually-chosen piece per run).
+        if (!jevOff && jevAvailable() && title) {
+            const recent = [...existingPosts]
+                .filter((p) => p.slug !== slug && p.title)
+                .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+                .slice(0, 20);
+            if (recent.length > 0) {
+                const q = {};
+                recent.forEach((p, i) => {
+                    q[`x${i}`] = {
+                        type: 'noul',
+                        instructions: `Does the candidate topic cover the SAME story or event as existing topic x${i} ("${p.title}")? Different angles on one underlying event = same story. Related themes ≠ same story.`,
+                        criteria: {
+                            true: 'Both topics are about the same underlying event, release, person, or controversy',
+                            false: 'The topics are about different stories, even if on a related theme',
+                        },
+                    };
+                });
+                const answers = await askJev({ candidate_topic: title, existing_topics: recent.map((p, i) => ({ id: `x${i}`, title: p.title })) }, q);
+                if (answers) {
+                    const hit = recent.find((p, i) => {
+                        const n = answers[`x${i}`]?.noul;
+                        return typeof n === 'number' && n >= 0.6;
+                    });
+                    if (hit) {
+                        console.warn(`[jev] ⏭ semantic: draft may duplicate existing post "${hit.title}" (${hit.slug})`);
+                        qcWarnings.push(`Semantic dedupe: may duplicate existing post "${hit.title}" (/blog/${hit.slug})`);
+                    }
+                }
+            }
+        }
+
         const category_title = articleData.category || '';
         const category_slug = slugify(category_title);
         articleData.category_slug = category_slug;
@@ -276,6 +464,11 @@ The content must be original, fact-based, and genuinely useful to crypto investo
 
         const result = await blogCollection.insertOne(enhancedArticleData);
 
+        // Ops-facing warnings: Jev QC flags that survived the retry and
+        // semantic-dedupe hits. Non-blocking — the piece is published.
+        const warnings = [...qcWarnings];
+        if (imageWarning) warnings.push(imageWarning);
+
         return NextResponse.json({
             success: true,
             id: result.insertedId,
@@ -285,9 +478,11 @@ The content must be original, fact-based, and genuinely useful to crypto investo
                 category: articleData.category,
                 estimated_read_time: articleData.estimated_read_time || "5 min read",
                 image_url: imageUrl,
-                status: enhancedArticleData.status
+                status: enhancedArticleData.status,
+                angle: angle ? angle.id : undefined
             },
-            warning: imageWarning || undefined,
+            warnings: warnings.length > 0 ? warnings : undefined,
+            warning: warnings[0] || undefined,
             message: hasImage
                 ? "Article created successfully with enhanced SEO optimization!"
                 : "Article saved without header image (generation failed); text and SEO fields were kept."

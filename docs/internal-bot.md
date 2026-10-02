@@ -40,6 +40,36 @@ Cosa fa:
    - immagine header 1536×1024 (modello `gpt-image-2.5-flare`), salvata in `public/imgs/`
 4. Salva l'articolo in MongoDB (collection `blog`, pubblicato) e aggiorna `public/sitemap.xml`
 
+### Layer editoriale Jev (TypeSafe System One, opzionale)
+
+Se `JEV_API_KEY` è impostata nel `.env`, la pipeline di `POST /api/blog`
+guadagna tre giudizi strutturati economici (Jev è una "enhancement layer":
+senza key o su errore ogni step degrada silenziosamente al comportamento
+precedente, il bot non rompe mai):
+
+1. **Angle steering** — un Choice Jev sceglie l'angolo editoriale migliore per
+   il tema (news-breakdown / market-impact / explainer / contrarian-take /
+   investor-action) e lo inietta nel prompt del writer come
+   `EDITORIAL DIRECTION`. Il writer LLM decide comunque tutto.
+2. **QC gate** — dopo la bozza, una chiamata con 4 domande: titolo coerente
+   (Choice, clickbait), dati non giustificati (Noul), categoria corretta
+   (Choice, auto-correzione se confidenza ≥ 0.5), forza excerpt (Score).
+   Se clickbait (conf ≥ 0.5) o dati non giustificati (≥ 0.6) → **1 retry** del
+   writer con correzione esplicita. Ancora flaggato → l'articolo viene
+   pubblicato ma la risposta contiene `warnings: [...]` (il tool CLI le
+   stampa come `⚠ ...`).
+3. **Semantic dedupe** — uno Noul per coppia contro i 20 articoli più recenti
+   dell'archivio: se `noul ≥ 0.6` → warning "may duplicate existing post"
+   (soft: mai blocca la pubblicazione, serve a non coprire la stessa storia).
+
+Disattiva tutto per una singola run: `NO_JEV=1 npm run tool:article -- "..."`
+oppure il body `{ "noJev": true }` sull'endpoint. I log del dev server
+usano il prefisso `[jev]` per auditare le decisioni (angle, QC, dedupe).
+
+Tuning (in ordine di leverage): wording dei livelli Score → soglie
+(clickbait 0.5 / dati 0.6 / dedupe 0.6, in `src/app/api/blog/route.js`) →
+menu angle. Monitora i log per una settimana prima di fidarti delle soglie.
+
 **Durata attesa: 2-5 minuti** per articolo. Non timeoutare prima.
 
 Output: JSON con `success`, `id` e `article` (`title`, `slug`, `image_url`).
@@ -118,6 +148,12 @@ tentativo il DNS risponde). Il workaround va applicato nel `.env` prima del riav
 - **Modelli OpenAI**: configurabili via `.env`:
   - `OPENAI_TEXT_MODEL` (default `gpt-6-luna`) — generazione testo
   - `OPENAI_IMAGE_MODEL` (default `gpt-image-2.5-flare`) — immagine header
+- **Jev (TypeSafe)**: `JEV_API_KEY` (opzionale — attiva il layer qualità,
+  vedi sezione sopra), `JEV_MODEL` (default `jev-latest`),
+  `JEV_ENDPOINT` (default `https://api.typesafe.ai/v1/systemone`),
+  `NO_JEV=1` per disattivare. Costo/latenza: ~3-4 chiamate Jev per
+  articolo (qualche centesimo, pochi secondi), a protezione di 1-2
+  generazioni LLM complete che costano 10-30× di più.
 - **Immagini**: vengono scritte in `public/imgs/<slug>-<timestamp>.png`.
   In un deploy VCS-based (es. Vercel) i file nuovi non sono persistenti:
   il bot interno è pensato per girare dove `public/` è scrivibile (dev locale).
