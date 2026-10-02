@@ -58,6 +58,15 @@ The project does not currently have a testing framework configured. If tests are
 
 ## External Dependencies
 
+### Editorial quality layer (TypeSafe Jev)
+`src/lib/jev.js` is a never-throwing client for TypeSafe's System One model
+Jev (`POST /v1/systemone`, `JEV_API_KEY` in `.env`). `POST /api/blog` uses it
+in three places (all no-ops when the key is missing or `noJev: true` in the
+body / `NO_JEV=1` env): angle steering (Choice) injected into the writer
+prompt, a QC gate (4 questions, one writer retry, then `warnings` in the
+response), and semantic dedupe (Noul vs. the 20 most recent posts). Thresholds
+live in `src/app/api/blog/route.js`. Docs: `docs/internal-bot.md`.
+
 ### API Integration
 - **CoinGecko API**: Used for fetching real-time cryptocurrency data
 - **MongoDB**: Primary database for storing crypto data and blog content

@@ -19,6 +19,12 @@
  *   BASE_URL          - dev server URL        (default http://localhost:3000)
  *   ADMIN_USERNAME    - admin panel user      (default admin)
  *   ADMIN_PASSWORD    - admin panel password  (default admin123)
+ *   JEV_API_KEY       - TypeSafe Jev key; activates the editorial quality layer
+ *                       (angle steering, QC gate, semantic dedupe). When unset
+ *                       every step degrades to the old behavior.
+ *   JEV_MODEL         - optional, default "jev-latest"
+ *   JEV_ENDPOINT      - optional, default https://api.typesafe.ai/v1/systemone
+ *   NO_JEV=1          - disable all Jev steps for a run
  */
 
 const BASE_URL = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/$/, '')
@@ -68,7 +74,11 @@ async function runArticle(topic) {
   log(`Logged in as ${USERNAME}`)
   log(`Generating article on topic: "${topic}" (this can take several minutes: text + image generation)`)
   const t0 = Date.now()
-  const data = await api('/api/blog', await login(), { method: 'POST', body: { topic } })
+  const noJev = process.env.NO_JEV === '1' || process.env.NO_JEV === 'true'
+  const data = await api('/api/blog', await login(), { method: 'POST', body: { topic, noJev } })
+  if (data.warnings?.length) {
+    for (const w of data.warnings) log(`⚠ ${w}`)
+  }
   log(`Done in ${((Date.now() - t0) / 1000).toFixed(0)}s`)
   console.log(JSON.stringify(data, null, 2))
 }
