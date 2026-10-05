@@ -1,69 +1,14 @@
 import { NextResponse } from 'next/server';
 import cache, { getCacheKey, CACHE_TTL } from '@/lib/cache';
-import { requireAuth } from '@/lib/auth';
 import { getDbCollection } from '@/lib/mongodb';
 
 async function connectToMongoDB() {
     return getDbCollection('coins');
 }
 
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// Bulk CoinGecko import — admin-only (unauthenticated callers can DoS Mongo + API quota)
-export const POST = requireAuth(async (_req) => {
-    const fetchCoins = async (pageNum) => {
-        try {
-            const response = await fetch(
-                `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${pageNum}&sparkline=false&locale=en`,
-                {
-                    headers: {
-                        Accept: 'application/json',
-                        ...(process.env.COINGECKO_API_KEY
-                            ? { 'x-cg-demo-api-key': process.env.COINGECKO_API_KEY }
-                            : {}),
-                    },
-                }
-            );
-            if (!response.ok) {
-                throw new Error(`CoinGecko HTTP ${response.status} on page ${pageNum}`);
-            }
-            return await response.json();
-        } catch (err) {
-            console.error(err);
-            return null;
-        }
-    };
-
-    let page = 1;
-    let coins;
-    try {
-        const collection = await connectToMongoDB();
-
-        do {
-            coins = await fetchCoins(page);
-            if (coins && coins.length > 0) {
-                try {
-                    // Insert or Update each coin in MongoDB
-                    for (const coin of coins) {
-                        await collection.updateOne({ id: coin.id }, { $set: coin }, { upsert: true });
-                    }
-                } catch (err) {
-                    console.error('Error with MongoDB operation:', err);
-                    return NextResponse.json({ message: "Error with MongoDB operation" }, { status: 500 });
-                }
-                page++;
-                await delay(30000); // Delay to avoid rate limits
-            }
-        } while (coins && coins.length > 0);
-
-        return NextResponse.json({ message: "Data saved to MongoDB successfully" }, { status: 200 });
-    } catch (error) {
-        console.error('Error importing coins:', error);
-        return NextResponse.json({ message: "Failed to import coin data" }, { status: 500 });
-    }
-});
+// NOTE: the legacy unauthenticated CoinGecko bulk import (old POST) was removed.
+// Use `POST /api/admin/prices` — it is auth-gated, supports `pages`/`delayMs`,
+// retries, and reports 403/429 quota errors cleanly.
 
 export async function GET(req) {
     const { searchParams } = new URL(req.url)
@@ -80,8 +25,13 @@ export async function GET(req) {
     const cacheKey = getCacheKey.coins(page, limit, searchTerm || '')
     const cachedData = cache.get(cacheKey)
     
+    const cacheHeaders = {
+        // `generateEtags` is disabled globally — set caching explicitly.
+        'Cache-Control': 'public, max-age=60, s-maxage=300',
+    }
+
     if (cachedData) {
-        return NextResponse.json(cachedData, { status: 200 })
+        return NextResponse.json(cachedData, { status: 200, headers: cacheHeaders })
     }
 
     try {
@@ -118,7 +68,7 @@ export async function GET(req) {
         // Cache the response
         cache.set(cacheKey, responseData, CACHE_TTL.COINS)
         
-        return NextResponse.json(responseData, { status: 200 });
+        return NextResponse.json(responseData, { status: 200, headers: cacheHeaders });
     } catch (error) {
         console.error("Failed to fetch coins:", error);
         return NextResponse.json({ message: "Failed to fetch coins" }, { status: 500 });

@@ -36,7 +36,7 @@ export default async function Blog({ searchParams }) {
     const { data: articles, pagination } = await getBlogPosts({ page, limit: PER_PAGE });
     if (page > 1 && articles.length === 0) notFound();
 
-    const pageParam = (p) => ({ page: p > 1 ? String(p) : undefined });
+    const hrefForPage = (p) => (p > 1 ? `/blog?page=${p}` : '/blog');
 
     return (
         <div className="container mx-auto px-4 py-8 main-content">
@@ -54,7 +54,7 @@ export default async function Blog({ searchParams }) {
             {pagination.totalPages > 1 && (
                 <div className="flex items-center justify-center gap-4 mt-10">
                     <Link
-                        href={page > 1 ? { pathname: '/blog', query: { page: String(page - 1) } } : '/blog'}
+                        href={hrefForPage(page - 1)}
                         aria-disabled={page === 1}
                         className={`cyber-cut-sm border border-line px-6 py-3 font-mono text-xs uppercase tracking-[0.25em] text-foreground hover:border-neon-cyan/60 hover:text-neon-cyan transition-all ${page === 1 ? 'opacity-30 pointer-events-none' : ''}`}
                     >
@@ -64,7 +64,7 @@ export default async function Blog({ searchParams }) {
                         [ {page} / {pagination.totalPages} ]
                     </span>
                     <Link
-                        href={{ pathname: '/blog', query: pageParam(page + 1) }}
+                        href={hrefForPage(page + 1)}
                         aria-disabled={page >= pagination.totalPages}
                         className={`cyber-cut-sm border border-line px-6 py-3 font-mono text-xs uppercase tracking-[0.25em] text-foreground hover:border-neon-cyan/60 hover:text-neon-cyan transition-all ${page >= pagination.totalPages ? 'opacity-30 pointer-events-none' : ''}`}
                     >

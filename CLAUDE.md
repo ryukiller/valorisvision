@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
-ValorisVisio is a Next.js 14 cryptocurrency comparison and scenario calculation tool. It allows users to compare their crypto holdings against other cryptocurrencies' market caps to visualize potential gains. The application includes a blog system for crypto news and articles.
+ValorisVisio is a Next.js 16 (App Router) cryptocurrency comparison and scenario calculation tool. It allows users to compare their crypto holdings against other cryptocurrencies' market caps to visualize potential gains. The application includes a blog system for crypto news and articles.
 
 ## Development Commands
 
@@ -14,7 +14,7 @@ ValorisVisio is a Next.js 14 cryptocurrency comparison and scenario calculation 
 - `npm run lint` - Run ESLint for code quality checks
 
 ### Testing
-The project does not currently have a testing framework configured. If tests are needed, you'll need to set up Jest or another testing framework.
+- `npm test` - Run Vitest unit tests (`tests/`): auth hashing/verification and the rate limiter
 
 ## Architecture Overview
 
@@ -29,11 +29,12 @@ The project does not currently have a testing framework configured. If tests are
 - `src/components/` - Reusable UI components (Radix UI based)
 - `src/rgcomponents/` - Application-specific React components
 - `src/lib/` - Utility functions and shared logic
-- `public/` - Static assets including crypto article images
+- `public/` - Static assets (legacy blog images under `imgs/`; new images live in Mongo)
 
 ### API Structure
 - `GET /api/getdata` - Fetch cryptocurrency data with pagination and search
-- `POST /api/getdata` - Bulk import crypto data from CoinGecko API
+- `POST /api/admin/prices` - Auth-gated bulk import of crypto prices from CoinGecko API (the legacy `POST /api/getdata` was removed)
+- `GET /api/article-image/[name]` - Serves blog header images stored in Mongo (`blog_images`; request-time writes to `public/` don't persist on serverless)
 - `GET /api/blog` - Fetch blog articles with pagination and category filtering
 - `GET /api/blog/[slug]` - Fetch individual blog article
 - `POST /api/send` - Handle contact form submissions
@@ -98,7 +99,7 @@ live in `src/app/api/blog/route.js`. Docs: `docs/internal-bot.md`.
 
 ### Adding New Crypto Features
 1. Extend the `GetCoinsData` component for new selection criteria
-2. Update API routes in `/api/getdata/` for additional data fields
+2. Update API routes in `/api/getdata/` (read) and `/api/admin/prices` (import) for additional data fields
 3. Modify database queries to support new filtering options
 
 ### Blog System Modifications

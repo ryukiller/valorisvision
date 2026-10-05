@@ -50,7 +50,7 @@ export default async function Category({ params, searchParams }) {
     const { data: articles, pagination } = await getBlogPosts({ page, limit: PER_PAGE, category_slug: slug });
     if (articles.length === 0) notFound();
 
-    const pageParam = (p) => ({ page: p > 1 ? String(p) : undefined });
+    const hrefForPage = (p) => (p > 1 ? `/blog/category/${slug}?page=${p}` : `/blog/category/${slug}`);
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -65,7 +65,7 @@ export default async function Category({ params, searchParams }) {
             {pagination.totalPages > 1 && (
                 <div className="flex items-center justify-center gap-4 mt-10">
                     <Link
-                        href={page > 1 ? { query: { page: String(page - 1) } } : { query: {} }}
+                        href={hrefForPage(page - 1)}
                         className={`cyber-cut-sm border border-line px-6 py-3 font-mono text-xs uppercase tracking-[0.25em] text-foreground hover:border-neon-cyan/60 hover:text-neon-cyan transition-all ${page === 1 ? 'opacity-30 pointer-events-none' : ''}`}
                     >
                         ‹ Prev
@@ -74,7 +74,7 @@ export default async function Category({ params, searchParams }) {
                         [ {page} / {pagination.totalPages} ]
                     </span>
                     <Link
-                        href={{ query: pageParam(page + 1) }}
+                        href={hrefForPage(page + 1)}
                         className={`cyber-cut-sm border border-line px-6 py-3 font-mono text-xs uppercase tracking-[0.25em] text-foreground hover:border-neon-cyan/60 hover:text-neon-cyan transition-all ${page >= pagination.totalPages ? 'opacity-30 pointer-events-none' : ''}`}
                     >
                         Next ›
