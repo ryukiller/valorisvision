@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import path from 'path';
 import OpenAI from 'openai';
 import sharp from 'sharp';
 import { requireAuth } from '@/lib/auth';
 import { getDbCollection } from '@/lib/mongodb';
+import { saveArticleImage, articleImageUrl } from '@/lib/article-images';
 import { askJev, jevAvailable, jevDisabled } from '@/lib/jev';
 
 /** Long-running AI generation; capped at 60s for Vercel Hobby (plan max). */
@@ -369,7 +369,6 @@ The content must be original, fact-based, and genuinely useful to crypto investo
         const category_slug = slugify(category_title);
         articleData.category_slug = category_slug;
 
-        console.log(articleData)
 
         // Array of famous Japanese mangaka styles
         const mangakaStyles = [
@@ -393,6 +392,8 @@ The content must be original, fact-based, and genuinely useful to crypto investo
         const randomStyle = mangakaStyles[Math.floor(Math.random() * mangakaStyles.length)];
 
         // Image is best-effort: text gen is expensive — still save the article if image fails (P1-10).
+        // Stored in Mongo, not `public/`: serverless filesystems are ephemeral, so
+        // request-time writes to public/ 404 in production.
         let imageUrl = null;
         let imageWarning = null;
         try {
@@ -428,11 +429,10 @@ The content must be original, fact-based, and genuinely useful to crypto investo
                 throw new Error("No image returned by the model");
             }
 
-            const publicDir = path.join(process.cwd(), 'public');
-            const fileName = `${slug}-${Date.now()}.webp`;
-            const filePath = path.join(publicDir, "imgs", fileName);
-            await sharp(buffer).webp({ quality: 80, effort: 4 }).toFile(filePath);
-            imageUrl = `/imgs/${fileName}`;
+            const key = `${slug}-${Date.now()}.webp`;
+            const webp = await sharp(buffer).webp({ quality: 80, effort: 4 }).toBuffer();
+            await saveArticleImage(key, webp, 'image/webp');
+            imageUrl = articleImageUrl(key);
         } catch (imgErr) {
             console.error("Image generation failed; saving article without header image:", imgErr);
             imageWarning = "Article saved without header image (image generation failed)";
@@ -531,8 +531,12 @@ export async function GET(req) {
             filter.category_slug = category;
         }
 
+        // Projection: exclude internal-only fields so public JSON stays lean
+        // and doesn't leak ops metadata (status, SEO internals).
+        const projection = { status: 0, seo_keywords: 0, social_media: 0, __v: 0 };
+
         // Fetch blog posts
-        const blogPosts = await collection.find(filter)
+        const blogPosts = await collection.find(filter, { projection })
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
@@ -541,15 +545,23 @@ export async function GET(req) {
         // Get total count for pagination
         const totalCount = await collection.countDocuments(filter);
 
-        return NextResponse.json({
-            success: true,
-            data: blogPosts,
-            pagination: {
-                currentPage: page,
-                totalPages: Math.ceil(totalCount / limit),
-                totalCount,
+        return NextResponse.json(
+            {
+                success: true,
+                data: blogPosts,
+                pagination: {
+                    currentPage: page,
+                    totalPages: Math.ceil(totalCount / limit),
+                    totalCount,
+                }
+            },
+            {
+                headers: {
+                    // `generateEtags` is disabled globally — set caching explicitly.
+                    'Cache-Control': 'public, max-age=60, s-maxage=600',
+                },
             }
-        });
+        );
     } catch (error) {
         console.error("Error fetching blog posts:", error);
         return NextResponse.json({ success: false, error: 'Failed to fetch blog posts' }, { status: 500 });

@@ -10,8 +10,7 @@ Tutti i comandi richiedono che il dev server sia in esecuzione.
 1. Server di sviluppo in esecuzione: `npm run dev` (porta 3000)
 2. MongoDB raggiungibile (variabile `MONGODB` nel `.env`)
 3. `OPENAI_API_KEY` valida nel `.env`
-4. Credenziali admin nel `.env`: `ADMIN_USERNAME` / `ADMIN_PASSWORD`
-   (default: `admin` / `admin123`)
+4. Credenziali admin nel `.env`: `ADMIN_USERNAME` / `ADMIN_PASSWORD_HASH`
 
 Tutto il tool legge le variabili dal file `application/.env`.
 
@@ -37,8 +36,8 @@ Cosa fa:
 3. Il backend genera con l'OpenAI **Responses API**:
    - articolo ≥1500 parole in markdown, ottimizzato SEO, con FAQ, internal link
    - titolo, slug, categorie, keyword, meta description
-   - immagine header 1536×1024 (modello `gpt-image-2.5-flare`), salvata in `public/imgs/`
-4. Salva l'articolo in MongoDB (collection `blog`, pubblicato) e aggiorna `public/sitemap.xml`
+   - immagine header 1536×1024 (modello `gpt-image-2.5-flare`), salvata in MongoDB (collection `blog_images`) e servita da `/api/article-image/<nome>`
+4. Salva l'articolo in MongoDB (collection `blog`, pubblicato). Il sitemap è dinamico (`src/app/sitemap.js`) e si aggiorna da solo
 
 ### Layer editoriale Jev (TypeSafe System One, opzionale)
 
@@ -154,10 +153,13 @@ tentativo il DNS risponde). Il workaround va applicato nel `.env` prima del riav
   `NO_JEV=1` per disattivare. Costo/latenza: ~3-4 chiamate Jev per
   articolo (qualche centesimo, pochi secondi), a protezione di 1-2
   generazioni LLM complete che costano 10-30× di più.
-- **Immagini**: vengono scritte in `public/imgs/<slug>-<timestamp>.png`.
-  In un deploy VCS-based (es. Vercel) i file nuovi non sono persistenti:
-  il bot interno è pensato per girare dove `public/` è scrivibile (dev locale).
-- **Sitemap**: viene aggiornato sul file locale `public/sitemap.xml`.
+- **Immagini**: vengono salvate in MongoDB (collection `blog_images`, key
+  `<slug>-<timestamp>.webp`) e servite da `/api/article-image/<nome>` con
+  `Cache-Control` annuale: funziona sia in dev che in produzione, senza
+  dipendere dalla persistenza di `public/`. Le immagini storiche
+  già committed sotto `public/imgs/` continuano a essere servite come
+  asset statici.
+- **Sitemap**: è dinamico (`src/app/sitemap.js`), nessun file da aggiornare.
 - **Errori**: in caso di errore il tool esce con codice 1 e stampa
   `ERROR: <motivo>` sull'stderr. Errori comuni:
   - `Login failed` → credenziali errate o dev server non avviato
