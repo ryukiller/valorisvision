@@ -1,88 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-
-// Simple fallback components if UI components fail
-const FallbackCard = ({ children, className = "" }) => (
-  <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-md border ${className}`}>
-    {children}
-  </div>
-)
-const FallbackCardHeader = ({ children }) => <div className="p-4 border-b">{children}</div>
-const FallbackCardTitle = ({ children }) => <h3 className="text-lg font-semibold">{children}</h3>
-const FallbackCardContent = ({ children }) => <div className="p-4">{children}</div>
-const FallbackButton = ({ children, onClick, className = "", disabled = false, variant = "default", size = "default" }) => {
-  const baseClass = "px-4 py-2 rounded font-medium transition-colors"
-  const variantClass = variant === "outline" 
-    ? "border border-gray-300 hover:bg-gray-50" 
-    : "bg-blue-500 text-white hover:bg-blue-600"
-  return (
-    <button 
-      onClick={onClick} 
-      disabled={disabled}
-      className={`${baseClass} ${variantClass} ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
-    >
-      {children}
-    </button>
-  )
-}
-const FallbackInput = ({ type = "text", placeholder, value, onChange, className = "", required = false }) => (
-  <input
-    type={type}
-    placeholder={placeholder}
-    value={value}
-    onChange={onChange}
-    required={required}
-    className={`w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
-  />
-)
-const FallbackBadge = ({ children, variant = "default" }) => {
-  const variantClass = variant === "secondary" ? "bg-gray-200 text-gray-800" : "bg-blue-100 text-blue-800"
-  return <span className={`px-2 py-1 rounded text-xs font-medium ${variantClass}`}>{children}</span>
-}
-
-// Try to import UI components, fall back to simple ones if they fail
-let Card, CardContent, CardHeader, CardTitle, Button, Input, Badge
-try {
-  const uiComponents = require('@/components/ui/card')
-  Card = uiComponents.Card || FallbackCard
-  CardContent = uiComponents.CardContent || FallbackCardContent  
-  CardHeader = uiComponents.CardHeader || FallbackCardHeader
-  CardTitle = uiComponents.CardTitle || FallbackCardTitle
-} catch {
-  Card = FallbackCard
-  CardContent = FallbackCardContent
-  CardHeader = FallbackCardHeader
-  CardTitle = FallbackCardTitle
-}
-
-try {
-  Button = require('@/components/ui/button').Button || FallbackButton
-} catch {
-  Button = FallbackButton
-}
-
-try {
-  Input = require('@/components/ui/input').Input || FallbackInput
-} catch {
-  Input = FallbackInput
-}
-
-try {
-  Badge = require('@/components/ui/badge').Badge || FallbackBadge
-} catch {
-  Badge = FallbackBadge
-}
-
-// Simple icon replacements
-const LayoutDashboard = () => "📊"
-const FileText = () => "📄"
-const DollarSign = () => "💰"
-const LogOut = () => "🚪"
-const Eye = () => "👁️"
-const Plus = () => "➕"
-const Refresh = () => "🔄"
-const Calendar = () => "📅"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { LayoutDashboard, FileText, DollarSign, LogOut, Eye, Plus, RefreshCw, Calendar } from 'lucide-react'
 
 export default function AdminDashboard() {
   const [user, setUser] = useState(null)
@@ -249,11 +171,7 @@ export default function AdminDashboard() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-blue-900 dark:to-purple-900 flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md"
-        >
+        <div className="w-full max-w-md">
           <Card className="backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -291,7 +209,7 @@ export default function AdminDashboard() {
               </form>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
       </div>
     )
   }
@@ -315,9 +233,9 @@ export default function AdminDashboard() {
         {/* Navigation */}
         <div className="flex gap-4 mb-8">
           {[
-            { id: 'dashboard', label: 'Dashboard', icon: () => <LayoutDashboard /> },
-            { id: 'articles', label: 'Articles', icon: () => <FileText /> },
-            { id: 'prices', label: 'Prices', icon: () => <DollarSign /> }
+            { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+            { id: 'articles', label: 'Articles', icon: FileText },
+            { id: 'prices', label: 'Prices', icon: DollarSign }
           ].map(tab => {
             const Icon = tab.icon
             return (
@@ -455,8 +373,8 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline">
-                          <Eye />
+                        <Button size="sm" variant="outline" aria-label="View article">
+<Eye className="w-4 h-4" />
                         </Button>
                       </div>
                     </div>
@@ -473,7 +391,7 @@ export default function AdminDashboard() {
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold">Price Data Management</h2>
               <Button onClick={updatePrices} disabled={loading} className="flex items-center gap-2">
-                <Refresh />
+                <RefreshCw />
                 {loading ? 'Updating...' : 'Update Prices'}
               </Button>
             </div>
