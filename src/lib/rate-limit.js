@@ -41,12 +41,20 @@ export function rateLimit(key, { limit = 5, windowMs = 60_000 } = {}) {
  * @returns {string}
  */
 export function getClientIp(req) {
+  // Take the LAST x-forwarded-for entry: the platform proxy appends the real
+  // client IP at the end, while the first entries are user-controllable and
+  // would let attackers rotate headers to bypass every limit.
   const forwarded = req.headers.get('x-forwarded-for')
   if (forwarded) {
-    const first = forwarded.split(',')[0]?.trim()
-    if (first) return first
+    const parts = forwarded.split(',').map((ip) => ip.trim()).filter(Boolean)
+    const last = parts[parts.length - 1]
+    if (last) return last
   }
   const realIp = req.headers.get('x-real-ip')
-  if (realIp) return realIp.trim()
+  if (realIp) {
+    const parts = realIp.split(',').map((ip) => ip.trim()).filter(Boolean)
+    const last = parts[parts.length - 1]
+    if (last) return last
+  }
   return 'unknown'
 }
