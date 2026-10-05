@@ -35,9 +35,7 @@ export default function ModernCalculator() {
     if (from && to && holdings > 0) {
       setIsCalculating(true)
 
-      // Simulate calculation delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 800))
-
+      // No artificial delay: the math is instant, show results instantly.
       const potentialPrice = to.market_cap / from.circulating_supply
       const potentialHoldingsValue = potentialPrice * parseFloat(holdings)
       const currentHoldingsValue = from.current_price * parseFloat(holdings)

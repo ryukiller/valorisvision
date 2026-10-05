@@ -1,9 +1,10 @@
-'use client'
 import Link from 'next/link'
 import ModernCalculator from '@/components/ModernCalculator'
 import Image from 'next/image'
 import RecentArticles from '@/components/RecentArticles'
-import { motion } from 'framer-motion'
+
+// Server component: the marketing copy renders to HTML for LCP/SEO.
+// ModernCalculator + RecentArticles are client islands (own 'use client').
 
 const STEPS = [
   {
@@ -47,12 +48,7 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       {/* ============ HERO ============ */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative overflow-hidden border-b border-line"
-      >
+      <section className="relative overflow-hidden border-b border-line">
         <div className="absolute inset-0">
           <Image
             priority
@@ -66,12 +62,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-void/40 via-transparent to-void/40" />
         </div>
 
-        <motion.div
-          initial={{ y: 40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="relative max-w-6xl mx-auto px-4 py-24 md:py-36 text-center"
-        >
+        <div className="relative max-w-6xl mx-auto px-4 py-24 md:py-36 text-center">
           <p className="term-label mb-6 flex items-center justify-center gap-3 text-neon-cyan/80">
             <span className="w-8 h-px bg-neon-cyan/60" />
             {'// valorisvisio scenario calculator'}
@@ -102,8 +93,8 @@ export default function Home() {
               How scenarios work
             </Link>
           </div>
-        </motion.div>
-      </motion.section>
+        </div>
+      </section>
 
       {/* ============ CALCULATOR ============ */}
       <section id="calculator" className="py-16 scroll-mt-24">
@@ -130,13 +121,7 @@ export default function Home() {
       {/* ============ LATEST ARTICLES ============ */}
       <section className="py-16 border-y border-line bg-panel/30">
         <div className="container px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="mb-12"
-          >
+          <div className="mb-12">
             <p className="term-label mb-3">{'// latest_drops'}</p>
             <h2 className="section-title">
               Latest Crypto <span className="text-neon-cyan">Insights</span>
@@ -144,7 +129,7 @@ export default function Home() {
             <p className="mt-3 text-muted-foreground max-w-2xl">
               Signal from the noise — market analysis and investment intelligence, decoded.
             </p>
-          </motion.div>
+          </div>
           <RecentArticles count="16" />
         </div>
       </section>
@@ -164,13 +149,9 @@ export default function Home() {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {STEPS.map((item, index) => (
-                <motion.div
+              {STEPS.map((item) => (
+                <div
                   key={item.step}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
                   className={`cyber-frame group relative p-6 border border-line bg-panel/60 ${item.border} transition-colors duration-300`}
                 >
                   <div className="font-mono text-xs tracking-[0.3em] text-muted-foreground mb-4">
@@ -182,17 +163,11 @@ export default function Home() {
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     {item.description}
                   </p>
-                </motion.div>
+                </div>
               ))}
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              viewport={{ once: true }}
-              className="mt-16 cyber-frame relative p-8 border border-line bg-gradient-to-br from-panel to-void"
-            >
+            <div className="mt-16 cyber-frame relative p-8 border border-line bg-gradient-to-br from-panel to-void">
               <div className="flex items-center gap-3 mb-8">
                 <span className="text-neon-acid text-xl">◈</span>
                 <h3 className="section-title text-xl md:text-2xl">
@@ -212,7 +187,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
