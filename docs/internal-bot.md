@@ -159,6 +159,24 @@ tentativo il DNS risponde). Il workaround va applicato nel `.env` prima del riav
   dipendere dalla persistenza di `public/`. Le immagini storiche
   già committed sotto `public/imgs/` continuano a essere servite come
   asset statici.
+- **Cover image empty (Content-Length: 0)**: if `/api/article-image/<name>`
+  returns `200` with `Content-Type: image/webp` but zero bytes, the serve
+  path used to call `new Uint8Array(mongoBinary)` — BSON `Binary.length` is
+  a method, so that builds an empty typed array. Fixed in
+  `src/lib/article-images.js` (`coerceImageBytes`). After deploy:
+  1. Verify with
+     `curl -sI "https://valorisvisio.top/api/article-image/<name>"`
+     — `Content-Length` must be `> 0`.
+  2. **Purge CDN/edge cache** for those URLs (responses were cached for a
+     year as `immutable`). Vercel + Cloudflare both need a purge, or the
+     browser/CDN will keep serving the empty body.
+  3. Bytes in `blog_images` were almost certainly fine — no re-generation
+     needed once cache is purged. If a key still 404s or stays empty after
+     purge, re-run
+     `npm run tool:article -- "<topic>"` (creates a **new** key) and update
+     the article's `imageUrl`, or locally re-save the same key via
+     `saveArticleImage(key, webpBuffer)` against the **production**
+     `MONGODB` URI the Vercel app uses.
 - **Sitemap**: è dinamico (`src/app/sitemap.js`), nessun file da aggiornare.
 - **Errori**: in caso di errore il tool esce con codice 1 e stampa
   `ERROR: <motivo>` sull'stderr. Errori comuni:

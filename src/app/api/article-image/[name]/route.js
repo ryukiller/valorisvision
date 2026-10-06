@@ -17,10 +17,14 @@ export async function GET(_req, { params }) {
 		if (!image) {
 			return NextResponse.json({ error: 'Not found' }, { status: 404 });
 		}
-		return new NextResponse(new Uint8Array(image.data), {
+		// Copy into a standalone Uint8Array so the Response body is real image
+		// bytes (not a BSON Binary, which `new Uint8Array(binary)` empties).
+		const body = new Uint8Array(image.data);
+		return new NextResponse(body, {
 			status: 200,
 			headers: {
 				'Content-Type': image.contentType,
+				'Content-Length': String(body.byteLength),
 				// Immutable filename (slug + timestamp) → cache for a year at the edge.
 				'Cache-Control': 'public, max-age=31536000, immutable',
 			},
