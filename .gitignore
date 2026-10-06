@@ -20,6 +20,16 @@
 .DS_Store
 *.pem
 
+# Heavy blog image sources (local only — commit optimized files under public/imgs/)
+# Workflow: docs/blog-images.md — npm run images:optimize
+/local/imgs-originals/*
+!/local/imgs-originals/README.md
+/public/imgs/originals/
+/public/imgs/**/*-original*
+/public/imgs/**/*.original.*
+/public/imgs/**/*-raw.*
+/public/imgs/**/*.tmp-*
+
 # debug
 npm-debug.log*
 yarn-debug.log*

@@ -11,6 +11,7 @@
     "tool:prices": "node --env-file=.env scripts/internal-bot.mjs prices",
     "tool:status": "node --env-file=.env scripts/internal-bot.mjs status",
     "migrate:articles-to-blog": "node --env-file=.env scripts/migrate-articles-to-blog.mjs",
+    "images:optimize": "node scripts/optimize-imgs.mjs",
     "test": "vitest run"
   },
   "dependencies": {

@@ -158,7 +158,9 @@ tentativo il DNS risponde). Il workaround va applicato nel `.env` prima del riav
   `Cache-Control` annuale: funziona sia in dev che in produzione, senza
   dipendere dalla persistenza di `public/`. Le immagini storiche
   già committed sotto `public/imgs/` continuano a essere servite come
-  asset statici.
+  asset statici. Per non gonfiare git/Vercel: originali pesanti in
+  `local/imgs-originals/` (gitignored), poi `npm run images:optimize` —
+  vedi `docs/blog-images.md`.
 - **Cover image empty (Content-Length: 0)**: if `/api/article-image/<name>`
   returns `200` with `Content-Type: image/webp` but zero bytes, the serve
   path used to call `new Uint8Array(mongoBinary)` — BSON `Binary.length` is

@@ -29,7 +29,7 @@ ValorisVisio is a Next.js 16 (App Router) cryptocurrency comparison and scenario
 - `src/components/` - Reusable UI components (Radix UI based)
 - `src/rgcomponents/` - Application-specific React components
 - `src/lib/` - Utility functions and shared logic
-- `public/` - Static assets (legacy blog images under `imgs/`; new images live in Mongo)
+- `public/` - Static assets (legacy blog images under `imgs/`; new images live in Mongo). Heavy originals stay in gitignored `local/imgs-originals/` — see `docs/blog-images.md` and `npm run images:optimize`.
 
 ### API Structure
 - `GET /api/getdata` - Fetch cryptocurrency data with pagination and search
