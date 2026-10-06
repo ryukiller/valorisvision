@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
+const BROKEN_IMAGES = new Set();
 
 const FALLBACK = [
     { name: 'BITCOIN', symbol: 'BTC', current_price: 67250, price_change_percentage_24h: 2.31, image: 'https://coin-images.coingecko.com/coins/images/1/small/bitcoin.png' },
     { name: 'ETHEREUM', symbol: 'ETH', current_price: 3480, price_change_percentage_24h: -1.12, image: 'https://coin-images.coingecko.com/coins/images/279/small/ethereum.png' },
     { name: 'SOLANA', symbol: 'SOL', current_price: 172.4, price_change_percentage_24h: 5.87, image: 'https://coin-images.coingecko.com/coins/images/4128/small/solana.png' },
-    { name: 'XRP', symbol: 'XRP', current_price: 0.62, price_change_percentage_24h: 0.44, image: 'https://coin-images.coingecko.com/coins/images/44/small/xrp-symbol-white_128.png' },
+    // CoinGecko 403s image 44 (asset removed upstream) — render the letter fallback
+    { name: 'XRP', symbol: 'XRP', current_price: 0.62, price_change_percentage_24h: 0.44, image: null },
     { name: 'DOGE', symbol: 'DOGE', current_price: 0.158, price_change_percentage_24h: -3.28, image: 'https://coin-images.coingecko.com/coins/images/5/small/dogecoin.png' },
     { name: 'ADA', symbol: 'ADA', current_price: 0.44, price_change_percentage_24h: 1.02, image: 'https://coin-images.coingecko.com/coins/images/975/small/cardano.png' },
     { name: 'AVAX', symbol: 'AVAX', current_price: 37.9, price_change_percentage_24h: 2.75, image: 'https://coin-images.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png' },
@@ -17,8 +18,12 @@ const FALLBACK = [
 const ICON_SIZE = 14;
 
 function resolveImageSrc(image) {
-    if (!image || image === 'missing_large.png') return null;
+    if (!image || image === 'missing_large.png' || BROKEN_IMAGES.has(image)) return null;
     return image;
+}
+
+function markBroken(src) {
+    if (src) BROKEN_IMAGES.add(src);
 }
 
 function TokenIcon({ coin }) {
@@ -34,17 +39,17 @@ function TokenIcon({ coin }) {
             aria-hidden="true"
         >
             {showImage ? (
-                <Image
+                // Plain <img> (not next/image): 403 responses fire `error`
+                // reliably and never render CoinGecko's HTML error page.
+                <img
                     src={src}
                     alt=""
                     width={ICON_SIZE}
                     height={ICON_SIZE}
                     className="rounded-full bg-white/90"
-                    style={{ width: ICON_SIZE, height: ICON_SIZE }}
                     loading="lazy"
                     decoding="async"
-                    unoptimized
-                    onError={() => setFailed(true)}
+                    onError={() => { markBroken(src); setFailed(true); }}
                 />
             ) : (
                 <span className="text-[8px] font-semibold leading-none text-neon-cyan/70">
